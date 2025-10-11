@@ -16,6 +16,6 @@ Physics & Collision Detection: Dynamic collisions, basic physics simulation.
 
 ## Sample games included:
 
-Pong: Classic 2-player game demo.
+Pong: Classic game to play against the computer.
 
 Jump & Run (WIP): Early prototype for a platformer demo.
