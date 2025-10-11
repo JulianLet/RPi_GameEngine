@@ -22,7 +22,11 @@ Jump & Run (WIP): Early prototype for a platformer demo.
 ## Quick build
 
 Run this inside the root folder
+```bash
 mkdir -p build && cd build && cmake -G "Ninja" .. && ninja
+```
 
 or this inside the empty build folder
+```bash
 cmake -G "Ninja" .. && ninja
+```
