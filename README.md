@@ -7,9 +7,7 @@ A lightweight game engine for the **Raspberry Pi Pico W**, built from scratch. T
 ## Features
 
 Entity-Component-System (ECS): Modular design to separate data, behavior, and logic.
-
 Event system: Easily handle game events, collisions, and input.
-
 Physics & Collision Detection: Dynamic collisions, basic physics simulation.
 
 
@@ -17,5 +15,14 @@ Physics & Collision Detection: Dynamic collisions, basic physics simulation.
 ## Sample games included:
 
 Pong: Classic game to play against the computer.
-
 Jump & Run (WIP): Early prototype for a platformer demo.
+
+
+
+## Quick build
+
+Run this inside the root folder
+mkdir -p build && cd build && cmake -G "Ninja" .. && ninja
+
+or this inside the empty build folder
+cmake -G "Ninja" .. && ninja
