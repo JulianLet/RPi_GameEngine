@@ -1,10 +1,10 @@
-Pi Game Engine by Julez
+#Pi Game Engine by Julez
 
-A lightweight game engine for the Raspberry Pi Pico, built from scratch. This project demonstrates an Entity-Component-System (ECS) architecture with events, physics, and dynamic collision detection, along with sample games.
+A lightweight game engine for the Raspberry Pi Pico W, built from scratch. This project demonstrates an Entity-Component-System (ECS) architecture with events, physics, and dynamic collision detection, along with sample games.
 
 
 
-Features
+##Features
 
 Entity-Component-System (ECS): Modular design to separate data, behavior, and logic.
 
@@ -14,7 +14,7 @@ Physics & Collision Detection: Dynamic collisions, basic physics simulation.
 
 
 
-Sample games included:
+##Sample games included:
 
 Pong: Classic 2-player game demo.
 
