@@ -1,6 +1,6 @@
 #include "EntityManager.h"
 #include "Events/Event.h"
-
+#include "Games/Game.h"
 #include "Entities/Components/Renderable.h"
 #include "Entities/Entity.h"
 
@@ -8,10 +8,10 @@
 
 #include <algorithm>
 
-EntityManager::EntityManager(std::vector<std::unique_ptr<Entity>> &entities)
+EntityManager::EntityManager(std::vector<std::unique_ptr<Entity>> &entities, Game* game)
  : entities(&entities)
 {
-    EventSystem::GetInstance().AddListener(this);
+    EventSystem::GetInstance().AddListener(this, game);
 }
 
 void EntityManager::Update()

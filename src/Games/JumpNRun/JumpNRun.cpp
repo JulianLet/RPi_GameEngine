@@ -16,7 +16,7 @@
 
 #include <algorithm>
 
-JumpNRun::JumpNRun(GameManager &manager) : Game("Jump 'N' Run", manager), entityManager(myEntities), eventComponentSystem(myEntities), eventComponentSystemUI(myUIElements)
+JumpNRun::JumpNRun(GameManager &manager) : Game("Jump 'N' Run", manager), entityManager(myEntities, this), eventComponentSystem(myEntities, this), eventComponentSystemUI(myUIElements, this)
 {
     auto& es = EventSystem::GetInstance();
 
@@ -52,6 +52,7 @@ void JumpNRun::Update(Input &input, float deltaTime)
     inputSystem.Update(myEntities, input);
     actionSystem.Update(myEntities);
     entityManager.Update();
+    uiUpdateSystem.Update(myUIElements, input, myGameManager);
 
     if (runGame)
     {

@@ -34,19 +34,20 @@ namespace Color
     }
 
     const uint16_t WHITE    = Color(255, 255, 255);
+    const uint16_t LIGHTGRAY= Color( 50,  50,  50);
     const uint16_t GRAY     = Color(128, 128, 128);
-    const uint16_t BLACK    = Color(0, 0, 0);
+    const uint16_t BLACK    = Color(  0,   0,   0);
 
-    const uint16_t RED      = Color(255, 0, 0);
-    const uint16_t GREEN    = Color(0, 255, 0);
-    const uint16_t BLUE     = Color(0, 0, 255);
+    const uint16_t RED      = Color(255,   0,   0);
+    const uint16_t GREEN    = Color(  0, 255,   0);
+    const uint16_t BLUE     = Color(  0,   0, 255);
 
-    const uint16_t YELLOW   = Color(255, 255, 0);
-    const uint16_t CYAN     = Color(0, 255, 255);
-    const uint16_t MAGENTA  = Color(255, 0, 255);
+    const uint16_t YELLOW   = Color(255, 255,   0);
+    const uint16_t CYAN     = Color(  0, 255, 255);
+    const uint16_t MAGENTA  = Color(255,   0, 255);
     
-    const uint16_t ORANGE   = Color(255, 165, 0);
-    const uint16_t PURPLE   = Color(128, 0, 128);
+    const uint16_t ORANGE   = Color(255, 165,   0);
+    const uint16_t PURPLE   = Color(128,   0, 128);
 
     inline uint16_t RANDOM() // must seed rand() before use
     {

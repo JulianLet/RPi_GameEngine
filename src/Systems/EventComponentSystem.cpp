@@ -1,16 +1,17 @@
 #include "EventComponentSystem.h"
 #include "EventSystem.h"
 
+#include "Games/Game.h"
 #include "Entities/Entity.h"
 
 #include "Globals.h"
 #include "Entities/Components/Rectangle.h"
 #include "Entities/Components/OnEventComponent.h"
 
-EventComponentSystem::EventComponentSystem(std::vector<std::unique_ptr<Entity>>& entities)
+EventComponentSystem::EventComponentSystem(std::vector<std::unique_ptr<Entity>>& entities, Game* game)
     : entities(&entities)
 {
-    EventSystem::GetInstance().AddListener(this);
+    EventSystem::GetInstance().AddListener(this, game);
 }
 
 void EventComponentSystem::HandleEvent(const Event &event)

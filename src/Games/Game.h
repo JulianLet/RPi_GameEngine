@@ -7,6 +7,7 @@ class GameManager;
 
 class Game
 {
+    public:
     std::string myName;
     GameManager& myGameManager;
     

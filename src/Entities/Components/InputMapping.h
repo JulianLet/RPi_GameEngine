@@ -5,7 +5,7 @@
 
 #include <unordered_map>
 
-enum class InputAction {HORIZONTAL = 0, VERTICAL, START_GAME, JUMP};
+enum class InputAction {HORIZONTAL = 0, VERTICAL, START_GAME, JUMP, CLICK};
 
 struct InputMappingComponent : public Component
 {

@@ -7,6 +7,7 @@
 class GameManager
 {
     std::unique_ptr<Game> currentGame;
+    std::unique_ptr<Game> pendingGame;
 
     public:
     GameManager();

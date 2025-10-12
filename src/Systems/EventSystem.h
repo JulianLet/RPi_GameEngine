@@ -3,10 +3,18 @@
 
 #include <vector>
 
+class Game;
+
+struct ListenerEntry {
+    EventListener* listener;
+    Game* ownerGame; // nullptr = persistent across games
+};
+
+
 class EventSystem
 {
 private:
-    std::vector<EventListener*> listeners;
+    std::vector<ListenerEntry> listenerEntries;
     EventSystem() = default; //is private for singelton
 
     EventSystem(const EventSystem&) = delete;
@@ -19,6 +27,7 @@ public:
         return instance;
     }
 
-    void AddListener(EventListener* listener);
+    void AddListener(EventListener* listener, Game* game);
     void DispatchEvent(const Event& event);
+    void RemoveListenersForGame(Game* game);
 };

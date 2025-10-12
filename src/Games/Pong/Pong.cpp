@@ -17,7 +17,7 @@
 #include "pico/stdlib.h"
 #include <algorithm>
 
-Pong::Pong(GameManager &manager) : Game("PONG", manager), actionSystem(this), entityManager(myEntities), eventComponentSystem(myEntities), eventComponentSystemUI(myUIElements)
+Pong::Pong(GameManager &manager) : Game("PONG", manager), actionSystem(this), entityManager(myEntities, this), eventComponentSystem(myEntities, this), eventComponentSystemUI(myUIElements, this)
 {
     auto& es = EventSystem::GetInstance();
 
@@ -40,7 +40,7 @@ Pong::Pong(GameManager &manager) : Game("PONG", manager), actionSystem(this), en
     es.DispatchEvent(EventSpawnEntity(ball));
 
     // Camera
-    auto* camera = new CameraObject(Vector2(65, 81), 3.f);
+    auto* camera = new CameraObject(Vector2(65, 81), 1.3f);
     camRef = camera->GetComponent<CameraComponent>();
     es.DispatchEvent(EventSpawnEntity(camera));
 
@@ -48,6 +48,8 @@ Pong::Pong(GameManager &manager) : Game("PONG", manager), actionSystem(this), en
     myUIElements.push_back(std::make_unique<TextObject>(Vector2(57, 8), "PONG", Color::WHITE));
     myUIElements.push_back(std::make_unique<ScoreText>(Vector2(65, 18), Color::WHITE));
     myUIElements.push_back(std::make_unique<TextObject>(Vector2(80, 150), "by Julez", Color::WHITE));
+
+    runGame = true;
 }
 
 void Pong::Update(Input &input, float deltaTime)
@@ -55,6 +57,7 @@ void Pong::Update(Input &input, float deltaTime)
     inputSystem.Update(myEntities, input);
     actionSystem.Update(myEntities, *this);
     entityManager.Update();
+    uiUpdateSystem.Update(myUIElements, input, myGameManager);
 
     if (runGame)
     {

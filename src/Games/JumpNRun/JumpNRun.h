@@ -14,6 +14,7 @@
 #include "Systems/CollisionSystem.h"
 #include "Systems/RenderSystem.h"
 #include "Systems/UIRenderSystem.h"
+#include "Systems/UIUpdateSystem.h"
 #include "Systems/EventComponentSystem.h"
 
 #include "Entities/Entity.h"
@@ -38,6 +39,7 @@ class JumpNRun : public Game
     CollisionSystem collisionSystem;
     EventComponentSystem eventComponentSystem;
     EventComponentSystem eventComponentSystemUI;
+    UIUpdateSystem uiUpdateSystem;
     CameraSystem cameraSystem;
     RenderSystem renderSystem;
     UIRenderSystem uiRenderSystem;

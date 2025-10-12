@@ -4,11 +4,12 @@
 #include "Entities/Components/InputIntend.h"
 #include "Entities/Entity.h"
 #include "Games/Pong/Pong.h"
+#include "PongActionSystem.h"
 
 PongActionSystem::PongActionSystem(Pong* pong)
     : pongRef(pong)
 {
-    EventSystem::GetInstance().AddListener(this);
+    EventSystem::GetInstance().AddListener(this, pong);
 }
 
 void PongActionSystem::Update(const std::vector<std::unique_ptr<Entity>>& entities, Pong& pongRef)

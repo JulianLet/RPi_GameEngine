@@ -4,7 +4,7 @@
 #include "Games/Game.h"
 #include "Systems/EntityManager.h"
 #include "Systems/InputSystem.h"
-#include "Games/Pong/Systems/PongActionSystem.h"
+#include "Games/Menu/Systems/MenuActionSystem.h"
 #include "Systems/CameraSystem.h"
 #include "Systems/AISystem.h"
 #include "Systems/MovementSystem.h"
@@ -19,21 +19,19 @@
 #include <vector>
 #include <memory>
 
-class Pong : public Game
+class Menu : public Game
 {
     public:
     bool runGame = false;
 
     private:
-    TransformComponent* ballTransform = nullptr;
     CameraComponent* camRef = nullptr;
 
-    Vector2 playingFieldSize = {130, 100};
-    uint16_t playingFieldColor = Color::GREEN;
+    uint16_t backgroundColor = Color::BLUE;
     
     EntityManager entityManager;
     InputSystem inputSystem;
-    PongActionSystem actionSystem;
+    MenuActionSystem actionSystem;
     AISystem aiSystem;
     MovementSystem movementSystem;
     PhysicsSystem physicsSystem;
@@ -50,14 +48,9 @@ class Pong : public Game
     std::vector<std::unique_ptr<Entity>> myUIElements;
 
     public:
-    Pong(GameManager& manager);
-    ~Pong() = default;
+    Menu(GameManager& manager);
+    ~Menu() = default;
 
     void Update(Input& input, float deltaTime) override;
     void Render(Renderer& renderer) override;
-
-    Entity* GetBall();
-    
-    private:
-    void ResetGame();
 };
