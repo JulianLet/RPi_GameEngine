@@ -5,17 +5,17 @@
 
 #define USE_GRAVITY true
 #define NO_GRAVITY false
-#define KINEMATIC true
-#define DYNAMIC false
+
+enum class PhysicsType {STATIC = 0, KINEMATIC, DYNAMIC};
 
 struct PhysicsComponent : public Component
 {
     bool useGravity;
-    bool isKinematic = false; // moves only by input/AI
+    PhysicsType physicsType;
     Vector2 startVelocity;
     Vector2 currentVelocity;
 
-    PhysicsComponent(bool useGravity, Vector2 velocity, bool isKinematic) : useGravity(useGravity), startVelocity(velocity), isKinematic(isKinematic) 
+    PhysicsComponent(bool useGravity, Vector2 velocity, PhysicsType physicsType) : useGravity(useGravity), startVelocity(velocity), physicsType(physicsType) 
     {
         currentVelocity = startVelocity;
     };

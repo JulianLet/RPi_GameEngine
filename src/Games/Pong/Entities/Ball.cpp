@@ -30,8 +30,8 @@ Ball::Ball() : Entity("Ball")
     AddComponent<TransformComponent>(startPos, size);
     AddComponent<MovementComponent>(speed);
     AddComponent<RectangleComponent>(color, FILLED);
-    AddComponent<ColliderComponent>(Vector2{0,0}, size, NOT_STATIC, SOLID);
-    AddComponent<PhysicsComponent>(NO_GRAVITY, Vector2{-1, 0}, DYNAMIC);
+    AddComponent<ColliderComponent>(Vector2{0,0}, size, SOLID);
+    AddComponent<PhysicsComponent>(NO_GRAVITY, Vector2{-1, 0}, PhysicsType::DYNAMIC);
     AddComponent<PhysicsMaterialComponent>(2.1f, 0.f);
     AddComponent<RenderableComponent>(0);
     

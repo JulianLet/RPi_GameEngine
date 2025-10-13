@@ -29,8 +29,8 @@ Paddle::Paddle(Pong* pongRef, Vector2 startPos, KEYCODE up, KEYCODE down, bool i
     AddComponent<TransformComponent>(startPos, size);
     AddComponent<MovementComponent>(speed);
 
-    AddComponent<PhysicsComponent>(NO_GRAVITY, Vector2{0,0}, KINEMATIC);
-    AddComponent<ColliderComponent>(Vector2{0,0}, size, NOT_STATIC, SOLID);
+    AddComponent<PhysicsComponent>(NO_GRAVITY, Vector2{0,0}, PhysicsType::KINEMATIC);
+    AddComponent<ColliderComponent>(Vector2{0,0}, size, SOLID);
 
     AddComponent<RenderableComponent>(0);
     AddComponent<RectangleComponent>(color, FILLED);

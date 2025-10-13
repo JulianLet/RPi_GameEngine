@@ -57,37 +57,36 @@ void PhysicsSystem::ResolveCollisions(const std::vector<std::unique_ptr<Entity>>
             if (!otherCollider || !otherPhysics) continue;
 
             if (myCollider->isTrigger || otherCollider->isTrigger) continue;
-            if (myCollider->isStatic && otherCollider->isStatic) continue;
+            if (!otherCollider || !otherPhysics) continue;
 
-            
-            // Handle kinematic vs static first
-            if (myCollider->isStatic && otherPhysics->isKinematic)
-            {
-                CollisionKinematicStatic(other.first, entity.get());
+            const auto myType    = myPhysics->physicsType;
+            const auto otherType = otherPhysics->physicsType;
+
+            if (myType == PhysicsType::STATIC && otherType == PhysicsType::STATIC)
                 continue;
-            }
-            else if (otherCollider->isStatic && myPhysics->isKinematic)
+
+            //one kin one static
+            if (myType == PhysicsType::KINEMATIC && otherType == PhysicsType::STATIC)
             {
                 CollisionKinematicStatic(entity.get(), other.first);
-                continue;
             }
-            
-            // case both are dynamic
-            if (!myPhysics->isKinematic && !otherPhysics->isKinematic)
+            else if (myType == PhysicsType::STATIC && otherType == PhysicsType::KINEMATIC)
             {
-                CollisionDynamicDynamic(entity.get(), other.first);
-                continue;
+                CollisionKinematicStatic(other.first, entity.get());
             }
 
-            // case one is dynamic vs non-movable
-            bool myMovable = !myCollider->isStatic && !myPhysics->isKinematic;
-            bool otherMovable = !otherCollider->isStatic && !otherPhysics->isKinematic;
-            
-            if (myMovable && !otherMovable)
+            //both dynamic
+            else if (myType == PhysicsType::DYNAMIC && otherType == PhysicsType::DYNAMIC)
+            {
+                CollisionDynamicDynamic(entity.get(), other.first);
+            }
+
+            //one dynamic
+            else if (myType == PhysicsType::DYNAMIC && otherType != PhysicsType::DYNAMIC)
             {
                 CollisionOneDynamic(entity.get(), other.first);
             }
-            else if (!myMovable && otherMovable)
+            else if (otherType == PhysicsType::DYNAMIC && myType != PhysicsType::DYNAMIC)
             {
                 CollisionOneDynamic(other.first, entity.get());
             }

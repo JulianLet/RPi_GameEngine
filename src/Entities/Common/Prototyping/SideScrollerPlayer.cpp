@@ -18,8 +18,8 @@ SideScrollerPlayer::SideScrollerPlayer(Vector2 startPos, Vector2 size, float mov
 
     AddComponent<TransformComponent>(startPos, size);
     AddComponent<MovementComponent>(moveSpeed);
-    AddComponent<ColliderComponent>(Vector2(0,0), size, NOT_STATIC, SOLID);
-    AddComponent<PhysicsComponent>(USE_GRAVITY, Vector2(0,0), DYNAMIC);
+    AddComponent<ColliderComponent>(Vector2(0,0), size, SOLID);
+    AddComponent<PhysicsComponent>(USE_GRAVITY, Vector2(0,0), PhysicsType::DYNAMIC);
     AddComponent<RenderableComponent>(1);
     AddComponent<RectangleComponent>(color, true);
     AddComponent<InputIntendComponent>();

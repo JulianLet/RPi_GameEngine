@@ -12,6 +12,6 @@ StaticWall::StaticWall(Vector2 pos, Vector2 size, uint16_t color, const char* ta
     AddComponent<TransformComponent>(pos, size);
     AddComponent<RectangleComponent>(color, FILLED);
     AddComponent<RenderableComponent>(1);
-    AddComponent<ColliderComponent>(Vector2{0,0}, size, STATIC, SOLID);
-    AddComponent<PhysicsComponent>(NO_GRAVITY, Vector2{0,0}, KINEMATIC);
+    AddComponent<ColliderComponent>(Vector2{0,0}, size, SOLID);
+    AddComponent<PhysicsComponent>(NO_GRAVITY, Vector2{0,0}, PhysicsType::STATIC);
 }
