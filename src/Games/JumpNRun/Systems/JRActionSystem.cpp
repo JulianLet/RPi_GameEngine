@@ -1,10 +1,10 @@
 #include "JRActionSystem.h"
 
-#include "Systems/EventSystem.h"
-#include "Events/Event.h"
+#include "Systems/Events/EventSystem.h"
+#include "Systems/Events/Event.h"
 
-#include "Entities/Components/InputIntend.h"
 #include "Entities/Entity.h"
+#include "Entities/Components/Input/InputIntendComponent.h"
 
 JRActionSystem::JRActionSystem() = default;
 

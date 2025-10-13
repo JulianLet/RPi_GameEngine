@@ -1,17 +1,17 @@
 #include "Player.h"
 
-#include "Events/Event.h"
+#include "Systems/Events/Event.h"
 
-#include "Entities/Components/Transform.h"
-#include "Entities/Components/Movement.h"
-#include "Entities/Components/Collider.h"
-#include "Entities/Components/CollisionResponse.h"
-#include "Entities/Components/Physics.h"
-#include "Entities/Components/InputIntend.h"
-#include "Entities/Components/InputMapping.h"
-#include "Entities/Components/Rectangle.h"
-#include "Entities/Components/Renderable.h"
-#include "Entities/Components/OnEventComponent.h"
+#include "Entities/Components/Core/TransformComponent.h"
+#include "Entities/Components/Core/MovementComponent.h"
+#include "Entities/Components/Physics/ColliderComponent.h"
+#include "Entities/Components/Physics/CollisionResponseComponent.h"
+#include "Entities/Components/Physics/PhysicsComponent.h"
+#include "Entities/Components/Input/InputIntendComponent.h"
+#include "Entities/Components/Input/InputMappingComponent.h"
+#include "Entities/Components/Render/RectangleComponent.h"
+#include "Entities/Components/Render/RenderableComponent.h"
+#include "Entities/Components/Events/OnEventComponent.h"
 
 Player::Player(Vector2 startPos) : Entity("Player")
 {

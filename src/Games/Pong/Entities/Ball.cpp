@@ -1,13 +1,15 @@
 #include "Ball.h"
 
-#include "Entities/Components/Transform.h"
-#include "Entities/Components/Movement.h"
-#include "Entities/Components/Renderable.h"
-#include "Entities/Components/Rectangle.h"
-#include "Entities/Components/Collider.h"
-#include "Entities/Components/Physics.h"
-#include "Entities/Components/PhysicsMaterial.h"
-#include "Entities/Components/CollisionResponse.h"
+#include "Entities/Components/Core/TransformComponent.h"
+#include "Entities/Components/Core/MovementComponent.h"
+
+#include "Entities/Components/Render/RenderableComponent.h"
+#include "Entities/Components/Render/RectangleComponent.h"
+
+#include "Entities/Components/Physics/ColliderComponent.h"
+#include "Entities/Components/Physics/PhysicsComponent.h"
+#include "Entities/Components/Physics/PhysicsMaterialComponent.h"
+#include "Entities/Components/Physics/CollisionResponseComponent.h"
 
 void Ball::OnCollisionEnter(Entity *self, Entity *other)
 {

@@ -1,20 +1,21 @@
 #include "Menu.h"
 
 #include "Entities/Entity.h"
-#include "Systems/GameManager.h"
+#include "Systems/Core/GameManager.h"
+
 #include "Games/Pong/Pong.h"
 #include "Games/JumpNRun/JumpNRun.h"
 
-#include "Systems/EventSystem.h"
-#include "Events/Event.h"
+#include "Systems/Events/EventSystem.h"
+#include "Systems/Events/Event.h"
 
-#include "Entities/Components/Transform.h"
-#include "Entities/Components/Rectangle.h"
-#include "Entities/Components/UIText.h"
-#include "Entities/Components/UIButton.h"
-#include "Entities/Components/Renderable.h"
+#include "Entities/Components/Core/TransformComponent.h"
+#include "Entities/Components/Render/RectangleComponent.h"
+#include "Entities/Components/UI/UITextComponent.h"
+#include "Entities/Components/UI/UIButtonComponent.h"
+#include "Entities/Components/Render/RenderableComponent.h"
 
-#include "Entities/Components/Camera.h"
+#include "Entities/Components/Render/CameraComponent.h"
 #include "pico/stdlib.h"
 #include <algorithm>
 

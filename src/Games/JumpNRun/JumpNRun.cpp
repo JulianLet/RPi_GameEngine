@@ -1,12 +1,12 @@
 #include "JumpNRun.h"
 
-#include "Systems/EventSystem.h"
+#include "Systems/Events/EventSystem.h"
 
-#include "Events/Event.h"
+#include "Systems/Events/Event.h"
 
-#include "Entities/Components/Renderable.h"
-#include "Entities/Components/Camera.h"
-#include "Entities/Components/Transform.h"
+#include "Entities/Components/Core/TransformComponent.h"
+#include "Entities/Components/Render/CameraComponent.h"
+#include "Entities/Components/Render/RenderableComponent.h"
 
 #include "Games/Pong/Entities/TextObject.h"
 #include "Games/JumpNRun/Entities/Plattform.h"

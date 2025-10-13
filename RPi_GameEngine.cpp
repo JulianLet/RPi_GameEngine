@@ -3,8 +3,8 @@
 #include "Hardware/Input.h"
 #include "Hardware/DisplayST7735.h"
 #include "Hardware/Renderer.h"
-#include "Systems/GameManager.h"
-#include "Systems/EventSystem.h"
+#include "Systems/Core/GameManager.h"
+#include "Systems/Events/EventSystem.h"
 
 const float TARGET_FPS = 60.0f;
 const float FRAME_TIME = 1.0f / TARGET_FPS;

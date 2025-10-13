@@ -5,17 +5,17 @@
 
 #include "Games/JumpNRun/Systems/JRActionSystem.h"
 
-#include "Systems/InputSystem.h"
-#include "Systems/EntityManager.h"
-#include "Systems/CameraSystem.h"
-#include "Systems/AISystem.h"
-#include "Systems/MovementSystem.h"
-#include "Systems/PhysicsSystem.h"
-#include "Systems/CollisionSystem.h"
-#include "Systems/RenderSystem.h"
-#include "Systems/UIRenderSystem.h"
-#include "Systems/UIUpdateSystem.h"
-#include "Systems/EventComponentSystem.h"
+#include "Systems/AI/AISystem.h"
+#include "Systems/Core/EntityManager.h"
+#include "Systems/Events/EventComponentSystem.h"
+#include "Systems/Input/InputSystem.h"
+#include "Systems/Physics/MovementSystem.h"
+#include "Systems/Physics/PhysicsSystem.h"
+#include "Systems/Physics/CollisionSystem.h"
+#include "Systems/Render/CameraSystem.h"
+#include "Systems/Render/RenderSystem.h"
+#include "Systems/UI/UIRenderSystem.h"
+#include "Systems/UI/UIUpdateSystem.h"
 
 #include "Entities/Entity.h"
 
@@ -28,20 +28,32 @@ class JumpNRun : public Game
     bool runGame = false;
 
     private:
-    uint16_t backgroundColor = Color::CYAN;
+    CameraComponent* camRef = nullptr;
+
+    uint16_t backgroundColor = Color::BLUE;
     
-    InputSystem inputSystem;
-    EntityManager entityManager;
-    JRActionSystem actionSystem;
     AISystem aiSystem;
+    EntityManager entityManager;
+
+    //Input
+    InputSystem inputSystem;
+    JRActionSystem actionSystem;
+
+    //Physics
     MovementSystem movementSystem;
     PhysicsSystem physicsSystem;
     CollisionSystem collisionSystem;
+
+    //Events
     EventComponentSystem eventComponentSystem;
     EventComponentSystem eventComponentSystemUI;
-    UIUpdateSystem uiUpdateSystem;
+
+    //Render
     CameraSystem cameraSystem;
     RenderSystem renderSystem;
+
+    //UI
+    UIUpdateSystem uiUpdateSystem;
     UIRenderSystem uiRenderSystem;
 
     CameraComponent* camObj;

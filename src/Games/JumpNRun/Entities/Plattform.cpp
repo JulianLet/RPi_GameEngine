@@ -1,10 +1,10 @@
 #include "Plattform.h"
 
-#include "Entities/Components/Transform.h"
-#include "Entities/Components/Collider.h"
-#include "Entities/Components/Physics.h"
-#include "Entities/Components/Renderable.h"
-#include "Entities/Components/Rectangle.h"
+#include "Entities/Components/Core/TransformComponent.h"
+#include "Entities/Components/Physics/ColliderComponent.h"
+#include "Entities/Components/Physics/PhysicsComponent.h"
+#include "Entities/Components/Render/RenderableComponent.h"
+#include "Entities/Components/Render/RectangleComponent.h"
 
 Plattform::Plattform(Vector2 pos, Vector2 size) : Entity("Ground")
 {

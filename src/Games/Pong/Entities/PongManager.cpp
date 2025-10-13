@@ -1,14 +1,14 @@
-#include "Games/Pong/Entities/PongManager.h"
+#include "PongManager.h"
 
 #include "Hardware/Input.h"
 
-#include "Entities/Components/InputMapping.h"
-#include "Entities/Components/InputIntend.h"
-#include "Entities/Components/OnEventComponent.h"
-#include "PongManager.h"
+#include "Systems/Events/Event.h"
+#include "Systems/Events/EventSystem.h"
 
-#include "Systems/EventSystem.h"
-#include "Events/Event.h"
+#include "Entities/Components/Input/InputMappingComponent.h"
+#include "Entities/Components/Input/InputIntendComponent.h"
+#include "Entities/Components/Events/OnEventComponent.h"
+
 
 PongManager::PongManager()
 {

@@ -2,9 +2,9 @@
 
 #include "Common.h"
 
-#include "Entities/Components/Transform.h"
-#include "Entities/Components/Rectangle.h"
-#include "Entities/Components/Renderable.h"
+#include "Entities/Components/Core/TransformComponent.h"
+#include "Entities/Components/Render/RectangleComponent.h"
+#include "Entities/Components/Render/RenderableComponent.h"
 
 Cloud::Cloud(int x, int y)
 {

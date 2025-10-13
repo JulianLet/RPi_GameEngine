@@ -1,7 +1,7 @@
 #include "TextObject.h"
 
-#include "Entities/Components/Transform.h"
-#include "Entities/Components/UIText.h"
+#include "Entities/Components/Core/TransformComponent.h"
+#include "Entities/Components/UI/UITextComponent.h"
 
 TextObject::TextObject(Vector2 position, const char* text, uint16_t textColor)
 {

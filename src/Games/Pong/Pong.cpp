@@ -1,7 +1,8 @@
 #include "Pong.h"
 
-#include "Systems/EventSystem.h"
-#include "Events/Event.h"
+#include "pico/stdlib.h"
+#include "Systems/Events/EventSystem.h"
+#include "Systems/Events/Event.h"
 
 #include "Games/Pong/Entities/PongManager.h"
 #include "Games/Pong/Entities/Ball.h"
@@ -11,10 +12,10 @@
 #include "Games/Pong/Entities/ScoreText.h"
 #include "Games/Pong/Entities/CameraObject.h"
 
-#include "Entities/Components/Transform.h"
-#include "Entities/Components/Renderable.h"
-#include "Entities/Components/Camera.h"
-#include "pico/stdlib.h"
+#include "Entities/Components/Core/TransformComponent.h"
+#include "Entities/Components/Render/RenderableComponent.h"
+#include "Entities/Components/Render/CameraComponent.h"
+
 #include <algorithm>
 
 Pong::Pong(GameManager &manager) : Game("PONG", manager), actionSystem(this), entityManager(myEntities, this), eventComponentSystem(myEntities, this), eventComponentSystemUI(myUIElements, this)

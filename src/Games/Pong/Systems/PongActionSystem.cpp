@@ -1,10 +1,12 @@
-#include "Games/Pong/Systems/PongActionSystem.h"
-#include "Systems/EventSystem.h"
-#include "Events/Event.h"
-#include "Entities/Components/InputIntend.h"
-#include "Entities/Entity.h"
-#include "Games/Pong/Pong.h"
 #include "PongActionSystem.h"
+
+#include "Games/Pong/Pong.h"
+
+#include "Systems/Events/EventSystem.h"
+#include "Systems/Events/Event.h"
+
+#include "Entities/Entity.h"
+#include "Entities/Components/Input/InputIntendComponent.h"
 
 PongActionSystem::PongActionSystem(Pong* pong)
     : pongRef(pong)

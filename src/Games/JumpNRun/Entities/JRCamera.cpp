@@ -1,9 +1,9 @@
 #include "JRCamera.h"
 
-#include "Entities/Components/Camera.h"
-#include "Entities/Components/Transform.h"
-#include "Entities/Components/Movement.h"
-#include "Entities/Components/FollowTarget.h"
+#include "Entities/Components/Core/TransformComponent.h"
+#include "Entities/Components/Render/CameraComponent.h"
+#include "Entities/Components/Core/MovementComponent.h"
+#include "Entities/Components/Render/FollowTargetComponent.h"
 
 JRCamera::JRCamera(Vector2 position, TransformComponent* target)
 {

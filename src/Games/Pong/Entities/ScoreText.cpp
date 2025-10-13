@@ -1,11 +1,11 @@
 #include "ScoreText.h"
 
-#include "Events/Event.h"
+#include "Systems/Events/Event.h"
+#include "Systems/Events/EventSystem.h"
 
-#include "Systems/EventSystem.h"
-#include "Entities/Components/Transform.h"
-#include "Entities/Components/UIText.h"
-#include "Entities/Components/OnEventComponent.h"
+#include "Entities/Components/Core/TransformComponent.h"
+#include "Entities/Components/Events/OnEventComponent.h"
+#include "Entities/Components/UI/UITextComponent.h"
 
 ScoreText::ScoreText(Vector2 position, uint16_t textColor)
 {
