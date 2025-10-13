@@ -35,11 +35,12 @@ void RenderSystem::Render(const std::vector<std::unique_ptr<Entity>>& entities, 
     Vector2 cameraPos = Vector2(0,0);
     float currentZoom = 1;
 
+    //adjust to current camera position and zoom
     if (camera)
     {
         auto* camTransform = camera->owner->GetComponent<TransformComponent>();
         if (camTransform) cameraPos = camera->owner->GetComponent<TransformComponent>()->currentPosition;
-        
+
         currentZoom = camera->currentZoom;
         cameraPos.x -= ST7735::WIDTH / (2 * currentZoom);
         cameraPos.y -= ST7735::HEIGHT / (2 * currentZoom); //cameraPos in middle of screen
@@ -52,21 +53,21 @@ void RenderSystem::Render(const std::vector<std::unique_ptr<Entity>>& entities, 
         RectangleComponent* rectangle = entity->GetComponent<RectangleComponent>();
 
         if (!transform || !rectangle || !renderable || !renderable->doRender) continue;
-
-        float prevX = (transform->lastPosition.x - cameraPos.x) * currentZoom;
-        float prevY = (transform->lastPosition.y - cameraPos.y) * currentZoom;
         
         // Calculate position relative to camera with parallax
         float parallaxX = cameraPos.x * renderable->parallaxFactor;
         float parallaxY = cameraPos.y * renderable->parallaxFactor;
-
+        
         float screenX = (transform->currentPosition.x - parallaxX) * currentZoom;
         float screenY = (transform->currentPosition.y - parallaxY) * currentZoom;
+
+        float prevX = (transform->lastPosition.x - parallaxX) * currentZoom;
+        float prevY = (transform->lastPosition.y - parallaxY) * currentZoom;
 
         float width = transform->currentSize.x * currentZoom;
         float height = transform->currentSize.y * currentZoom;
 
-        // Optional: cull entities outside screen
+        // cull entities outside screen
         if (screenX + width < 0 || screenX > ST7735::WIDTH ||
             screenY + height < 0 || screenY > ST7735::HEIGHT)
         {

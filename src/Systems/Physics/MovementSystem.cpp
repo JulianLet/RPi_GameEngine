@@ -19,11 +19,12 @@ void MovementSystem::Update(const std::vector<std::unique_ptr<Entity>> &entities
 
         if (!movement) continue;
 
-        if (transform)
+        if (transform) //update old position before any movement
         {
             transform->lastPosition = transform->currentPosition;
         }
 
+        //update velocity based on input
         if (physics && intend)
         {   
             if (intend->hasX)
@@ -37,19 +38,18 @@ void MovementSystem::Update(const std::vector<std::unique_ptr<Entity>> &entities
             }
         }
 
+        //lerp towards position based on to follow entity
         FollowTargetComponent* follow = entity->GetComponent<FollowTargetComponent>();
 
         if (transform && follow)
         {
             Vector2 diff = follow->target->currentPosition - transform->currentPosition;
 
-            // Lerp factor controls how quickly we approach the target.
             float lerpFactor = movement->currentSpeed * deltaTime;
 
             // Clamp lerpFactor to [0,1] to avoid overshooting
             if (lerpFactor > 1.0f) lerpFactor = 1.0f;
 
-            // Lerp between current position and target
             transform->currentPosition += diff * lerpFactor;
         }
 

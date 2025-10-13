@@ -7,9 +7,8 @@
 
 UIButtonObject::UIButtonObject(Vector2 pos, Vector2 size, uint16_t baseColor, uint16_t selectedColor, int layer)
 {
-    auto pongButton = std::make_unique<Entity>();
-    pongButton->AddComponent<TransformComponent>(pos, size);
-    pongButton->AddComponent<RectangleComponent>(baseColor, true);
-    pongButton->AddComponent<UIButtonComponent>(baseColor, selectedColor);
-    pongButton->AddComponent<RenderableComponent>(layer);
+    AddComponent<TransformComponent>(pos, size);
+    AddComponent<RectangleComponent>(baseColor, true);
+    AddComponent<UIButtonComponent>(baseColor, selectedColor);
+    AddComponent<RenderableComponent>(layer);
 }

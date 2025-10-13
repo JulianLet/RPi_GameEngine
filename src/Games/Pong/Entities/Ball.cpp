@@ -20,8 +20,8 @@ void Ball::OnCollisionEnter(Entity *self, Entity *other)
 
         float deltaY = myTransform->GetCenterPos().y - otherTransform->GetCenterPos().y;
 
+        //give vertical direction based on where on paddle it hit
         GetComponent<PhysicsComponent>()->currentVelocity.y = 2 * deltaY / otherTransform->currentSize.y;
-        GetComponent<MovementComponent>()->currentSpeed++;
     }
 }
 

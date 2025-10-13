@@ -20,8 +20,10 @@ void InputSystem::Update(const std::vector<std::unique_ptr<Entity>> &entities, I
 
         if (!mapping || !intend) continue;
 
+        //delete intends from last frame
         intend->Reset();
 
+        //update movement based on hardware input
         for (const auto& [key, pair] : mapping->directionMapping)
         {
             KeyState& ks = input.GetKey(key);
@@ -43,6 +45,7 @@ void InputSystem::Update(const std::vector<std::unique_ptr<Entity>> &entities, I
             }
         }
 
+        //update actions based on hardware input
         for (const auto& [key, action] : mapping->actionMapping)
         {
             KeyState& ks = input.GetKey(key);

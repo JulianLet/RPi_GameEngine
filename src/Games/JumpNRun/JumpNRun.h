@@ -30,7 +30,7 @@ class JumpNRun : public Game
     private:
     CameraComponent* camRef = nullptr;
 
-    uint16_t backgroundColor = Color::BLUE;
+    uint16_t backgroundColor = Color::CYAN;
     
     AISystem aiSystem;
     EntityManager entityManager;

@@ -9,6 +9,7 @@
 #include "Systems/Events/EventSystem.h"
 #include "Systems/Events/Event.h"
 
+#include "Entities/Common/Prototyping/StaticCamera.h"
 #include "Entities/Common/UI/UIButtonObject.h"
 #include "Entities/Common/UI/UITextObject.h"
 
@@ -23,10 +24,12 @@ Menu::Menu(GameManager &manager) : Game("MENU", manager), entityManager(myEntiti
     auto& es = EventSystem::GetInstance();
 
     // --- World entities ---
-
+    auto* camera = new StaticCamera(Vector2(65, 81), 1.f, 1.f);
+    camRef = camera->GetComponent<CameraComponent>();
+    es.DispatchEvent(EventSpawnEntity(camera));
 
     // --- UI elements ---
-    auto pongButton = std::make_unique<UIButtonObject>(Vector2(10,30), Vector2(110,20), Color::BLACK, Color::LIGHTGRAY, 0);
+    auto pongButton = std::make_unique<UIButtonObject>(Vector2(10,30), Vector2(110,20), Color::BLACK, Color::YELLOW, 0);
     pongButton->GetComponent<UIButtonComponent>()->OnClicked = [](GameManager& manager)
     {
         manager.SwitchGame(std::make_unique<Pong>(manager));
@@ -36,7 +39,7 @@ Menu::Menu(GameManager &manager) : Game("MENU", manager), entityManager(myEntiti
     auto pongButtonText = std::make_unique<UITextObject>(Vector2(65-12, 37), "PONG", Color::WHITE, -1);
     myUIElements.emplace_back(std::move(pongButtonText));
 
-    auto jnrButton = std::make_unique<UIButtonObject>(Vector2(10,60), Vector2(110,20), Color::BLACK, Color::LIGHTGRAY, 0);
+    auto jnrButton = std::make_unique<UIButtonObject>(Vector2(10,60), Vector2(110,20), Color::BLACK, Color::YELLOW, 0);
     jnrButton->GetComponent<UIButtonComponent>()->OnClicked = [](GameManager& manager)
     {
         manager.SwitchGame(std::make_unique<JumpNRun>(manager));

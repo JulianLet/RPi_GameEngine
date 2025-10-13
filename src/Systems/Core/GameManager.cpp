@@ -1,5 +1,6 @@
 #include "GameManager.h"
 
+#include "Hardware/Input.h"
 #include "Systems/Events/EventSystem.h"
 
 #include "Games/Pong/Pong.h"
@@ -22,6 +23,11 @@ void GameManager::Update(Input& input, float deltaTime)
     }
 
     currentGame->Update(input, deltaTime);
+
+    if (input.GetKey(KEYCODE::START).pressed)
+    {
+        SwitchGame(std::make_unique<Menu>(*this));
+    }
 }
 
 void GameManager::Render(Renderer& renderer)

@@ -28,6 +28,7 @@ void PhysicsSystem::Update(const std::vector<std::unique_ptr<Entity>> &entities,
             physics->currentVelocity.y += 10 * deltaTime; //add gravity acceleration
         }
 
+        //move entity
         transform->currentPosition.x += physics->currentVelocity.x * movement->currentSpeed * deltaTime;
         transform->currentPosition.y += physics->currentVelocity.y * movement->currentSpeed * deltaTime;
     }
@@ -55,9 +56,7 @@ void PhysicsSystem::ResolveCollisions(const std::vector<std::unique_ptr<Entity>>
             PhysicsComponent* otherPhysics = other.first->GetComponent<PhysicsComponent>();
 
             if (!otherCollider || !otherPhysics) continue;
-
-            if (myCollider->isTrigger || otherCollider->isTrigger) continue;
-            if (!otherCollider || !otherPhysics) continue;
+            if (myCollider->isTrigger || otherCollider->isTrigger) continue; //skip if only trigger collision
 
             const auto myType    = myPhysics->physicsType;
             const auto otherType = otherPhysics->physicsType;
@@ -123,14 +122,14 @@ void PhysicsSystem::CollisionOneDynamic(Entity* dynamic, Entity* other)
 
     if (overlaps.x < overlaps.y)
     {
-        //int dir = dynamicTransform->GetCenterPos().x < otherTransform->GetCenterPos().x ? -1 : 1; //which direction to move
+        //direction agains the old
         int dir = dynamicPhysics->currentVelocity.x < 0 ? 1 : -1;
         dynamicTransform->currentPosition.x += dir * overlaps.x;
         dynamicPhysics->currentVelocity.x *= -aB;
     }
     else
     {
-        //int dir = dynamicTransform->GetCenterPos().y < otherTransform->GetCenterPos().y ? -1 : 1; //which direction to move
+        //direction agains the old
         int dir = dynamicPhysics->currentVelocity.y < 0 ? 1 : -1;
         dynamicTransform->currentPosition.y += dir * overlaps.y;
         dynamicPhysics->currentVelocity.y *= -aB;
@@ -149,13 +148,13 @@ void PhysicsSystem::CollisionKinematicStatic(Entity* kinematic, Entity* other)
     // Move kinematic out of overlap along smallest axis
     if (overlaps.x < overlaps.y)
     {
-        // int dir = kTransform->GetCenterPos().x < oTransform->GetCenterPos().x ? -1 : 1;
+        //direction agains the old
         int dir = kinematic->GetComponent<PhysicsComponent>()->currentVelocity.x < 0 ? 1 : -1;
         kTransform->currentPosition.x += dir * overlaps.x;
     }
     else
     {
-        // int dir = kTransform->GetCenterPos().y < oTransform->GetCenterPos().y ? -1 : 1;
+        //direction agains the old
         int dir = kinematic->GetComponent<PhysicsComponent>()->currentVelocity.y < 0 ? 1 : -1;
         kTransform->currentPosition.y += dir * overlaps.y;
     }
@@ -177,14 +176,14 @@ void PhysicsSystem::CollisionDynamicDynamic(Entity* self, Entity* other)
     //resolve overlaps
     if (overlaps.x < overlaps.y)
     {
-        // float dir = selfTransform->GetCenterPos().x < otherTransform->GetCenterPos().x ? -0.5f : 0.5f; //which direction to move only halfway
+        //direction agains the old
         float dir = selfPhysics->currentVelocity.x < 0 ? 0.5f : -0.5f;
         selfTransform->currentPosition.x += dir * overlaps.x;
         otherTransform->currentPosition.x -= dir * overlaps.x;
     }
     else
     {
-        // float dir = selfTransform->GetCenterPos().y < otherTransform->GetCenterPos().y ? -0.5f : 0.5f; //which direction to move only halfway
+        //direction agains the old
         float dir = selfPhysics->currentVelocity.y < 0 ? 0.5f : -0.5f;
         selfTransform->currentPosition.y += dir * overlaps.y;
         otherTransform->currentPosition.y -= dir * overlaps.y;
@@ -194,8 +193,11 @@ void PhysicsSystem::CollisionDynamicDynamic(Entity* self, Entity* other)
     float sB = selfPM ? selfPM->bounciness : 0;
     float oB = otherPM ? otherPM->bounciness : 0;
     float aB = (sB + oB) / 2.f; //average bounciness
+
+    //mass for now at 1
     float sM = 1.f;
     float oM = 1.f;
+    
     Vector2 sV = selfPhysics->currentVelocity;
     Vector2 oV = otherPhysics->currentVelocity;
 

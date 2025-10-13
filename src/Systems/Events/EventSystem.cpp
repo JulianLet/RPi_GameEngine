@@ -18,6 +18,7 @@ void EventSystem::DispatchEvent(const Event &event)
     }
 }
 
+//otherwise saved as nullptr if game gets destroyed
 void EventSystem::RemoveListenersForGame(Game* game)
 {
     listenerEntries.erase(

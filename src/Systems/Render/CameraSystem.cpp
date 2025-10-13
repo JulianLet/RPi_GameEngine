@@ -5,6 +5,7 @@
 
 void CameraSystem::Update(const std::vector<std::unique_ptr<Entity>> &entities, float deltaTime)
 {
+    //currently just updates zoom
     for (auto& entity : entities)
     {
         CameraComponent* camera = entity->GetComponent<CameraComponent>();
