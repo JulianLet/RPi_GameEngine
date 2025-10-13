@@ -5,17 +5,15 @@
 
 class Event;
 
-class Player : public Entity
+class SideScrollerPlayer : public Entity
 {
 private:
-    Vector2 size = {5, 8};
-    float speed = 40.f;
-    uint16_t color = Color::BLUE;
     bool isGrounded = false;
+    float jumpPower = 0;
 
     public:
-    Player(Vector2 startPos);
-    ~Player() = default;
+    SideScrollerPlayer(Vector2 startPos, Vector2 size, float moveSpeed, uint16_t color, float jumpPower);
+    ~SideScrollerPlayer() = default;
 
     private:
     void OnCollisionEnter(Entity* self, Entity* other);

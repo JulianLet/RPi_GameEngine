@@ -1,10 +1,12 @@
-#include "TextObject.h"
+#include "UITextObject.h"
 
 #include "Entities/Components/Core/TransformComponent.h"
+#include "Entities/Components/Render/RenderableComponent.h"
 #include "Entities/Components/UI/UITextComponent.h"
 
-TextObject::TextObject(Vector2 position, const char* text, uint16_t textColor)
+UITextObject::UITextObject(Vector2 position, const char* text, uint16_t textColor, int layer)
 {
     AddComponent<TransformComponent>(position, Vector2{0,0});
     AddComponent<UITextComponent>(text, textColor);
+    AddComponent<RenderableComponent>(layer);
 }

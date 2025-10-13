@@ -9,11 +9,10 @@
 #include "Systems/Events/EventSystem.h"
 #include "Systems/Events/Event.h"
 
-#include "Entities/Components/Core/TransformComponent.h"
-#include "Entities/Components/Render/RectangleComponent.h"
-#include "Entities/Components/UI/UITextComponent.h"
+#include "Entities/Common/UI/UIButtonObject.h"
+#include "Entities/Common/UI/UITextObject.h"
+
 #include "Entities/Components/UI/UIButtonComponent.h"
-#include "Entities/Components/Render/RenderableComponent.h"
 
 #include "Entities/Components/Render/CameraComponent.h"
 #include "pico/stdlib.h"
@@ -27,42 +26,25 @@ Menu::Menu(GameManager &manager) : Game("MENU", manager), entityManager(myEntiti
 
 
     // --- UI elements ---
-    auto pongButton = std::make_unique<Entity>();
-    pongButton->AddComponent<TransformComponent>(Vector2(10,30), Vector2(110,20));
-    pongButton->AddComponent<RectangleComponent>(Color::WHITE, true);
-    pongButton->AddComponent<UIButtonComponent>(Color::BLACK, Color::LIGHTGRAY);
+    auto pongButton = std::make_unique<UIButtonObject>(Vector2(10,30), Vector2(110,20), Color::BLACK, Color::LIGHTGRAY, 0);
     pongButton->GetComponent<UIButtonComponent>()->OnClicked = [](GameManager& manager)
     {
-        //EventSystem::GetInstance().listenerEntries.clear();
         manager.SwitchGame(std::make_unique<Pong>(manager));
     };
-    pongButton->AddComponent<RenderableComponent>(0);
-
     myUIElements.emplace_back(std::move(pongButton));
     
-    auto pongButtonText = std::make_unique<Entity>();
-    pongButtonText->AddComponent<TransformComponent>(Vector2(65-12, 37), Vector2(0,0));
-    pongButtonText->AddComponent<UITextComponent>("PONG", Color::WHITE);
-    pongButtonText->AddComponent<RenderableComponent>(0);
+    auto pongButtonText = std::make_unique<UITextObject>(Vector2(65-12, 37), "PONG", Color::WHITE, -1);
     myUIElements.emplace_back(std::move(pongButtonText));
 
-    auto jnrButton = std::make_unique<Entity>();
-    jnrButton->AddComponent<TransformComponent>(Vector2(10,60), Vector2(110,20));
-    jnrButton->AddComponent<RectangleComponent>(Color::WHITE, true);
-    jnrButton->AddComponent<UIButtonComponent>(Color::BLACK, Color::LIGHTGRAY);
+    auto jnrButton = std::make_unique<UIButtonObject>(Vector2(10,60), Vector2(110,20), Color::BLACK, Color::LIGHTGRAY, 0);
     jnrButton->GetComponent<UIButtonComponent>()->OnClicked = [](GameManager& manager)
     {
-        //EventSystem::GetInstance().listenerEntries.clear();
         manager.SwitchGame(std::make_unique<JumpNRun>(manager));
     };
-    jnrButton->AddComponent<RenderableComponent>(0);
 
     myUIElements.emplace_back(std::move(jnrButton));
     
-    auto jnrButtonText = std::make_unique<Entity>();
-    jnrButtonText->AddComponent<TransformComponent>(Vector2(65-36, 67), Vector2(0,0));
-    jnrButtonText->AddComponent<UITextComponent>("JUMP 'N' RUN", Color::WHITE);
-    jnrButtonText->AddComponent<RenderableComponent>(0);
+    auto jnrButtonText = std::make_unique<UITextObject>(Vector2(65-36, 67),"JUMP 'N' RUN", Color::WHITE, -1);
     myUIElements.emplace_back(std::move(jnrButtonText));
 }
 

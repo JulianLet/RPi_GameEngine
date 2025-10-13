@@ -4,13 +4,15 @@
 #include "Systems/Events/EventSystem.h"
 #include "Systems/Events/Event.h"
 
+#include "Entities/Common/Prototyping/StaticWall.h"
+#include "Entities/Common/Prototyping/StaticCamera.h"
+
 #include "Games/Pong/Entities/PongManager.h"
 #include "Games/Pong/Entities/Ball.h"
-#include "Games/Pong/Entities/Wall.h"
 #include "Games/Pong/Entities/Paddle.h"
-#include "Games/Pong/Entities/TextObject.h"
 #include "Games/Pong/Entities/ScoreText.h"
-#include "Games/Pong/Entities/CameraObject.h"
+
+#include "Entities/Common/UI/UITextObject.h"
 
 #include "Entities/Components/Core/TransformComponent.h"
 #include "Entities/Components/Render/RenderableComponent.h"
@@ -32,8 +34,8 @@ Pong::Pong(GameManager &manager) : Game("PONG", manager), actionSystem(this), en
     es.DispatchEvent(EventSpawnEntity(new Paddle(this, Vector2(120, 65), KEYCODE::LEFT, KEYCODE::RIGHT, false)));
 
     // Walls
-    es.DispatchEvent(EventSpawnEntity(new Wall(Vector2(0, 0), Vector2(playingFieldSize.x, 30))));
-    es.DispatchEvent(EventSpawnEntity(new Wall(Vector2(0, playingFieldSize.y + 30), Vector2(playingFieldSize.x, 35))));
+    es.DispatchEvent(EventSpawnEntity(new StaticWall(Vector2(0, 0), Vector2(playingFieldSize.x, 30), Color::BLACK, "Wall")));
+    es.DispatchEvent(EventSpawnEntity(new StaticWall(Vector2(0, playingFieldSize.y + 30), Vector2(playingFieldSize.x, 35), Color::BLACK, "Wall")));
 
     // Ball
     auto* ball = new Ball();
@@ -41,14 +43,14 @@ Pong::Pong(GameManager &manager) : Game("PONG", manager), actionSystem(this), en
     es.DispatchEvent(EventSpawnEntity(ball));
 
     // Camera
-    auto* camera = new CameraObject(Vector2(65, 81), 1.3f);
+    auto* camera = new StaticCamera(Vector2(65, 81), 1.3f, 1.f);
     camRef = camera->GetComponent<CameraComponent>();
     es.DispatchEvent(EventSpawnEntity(camera));
 
     // --- UI elements ---
-    myUIElements.push_back(std::make_unique<TextObject>(Vector2(57, 8), "PONG", Color::WHITE));
+    myUIElements.push_back(std::make_unique<UITextObject>(Vector2(57, 8), "PONG", Color::WHITE, 0));
     myUIElements.push_back(std::make_unique<ScoreText>(Vector2(65, 18), Color::WHITE));
-    myUIElements.push_back(std::make_unique<TextObject>(Vector2(80, 150), "by Julez", Color::WHITE));
+    myUIElements.push_back(std::make_unique<UITextObject>(Vector2(80, 150), "by Julez", Color::WHITE, 0));
 
     runGame = true;
 }

@@ -1,4 +1,4 @@
-#include "Wall.h"
+#include "StaticWall.h"
 
 #include "Entities/Components/Core/TransformComponent.h"
 #include "Entities/Components/Render/RenderableComponent.h"
@@ -7,7 +7,7 @@
 #include "Entities/Components/Physics/PhysicsComponent.h"
 #include "Entities/Components/Physics/PhysicsMaterialComponent.h"
 
-Wall::Wall(Vector2 pos, Vector2 size) : Entity("Wall")
+StaticWall::StaticWall(Vector2 pos, Vector2 size, uint16_t color, const char* tag) : Entity(tag)
 {
     AddComponent<TransformComponent>(pos, size);
     AddComponent<RectangleComponent>(color, FILLED);

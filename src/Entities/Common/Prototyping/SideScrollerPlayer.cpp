@@ -1,4 +1,4 @@
-#include "Player.h"
+#include "SideScrollerPlayer.h"
 
 #include "Systems/Events/Event.h"
 
@@ -13,10 +13,11 @@
 #include "Entities/Components/Render/RenderableComponent.h"
 #include "Entities/Components/Events/OnEventComponent.h"
 
-Player::Player(Vector2 startPos) : Entity("Player")
+SideScrollerPlayer::SideScrollerPlayer(Vector2 startPos, Vector2 size, float moveSpeed, uint16_t color, float jumpPower) : Entity("Player"), jumpPower(jumpPower)
 {
+
     AddComponent<TransformComponent>(startPos, size);
-    AddComponent<MovementComponent>(speed);
+    AddComponent<MovementComponent>(moveSpeed);
     AddComponent<ColliderComponent>(Vector2(0,0), size, NOT_STATIC, SOLID);
     AddComponent<PhysicsComponent>(USE_GRAVITY, Vector2(0,0), DYNAMIC);
     AddComponent<RenderableComponent>(1);
@@ -56,7 +57,7 @@ Player::Player(Vector2 startPos) : Entity("Player")
     };
 }
 
-void Player::OnCollisionEnter(Entity* self, Entity* other)
+void SideScrollerPlayer::OnCollisionEnter(Entity* self, Entity* other)
 {
     if (other->tag == "Ground")
     {
@@ -68,7 +69,7 @@ void Player::OnCollisionEnter(Entity* self, Entity* other)
     }
 }
 
-void Player::OnCollisionExit(Entity* self, Entity* other)
+void SideScrollerPlayer::OnCollisionExit(Entity* self, Entity* other)
 {
     if (other->tag == "Ground")
     {
@@ -77,11 +78,11 @@ void Player::OnCollisionExit(Entity* self, Entity* other)
     }
 }
 
-void Player::Jump(const Event &event)
+void SideScrollerPlayer::Jump(const Event &event)
 {
         if (!isGrounded) return;
         isGrounded = false;
 
         auto* physics = GetComponent<PhysicsComponent>();
-        physics->currentVelocity.y = -3.f;
+        physics->currentVelocity.y = -jumpPower;
 }

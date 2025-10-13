@@ -4,15 +4,16 @@
 
 #include "Systems/Events/Event.h"
 
+#include "Entities/Common/Prototyping/SideScrollerPlayer.h"
+#include "Entities/Common/Prototyping/StaticWall.h"
+#include "Entities/Common/Prototyping/FollowCamera.h"
+#include "Entities/Common/UI/UITextObject.h"
+
 #include "Entities/Components/Core/TransformComponent.h"
 #include "Entities/Components/Render/CameraComponent.h"
 #include "Entities/Components/Render/RenderableComponent.h"
 
-#include "Games/Pong/Entities/TextObject.h"
-#include "Games/JumpNRun/Entities/Plattform.h"
-#include "Games/JumpNRun/Entities/Player.h"
 #include "Games/JumpNRun/Entities/Cloud.h"
-#include "Games/JumpNRun/Entities/JRCamera.h"
 
 #include <algorithm>
 
@@ -21,18 +22,17 @@ JumpNRun::JumpNRun(GameManager &manager) : Game("Jump 'N' Run", manager), entity
     auto& es = EventSystem::GetInstance();
 
     // --- World entities ---
-
-    auto* player =  new Player(Vector2(65,50));
+    auto* player =  new SideScrollerPlayer(Vector2(65,50), Vector2(5,8), 40, Color::BLUE, 3);
     TransformComponent* playerTransform = player->GetComponent<TransformComponent>();
     es.DispatchEvent(EventSpawnEntity(player));
 
-    es.DispatchEvent(EventSpawnEntity(new Plattform(Vector2(-50,130), Vector2(500,40))));
-    es.DispatchEvent(EventSpawnEntity(new Plattform(Vector2(80,120),  Vector2(200,40))));
-    es.DispatchEvent(EventSpawnEntity(new Plattform(Vector2(100,105), Vector2(180,40))));
-    es.DispatchEvent(EventSpawnEntity(new Plattform(Vector2(120,85),  Vector2(160,40))));
-    es.DispatchEvent(EventSpawnEntity(new Plattform(Vector2(140,60),  Vector2(140,40))));
+    es.DispatchEvent(EventSpawnEntity(new StaticWall(Vector2(-50,130), Vector2(500,40), Color::BLACK, "Ground")));
+    es.DispatchEvent(EventSpawnEntity(new StaticWall(Vector2(80,120),  Vector2(200,40), Color::BLACK, "Ground")));
+    es.DispatchEvent(EventSpawnEntity(new StaticWall(Vector2(100,105), Vector2(180,40), Color::BLACK, "Ground")));
+    es.DispatchEvent(EventSpawnEntity(new StaticWall(Vector2(120,85),  Vector2(160,40), Color::BLACK, "Ground")));
+    es.DispatchEvent(EventSpawnEntity(new StaticWall(Vector2(140,60),  Vector2(140,40), Color::BLACK, "Ground")));
 
-    auto* cam = new JRCamera(Vector2(65,80), playerTransform);
+    auto* cam = new FollowCamera(playerTransform, 1, 3, 30);
     camObj = cam->GetComponent<CameraComponent>();
     es.DispatchEvent(EventSpawnEntity(cam));
 
@@ -42,7 +42,7 @@ JumpNRun::JumpNRun(GameManager &manager) : Game("Jump 'N' Run", manager), entity
     }
 
     // --- UI entities ---
-    myUIElements.push_back(std::make_unique<TextObject>(Vector2(26, 8), "Jump 'N' Run", Color::BLACK));
+    myUIElements.push_back(std::make_unique<UITextObject>(Vector2(26, 8), "Jump 'N' Run", Color::BLACK, -1));
 
     runGame = true; //temp
 }

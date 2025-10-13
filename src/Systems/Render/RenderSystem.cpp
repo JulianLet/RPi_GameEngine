@@ -37,7 +37,9 @@ void RenderSystem::Render(const std::vector<std::unique_ptr<Entity>>& entities, 
 
     if (camera)
     {
-        cameraPos = camera->owner->GetComponent<TransformComponent>()->currentPosition;
+        auto* camTransform = camera->owner->GetComponent<TransformComponent>();
+        if (camTransform) cameraPos = camera->owner->GetComponent<TransformComponent>()->currentPosition;
+        
         currentZoom = camera->currentZoom;
         cameraPos.x -= ST7735::WIDTH / (2 * currentZoom);
         cameraPos.y -= ST7735::HEIGHT / (2 * currentZoom); //cameraPos in middle of screen
