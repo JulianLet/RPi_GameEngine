@@ -43,7 +43,7 @@ Pong::Pong(GameManager &manager) : Game("PONG", manager), actionSystem(this), en
     es.DispatchEvent(EventSpawnEntity(ball));
 
     // Camera
-    auto* camera = new StaticCamera(Vector2(65, 81), 1.3f, 1.f);
+    auto* camera = new StaticCamera(Vector2(65, 81), 1.f, 1.f);
     camRef = camera->GetComponent<CameraComponent>();
     es.DispatchEvent(EventSpawnEntity(camera));
 

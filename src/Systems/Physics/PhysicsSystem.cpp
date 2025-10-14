@@ -104,16 +104,16 @@ void PhysicsSystem::CollisionOneDynamic(Entity* dynamic, Entity* other)
 
     Vector2 overlaps = GetOverlaps(dynamicTransform, otherTransform);
 
-    //if contact only apply friction
-    if (overlaps.x <= 1.f && overlaps.y <= 1.f) 
-    {
-        float friction = dynamicPM ? dynamicPM->friction : 0;
-        friction += otherPM ? otherPM->friction : 0;
+    // //if contact only apply friction
+    // if (overlaps.x <= 0.01f && overlaps.y <= 0.01f) 
+    // {
+    //     float friction = dynamicPM ? dynamicPM->friction : 0;
+    //     friction += otherPM ? otherPM->friction : 0;
 
-        float frictionFactor = 1 - friction;
-        dynamicPhysics->currentVelocity = dynamicPhysics->currentVelocity * frictionFactor;
-        return;
-    }
+    //     float frictionFactor = 1 - friction;
+    //     dynamicPhysics->currentVelocity = dynamicPhysics->currentVelocity * frictionFactor;
+    //     return;
+    // }
 
     //add bounces
     float sB = dynamicPM ? dynamicPM->bounciness : 0;
@@ -123,15 +123,15 @@ void PhysicsSystem::CollisionOneDynamic(Entity* dynamic, Entity* other)
     if (overlaps.x < overlaps.y)
     {
         //direction agains the old
-        int dir = dynamicPhysics->currentVelocity.x < 0 ? 1 : -1;
-        dynamicTransform->currentPosition.x += dir * overlaps.x;
+        int dir = dynamicPhysics->currentVelocity.x <= 0 ? 1 : -1;
+        dynamicTransform->currentPosition.x += dir * (overlaps.x + 0.1f);
         dynamicPhysics->currentVelocity.x *= -aB;
     }
     else
     {
         //direction agains the old
-        int dir = dynamicPhysics->currentVelocity.y < 0 ? 1 : -1;
-        dynamicTransform->currentPosition.y += dir * overlaps.y;
+        int dir = dynamicPhysics->currentVelocity.y <= 0 ? 1 : -1;
+        dynamicTransform->currentPosition.y += dir * (overlaps.y+ 0.1f);
         dynamicPhysics->currentVelocity.y *= -aB;
     }
 }
@@ -217,10 +217,25 @@ void PhysicsSystem::CollisionDynamicDynamic(Entity* self, Entity* other)
     }
 }
 
-Vector2 PhysicsSystem::GetOverlaps(TransformComponent *self, TransformComponent *other)
+Vector2 PhysicsSystem::GetOverlaps(TransformComponent* self, TransformComponent* other)
 {
-    float overlapX = (self->currentSize.x + other->currentSize.x) / 2 - std::abs(self->GetCenterPos().x - other->GetCenterPos().x);
-    float overlapY = (self->currentSize.y + other->currentSize.y) / 2 - std::abs(self->GetCenterPos().y - other->GetCenterPos().y);
+    float selfLeft   = self->currentPosition.x;
+    float selfRight  = self->currentPosition.x + self->currentSize.x;
+    float selfTop    = self->currentPosition.y;
+    float selfBottom = self->currentPosition.y + self->currentSize.y;
+
+    float otherLeft   = other->currentPosition.x;
+    float otherRight  = other->currentPosition.x + other->currentSize.x;
+    float otherTop    = other->currentPosition.y;
+    float otherBottom = other->currentPosition.y + other->currentSize.y;
+
+    // Compute overlap
+    float overlapX = std::min(selfRight, otherRight) - std::max(selfLeft, otherLeft);
+    float overlapY = std::min(selfBottom, otherBottom) - std::max(selfTop, otherTop);
+
+    // Ensure non-negative overlap
+    if (overlapX < 0.f) overlapX = 0.f;
+    if (overlapY < 0.f) overlapY = 0.f;
 
     return Vector2{overlapX, overlapY};
 }

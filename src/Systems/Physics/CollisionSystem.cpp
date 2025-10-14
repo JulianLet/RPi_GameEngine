@@ -43,13 +43,6 @@ void CollisionSystem::Update(const std::vector<std::unique_ptr<Entity>>& entitie
             Vector2 collisionPos = {0, 0};
             bool overlap = SweptAABB(transformA, colliderA, transformB, colliderB, collisionPos);
             
-            if (!overlap && CheckOverlap(transformA, colliderA, transformB, colliderB)) 
-            {
-                collisionPos = transformA->currentPosition; // or midpoint of overlap
-                overlap = true;
-            }
-
-
             if (overlap)
             {
                 HandleEnterStayPos(entities[i].get(), colliderA, entities[j].get(), collisionPos);
@@ -64,61 +57,91 @@ void CollisionSystem::Update(const std::vector<std::unique_ptr<Entity>>& entitie
     }
 }
 
-bool CollisionSystem::CheckOverlap(TransformComponent* aT, ColliderComponent* aC, TransformComponent* bT, ColliderComponent* bC)
-{
-    // Axis-Aligned Bounding Box overlap test
-    return (aT->currentPosition.x < bT->currentPosition.x + bC->size.x &&
-            aT->currentPosition.x + aC->size.x > bT->currentPosition.x &&
-            aT->currentPosition.y < bT->currentPosition.y + bC->size.y &&
-            aT->currentPosition.y + aC->size.y > bT->currentPosition.y);
-}
-
 bool CollisionSystem::SweptAABB(TransformComponent* aT, ColliderComponent* aC, TransformComponent* bT, ColliderComponent* bC, Vector2& intersection)
 {
-    // Calculate relative motion
-    Vector2 motion = (aT->currentPosition - aT->lastPosition) - (bT->currentPosition - bT->lastPosition);
+    //little bit of tolerance
+    const float EPS = 0.001;
 
-    // Expanded target rectangle
-    float expandedLeft   = bT->currentPosition.x - aC->size.x;
-    float expandedTop    = bT->currentPosition.y - aC->size.y;
-    float expandedRight  = bT->currentPosition.x + bC->size.x;
-    float expandedBottom = bT->currentPosition.y + bC->size.y;
 
-    // Avoid divide by zero
-    Vector2 invEntry, invExit;
-    if (motion.x > 0.0f) {
-        invEntry.x = expandedLeft - aT->lastPosition.x;
-        invExit.x  = expandedRight - aT->lastPosition.x;
-    } else {
-        invEntry.x = expandedRight - aT->lastPosition.x;
-        invExit.x  = expandedLeft - aT->lastPosition.x;
+    //calculate relative velocity
+    Vector2 relativeVel = (aT->currentPosition - aT->lastPosition) - (bT->currentPosition - bT->lastPosition);
+
+    //if there is no movement static collision check
+    if (relativeVel.x == 0 && relativeVel.y == 0)
+    {
+        // simple static AABB overlap test
+        bool overlapX = std::abs(aT->currentPosition.x - bT->currentPosition.x) <= (aC->size.x + bC->size.x);
+        bool overlapY = std::abs(aT->currentPosition.y - bT->currentPosition.y) <= (aC->size.y + bC->size.y);
+        if (overlapX && overlapY)
+        {
+            intersection = aT->currentPosition; // or midpoint
+            return true;
+        }
+        return false;
     }
 
-    if (motion.y > 0.0f) {
-        invEntry.y = expandedTop - aT->lastPosition.y;
-        invExit.y  = expandedBottom - aT->lastPosition.y;
-    } else {
-        invEntry.y = expandedBottom - aT->lastPosition.y;
-        invExit.y  = expandedTop - aT->lastPosition.y;
+
+    //extend "static" rectangle. I choose b -> extended to top left
+    float leftSide = bT->currentPosition.x - aC->size.x;
+    float rightSide = bT->currentPosition.x + bC->size.x;
+    float topSide = bT->currentPosition.y - aC->size.y;
+    float bottomSide = bT->currentPosition.y + bC->size.y;
+
+    //projection on x
+    // ax + entryX * vx = leftSide -> entryX = (leftside - ax) / vx
+    // ax + exitX * vx = rightSide -> exitX = (rightSide - ax) / vx
+
+    float entryX = 0;
+    float exitX = 0;
+
+
+    if (relativeVel.x > EPS) //moving right
+    {
+        entryX = (leftSide - aT->lastPosition.x) / relativeVel.x;
+        exitX = (rightSide - aT->lastPosition.x) / relativeVel.x;
+    }
+    else if (relativeVel.x < -EPS) //moving left
+    {
+        entryX = (rightSide - aT->lastPosition.x) / relativeVel.x;
+        exitX = (leftSide - aT->lastPosition.x) / relativeVel.x;
+    }
+    else
+    {
+        entryX = -FLT_MAX;
+        exitX = FLT_MAX;
     }
 
-    Vector2 entry, exit;
-    entry.x = (motion.x == 0.0f) ? -FLT_MAX : invEntry.x / motion.x;
-    exit.x  = (motion.x == 0.0f) ?  FLT_MAX : invExit.x  / motion.x;
-    entry.y = (motion.y == 0.0f) ? -FLT_MAX : invEntry.y / motion.y;
-    exit.y  = (motion.y == 0.0f) ?  FLT_MAX : invExit.y  / motion.y;
+    //projection on y
+    float entryY = 0;
+    float exitY = 0;
 
-    float entryTime = std::max(entry.x, entry.y);
-    float exitTime  = std::min(exit.x, exit.y);
+    if (relativeVel.y > EPS) //moving down
+    {
+        entryY = (topSide - aT->lastPosition.y) / relativeVel.y;
+        exitY = (bottomSide - aT->lastPosition.y) / relativeVel.y;
+    }
+    else if (relativeVel.y < -EPS) //moving up
+    {
+        entryY = (bottomSide - aT->lastPosition.y) / relativeVel.y;
+        exitY = (topSide - aT->lastPosition.y) / relativeVel.y;
+    }
+    else
+    {
+        entryY = -FLT_MAX;
+        exitY = FLT_MAX;
+    }
 
-    if (entryTime > exitTime || entryTime < 0.0f || entryTime > 1.0f)
-        return false; // no collision
+    //get entry/ exit times
+    float entryTime = std::max(entryX, entryY);
+    float exitTime = std::min(exitX, exitY);
 
-    // Collision occurs
-    intersection = aT->lastPosition + motion * entryTime;
+    //no collision if entry after 1, exit before 0 or exit before enter
+    if (entryTime > 1.f || exitTime < 0 || entryTime > exitTime) return false;
+
+    if (entryTime < 0.f) entryTime = 0.f;
+    intersection = aT->lastPosition + entryTime * relativeVel;
     return true;
 }
-
 
 void CollisionSystem::HandleEnterStayPos(Entity *self, ColliderComponent *collider, Entity *other, Vector2& intersection)
 {
