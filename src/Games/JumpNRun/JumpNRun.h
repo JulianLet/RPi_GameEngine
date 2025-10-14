@@ -8,6 +8,7 @@
 
 #include "Systems/AI/AISystem.h"
 #include "Systems/Core/EntityManager.h"
+#include "Systems/Core/TimerSystem.h"
 #include "Systems/Events/EventComponentSystem.h"
 #include "Systems/Input/InputSystem.h"
 #include "Systems/Physics/MovementSystem.h"
@@ -37,6 +38,7 @@ class JumpNRun : public Game
     
     AISystem aiSystem;
     EntityManager entityManager;
+    TimerSystem timerSystem;
 
     //Input
     InputSystem inputSystem;
@@ -58,8 +60,6 @@ class JumpNRun : public Game
     //UI
     UIUpdateSystem uiUpdateSystem;
     UIRenderSystem uiRenderSystem;
-
-    CameraComponent* camObj;
 
     std::vector<std::unique_ptr<Entity>> myEntities;
     std::vector<std::unique_ptr<Entity>> myUIElements;

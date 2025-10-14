@@ -3,6 +3,7 @@
 #include "Globals.h"
 #include "Entities/Entity.h"
 #include "Entities/Components/Core/TransformComponent.h"
+#include "Entities/Components/Render/RectangleComponent.h"
 #include "Entities/Components/Physics/ColliderComponent.h"
 #include "Entities/Components/Physics/CollisionResponseComponent.h"
 
@@ -67,14 +68,20 @@ bool CollisionSystem::SweptAABB(TransformComponent* aT, ColliderComponent* aC, T
     Vector2 relativeVel = (aT->currentPosition - aT->lastPosition) - (bT->currentPosition - bT->lastPosition);
 
     //if there is no movement static collision check
-    if (relativeVel.x == 0 && relativeVel.y == 0)
+    if (std::abs(relativeVel.x) < EPS && std::abs(relativeVel.y) < EPS)
     {
-        // simple static AABB overlap test
-        bool overlapX = std::abs(aT->currentPosition.x - bT->currentPosition.x) <= (aC->size.x + bC->size.x);
-        bool overlapY = std::abs(aT->currentPosition.y - bT->currentPosition.y) <= (aC->size.y + bC->size.y);
+        // proper static AABB overlap check
+        bool overlapX = (aT->currentPosition.x < bT->currentPosition.x + bC->size.x) &&
+                        (aT->currentPosition.x + aC->size.x > bT->currentPosition.x);
+        bool overlapY = (aT->currentPosition.y < bT->currentPosition.y + bC->size.y) &&
+                        (aT->currentPosition.y + aC->size.y > bT->currentPosition.y);
+
         if (overlapX && overlapY)
         {
-            intersection = aT->currentPosition; // or midpoint
+            intersection.x = (std::max(aT->currentPosition.x, bT->currentPosition.x) +
+                            std::min(aT->currentPosition.x + aC->size.x, bT->currentPosition.x + bC->size.x)) / 2;
+            intersection.y = (std::max(aT->currentPosition.y, bT->currentPosition.y) +
+                            std::min(aT->currentPosition.y + aC->size.y, bT->currentPosition.y + bC->size.y)) / 2;
             return true;
         }
         return false;
@@ -94,41 +101,54 @@ bool CollisionSystem::SweptAABB(TransformComponent* aT, ColliderComponent* aC, T
     float entryX = 0;
     float exitX = 0;
 
+    // X-axis
+    if (std::abs(relativeVel.x) < EPS)
+    {
+        // If no movement in X, check if overlapping; else no collision
+        if (aT->lastPosition.x + aC->size.x <= bT->lastPosition.x ||
+            aT->lastPosition.x >= bT->lastPosition.x + bC->size.x)
+        {
+            return false;
+        }
 
-    if (relativeVel.x > EPS) //moving right
-    {
-        entryX = (leftSide - aT->lastPosition.x) / relativeVel.x;
-        exitX = (rightSide - aT->lastPosition.x) / relativeVel.x;
-    }
-    else if (relativeVel.x < -EPS) //moving left
-    {
-        entryX = (rightSide - aT->lastPosition.x) / relativeVel.x;
-        exitX = (leftSide - aT->lastPosition.x) / relativeVel.x;
-    }
-    else
-    {
         entryX = -FLT_MAX;
-        exitX = FLT_MAX;
+        exitX  = FLT_MAX;
+    }
+    else if (relativeVel.x > 0) // moving right
+    {
+        entryX = (bT->lastPosition.x - (aT->lastPosition.x + aC->size.x)) / relativeVel.x;
+        exitX  = (bT->lastPosition.x + bC->size.x - aT->lastPosition.x) / relativeVel.x;
+    }
+    else // moving left
+    {
+        entryX = (bT->lastPosition.x + bC->size.x - aT->lastPosition.x) / relativeVel.x;
+        exitX  = (bT->lastPosition.x - (aT->lastPosition.x + aC->size.x)) / relativeVel.x;
     }
 
     //projection on y
     float entryY = 0;
     float exitY = 0;
 
-    if (relativeVel.y > EPS) //moving down
+    // Y-axis
+    if (std::abs(relativeVel.y) < EPS)
     {
-        entryY = (topSide - aT->lastPosition.y) / relativeVel.y;
-        exitY = (bottomSide - aT->lastPosition.y) / relativeVel.y;
-    }
-    else if (relativeVel.y < -EPS) //moving up
-    {
-        entryY = (bottomSide - aT->lastPosition.y) / relativeVel.y;
-        exitY = (topSide - aT->lastPosition.y) / relativeVel.y;
-    }
-    else
-    {
+        if (aT->lastPosition.y + aC->size.y <= bT->lastPosition.y ||
+            aT->lastPosition.y >= bT->lastPosition.y + bC->size.y)
+        {
+            return false;
+        }
         entryY = -FLT_MAX;
-        exitY = FLT_MAX;
+        exitY  = FLT_MAX;
+    }
+    else if (relativeVel.y > 0) // moving down
+    {
+        entryY = (bT->lastPosition.y - (aT->lastPosition.y + aC->size.y)) / relativeVel.y;
+        exitY  = (bT->lastPosition.y + bC->size.y - aT->lastPosition.y) / relativeVel.y;
+    }
+    else // moving up
+    {
+        entryY = (bT->lastPosition.y + bC->size.y - aT->lastPosition.y) / relativeVel.y;
+        exitY  = (bT->lastPosition.y - (aT->lastPosition.y + aC->size.y)) / relativeVel.y;
     }
 
     //get entry/ exit times
@@ -146,6 +166,7 @@ bool CollisionSystem::SweptAABB(TransformComponent* aT, ColliderComponent* aC, T
 void CollisionSystem::HandleEnterStayPos(Entity *self, ColliderComponent *collider, Entity *other, Vector2& intersection)
 {
     auto response = self->GetComponent<CollisionResponseComponent>();
+    // self->GetComponent<RectangleComponent>()->currentColor = Color::RED;
 
     auto [it, inserted] = collider->currentCollisionsPos.insert({other, intersection});
 
@@ -165,9 +186,10 @@ void CollisionSystem::HandleEnterStayPos(Entity *self, ColliderComponent *collid
 void CollisionSystem::HandleExitPos(Entity *self, ColliderComponent *collider, Entity *other)
 {
     auto response = self->GetComponent<CollisionResponseComponent>();
-
+    
     if (collider->currentCollisionsPos.erase(other))
     {
+        // self->GetComponent<RectangleComponent>()->Reset();
         if (response && response->OnExit)
             response->OnExit(self, other);
     }

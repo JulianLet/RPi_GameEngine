@@ -5,13 +5,11 @@
 class JRManager : public Entity
 {
     private:
-    void CheckHighScore();
+    void CheckHighScore(float thisTime);
     
     public:
     JRManager();
     ~JRManager() = default;
-
-
+    
     float bestTime = 0;
-    float currentTime = 0;
 };

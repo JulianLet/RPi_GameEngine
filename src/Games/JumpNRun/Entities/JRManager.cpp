@@ -4,11 +4,11 @@
 #include "Entities/Components/Input/InputMappingComponent.h"
 #include "Entities/Components/Input/InputIntendComponent.h"
 
-void JRManager::CheckHighScore()
+void JRManager::CheckHighScore(float thisTime)
 {
-    if (currentTime < bestTime) 
+    if (thisTime < bestTime) 
     {
-        bestTime = currentTime;
+        bestTime = thisTime;
     }
 }
 
@@ -18,7 +18,9 @@ JRManager::JRManager()
     auto* onEvent = GetComponent<OnEventComponent>();
     onEvent->events[EventType::UPDATE_SCORE] = [this](const Event &event) 
     {
-        this->CheckHighScore();
+        const EventUpdateScore* e = static_cast<const EventUpdateScore*>(&event);
+
+        this->CheckHighScore(e->endTime);
     };
 
     AddComponent<InputIntendComponent>();

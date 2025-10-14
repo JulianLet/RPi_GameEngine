@@ -16,7 +16,7 @@ private:
     ~SideScrollerPlayer() = default;
 
     private:
-    void OnCollisionEnter(Entity* self, Entity* other);
+    void OnCollisionStay(Entity* self, Entity* other);
     void OnCollisionExit(Entity* self, Entity* other);
     void Jump(const Event& event);
 };

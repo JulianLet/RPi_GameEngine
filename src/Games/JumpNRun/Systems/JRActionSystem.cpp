@@ -8,6 +8,8 @@
 #include "Entities/Entity.h"
 #include "Entities/Components/Input/InputIntendComponent.h"
 
+#include <string>
+
 JRActionSystem::JRActionSystem(JumpNRun* jrRef, JRManager* manager) 
     : jrRef(jrRef), manager(manager)
 {
@@ -16,8 +18,6 @@ JRActionSystem::JRActionSystem(JumpNRun* jrRef, JRManager* manager)
 
 void JRActionSystem::Update(const std::vector<std::unique_ptr<Entity>>& entities, float deltaTime)
 {
-    manager->currentTime += deltaTime;
-
     for (auto& entity : entities)
     {
         InputIntendComponent* intend = entity->GetComponent<InputIntendComponent>();
@@ -41,7 +41,6 @@ void JRActionSystem::HandleEvent(const Event &event)
 {
     if (event.GetEventType() == EventType::START_GAME)
     {
-        manager->currentTime = 0;
         jrRef->StartGame();
     }
 

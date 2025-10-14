@@ -3,9 +3,11 @@
 #include "Entities/Component.h"
 #include "Globals.h"
 
+#include <string>
+
 struct UITextComponent : public Component
 {
-    const char* text;
+    std::string text;
     uint16_t textColor;
 
     UITextComponent(const char* text, uint16_t color) : text(text), textColor(color) {};

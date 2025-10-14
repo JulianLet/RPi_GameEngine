@@ -74,14 +74,14 @@ void RenderSystem::Render(const std::vector<std::unique_ptr<Entity>>& entities, 
             continue;
         }
     
-        renderer.DrawRectangle(
-            (int)prevX,
-            (int)prevY,
-            (int)width,
-            (int)height,
-            Color::RED,
-            rectangle->filled
-        );
+        // renderer.DrawRectangle(
+        //     (int)prevX,
+        //     (int)prevY,
+        //     (int)width,
+        //     (int)height,
+        //     Color::RED,
+        //     rectangle->filled
+        // );
 
         renderer.DrawRectangle(
             (int)screenX,

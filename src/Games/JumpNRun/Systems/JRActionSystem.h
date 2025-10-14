@@ -13,10 +13,11 @@ class JRManager;
 
 class JRActionSystem : public EventListener
 {
-    JumpNRun* jrRef;
-    JRManager* manager;
+    JumpNRun* jrRef = nullptr;
+    JRManager* manager = nullptr;
 
     public: 
+    JRActionSystem() = default;
     JRActionSystem(JumpNRun* jrRef, JRManager* manager);
     ~JRActionSystem() = default;
 

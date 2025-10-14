@@ -3,6 +3,8 @@
 #include "Hardware/Input.h"
 
 #include "Entities/Entity.h"
+#include "Entities/Components/Core/TimerComponent.h"
+#include "Entities/Components/UI/UITextComponent.h"
 #include "Entities/Components/UI/UIButtonComponent.h"
 #include "Entities/Components/Render/RectangleComponent.h"
 
@@ -13,6 +15,15 @@ void UIUpdateSystem::Update(const std::vector<std::unique_ptr<Entity>> &entities
 
     for (auto& entity : entities)
     {
+        auto* timer = entity->GetComponent<TimerComponent>();
+        auto* text = entity->GetComponent<UITextComponent>();
+
+        if (timer && text)
+        {
+            text->text = std::to_string(timer->currentTime);
+            continue;
+        }
+
         auto* btn = entity->GetComponent<UIButtonComponent>();
 
         if (btn)

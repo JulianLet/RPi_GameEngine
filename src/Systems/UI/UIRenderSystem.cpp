@@ -18,7 +18,7 @@ void UIRenderSystem::Render(const std::vector<std::unique_ptr<Entity>> &entities
         auto* text = entity->GetComponent<UITextComponent>();
         if (text)
         {
-            renderer.DrawText((int)transform->currentPosition.x, (int)transform->currentPosition.y, text->text, text->textColor);
+            renderer.DrawText((int)transform->currentPosition.x, (int)transform->currentPosition.y, text->text.c_str(), text->textColor);
             continue;
         }
 

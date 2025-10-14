@@ -36,9 +36,9 @@ SideScrollerPlayer::SideScrollerPlayer(Vector2 startPos, Vector2 size, float mov
     //add collider responses
     AddComponent<CollisionResponseComponent>();
     auto* response = GetComponent<CollisionResponseComponent>();
-    response->OnEnter = [this](Entity* self, Entity* other) 
+    response->OnStay = [this](Entity* self, Entity* other) 
     {
-        this->OnCollisionEnter(self, other);
+        this->OnCollisionStay(self, other);
     };
 
     response->OnExit = [this](Entity* self, Entity* other) 
@@ -57,15 +57,15 @@ SideScrollerPlayer::SideScrollerPlayer(Vector2 startPos, Vector2 size, float mov
     };
 }
 
-void SideScrollerPlayer::OnCollisionEnter(Entity* self, Entity* other)
+void SideScrollerPlayer::OnCollisionStay(Entity* self, Entity* other)
 {
     if (other->tag == "Ground")
     {
         isGrounded = true;
-        auto* physics = self->GetComponent<PhysicsComponent>();
+        // auto* physics = self->GetComponent<PhysicsComponent>();
 
-        physics->useGravity = false;
-        physics->currentVelocity.y = 0;
+        //->useGravity = false;
+        // physics->currentVelocity.y = 0;
     }
 }
 
@@ -73,10 +73,10 @@ void SideScrollerPlayer::OnCollisionExit(Entity* self, Entity* other)
 {
     if (other->tag == "Ground")
     {
-        //isGrounded = false;
+        // isGrounded = false;
 
         auto* physics = self->GetComponent<PhysicsComponent>();
-        physics->useGravity = true;
+        //physics->useGravity = true;
     }
 }
 

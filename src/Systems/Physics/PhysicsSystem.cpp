@@ -104,16 +104,16 @@ void PhysicsSystem::CollisionOneDynamic(Entity* dynamic, Entity* other)
 
     Vector2 overlaps = GetOverlaps(dynamicTransform, otherTransform);
 
-    // //if contact only apply friction
-    // if (overlaps.x <= 0.01f && overlaps.y <= 0.01f) 
-    // {
-    //     float friction = dynamicPM ? dynamicPM->friction : 0;
-    //     friction += otherPM ? otherPM->friction : 0;
+    //if contact only apply friction
+    if (overlaps.x <= 0.01f && overlaps.y <= 0.01f) 
+    {
+        float friction = dynamicPM ? dynamicPM->friction : 0;
+        friction += otherPM ? otherPM->friction : 0;
 
-    //     float frictionFactor = 1 - friction;
-    //     dynamicPhysics->currentVelocity = dynamicPhysics->currentVelocity * frictionFactor;
-    //     return;
-    // }
+        float frictionFactor = 1 - friction;
+        dynamicPhysics->currentVelocity *= frictionFactor;
+        return;
+    }
 
     //add bounces
     float sB = dynamicPM ? dynamicPM->bounciness : 0;
@@ -124,14 +124,14 @@ void PhysicsSystem::CollisionOneDynamic(Entity* dynamic, Entity* other)
     {
         //direction agains the old
         int dir = dynamicPhysics->currentVelocity.x <= 0 ? 1 : -1;
-        dynamicTransform->currentPosition.x += dir * (overlaps.x + 0.1f);
+        dynamicTransform->currentPosition.x += dir * (overlaps.x + 0.01f);
         dynamicPhysics->currentVelocity.x *= -aB;
     }
     else
     {
         //direction agains the old
         int dir = dynamicPhysics->currentVelocity.y <= 0 ? 1 : -1;
-        dynamicTransform->currentPosition.y += dir * (overlaps.y+ 0.1f);
+        dynamicTransform->currentPosition.y += dir * (overlaps.y + 0.01f);
         dynamicPhysics->currentVelocity.y *= -aB;
     }
 }

@@ -32,9 +32,11 @@ struct EventBallOOB : public Event
 
 struct EventUpdateScore : public Event
 {
-    int playerOne;
-    int playerTwo;
+    int playerOne = 0;
+    int playerTwo = 0;
+    float endTime = 0;
     EventUpdateScore(int playerOne, int playerTwo) : playerOne(playerOne), playerTwo(playerTwo) {};
+    EventUpdateScore(float endTime) : endTime(endTime) {};
     EventType GetEventType() const override { return EventType::UPDATE_SCORE; };
 };
 
