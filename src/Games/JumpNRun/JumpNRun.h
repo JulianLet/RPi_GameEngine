@@ -4,6 +4,7 @@
 #include "Games/Game.h"
 
 #include "Games/JumpNRun/Systems/JRActionSystem.h"
+#include "Games/JumpNRun/Entities/JRManager.h"
 
 #include "Systems/AI/AISystem.h"
 #include "Systems/Core/EntityManager.h"
@@ -28,7 +29,9 @@ class JumpNRun : public Game
     bool runGame = false;
 
     private:
+    JRManager jrManager;
     CameraComponent* camRef = nullptr;
+    TransformComponent* playerTransform = nullptr;
 
     uint16_t backgroundColor = Color::CYAN;
     
@@ -67,7 +70,6 @@ class JumpNRun : public Game
 
     void Update(Input& input, float deltaTime) override;
     void Render(Renderer& renderer) override;
-    
-    private:
+    void StartGame();
     void ResetGame();
 };

@@ -73,7 +73,7 @@ void SideScrollerPlayer::OnCollisionExit(Entity* self, Entity* other)
 {
     if (other->tag == "Ground")
     {
-        isGrounded = false;
+        //isGrounded = false;
 
         auto* physics = self->GetComponent<PhysicsComponent>();
         physics->useGravity = true;

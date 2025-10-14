@@ -13,26 +13,34 @@
 #include "Entities/Components/Render/CameraComponent.h"
 #include "Entities/Components/Render/RenderableComponent.h"
 
+#include "Games/JumpNRun/Entities/JRGoal.h"
 #include "Games/JumpNRun/Entities/Cloud.h"
 
 #include <algorithm>
 
-JumpNRun::JumpNRun(GameManager &manager) : Game("Jump 'N' Run", manager), entityManager(myEntities, this), eventComponentSystem(myEntities, this), eventComponentSystemUI(myUIElements, this)
+JumpNRun::JumpNRun(GameManager &manager) : Game("Jump 'N' Run", manager), actionSystem(this, &jrManager), entityManager(myEntities, this), eventComponentSystem(myEntities, this), eventComponentSystemUI(myUIElements, this)
 {
     auto& es = EventSystem::GetInstance();
 
     // --- World entities ---
-    auto* player =  new SideScrollerPlayer(Vector2(65,50), Vector2(5,8), 40, Color::BLUE, 3);
-    TransformComponent* playerTransform = player->GetComponent<TransformComponent>();
+    auto* player =  new SideScrollerPlayer(Vector2(0, 110), Vector2(8, 10), 40, Color::BLUE, 4);
+    playerTransform = player->GetComponent<TransformComponent>();
     es.DispatchEvent(EventSpawnEntity(player));
 
-    es.DispatchEvent(EventSpawnEntity(new StaticWall(Vector2(-50,130), Vector2(500,40), Color::BLACK, "Ground")));
-    es.DispatchEvent(EventSpawnEntity(new StaticWall(Vector2(80,120),  Vector2(200,40), Color::BLACK, "Ground")));
-    es.DispatchEvent(EventSpawnEntity(new StaticWall(Vector2(100,105), Vector2(180,40), Color::BLACK, "Ground")));
-    es.DispatchEvent(EventSpawnEntity(new StaticWall(Vector2(120,85),  Vector2(160,40), Color::BLACK, "Ground")));
-    es.DispatchEvent(EventSpawnEntity(new StaticWall(Vector2(140,60),  Vector2(140,40), Color::BLACK, "Ground")));
+    es.DispatchEvent(EventSpawnEntity(new StaticWall(Vector2(-50, 180), Vector2(200, 25), Color::BLACK, "Ground"))); //ground
+    es.DispatchEvent(EventSpawnEntity(new StaticWall(Vector2( 80, 150), Vector2( 70, 30), Color::BLACK, "Ground"))); //first step
+    es.DispatchEvent(EventSpawnEntity(new StaticWall(Vector2(100, 110), Vector2( 50, 40), Color::BLACK, "Ground"))); //second step
+    es.DispatchEvent(EventSpawnEntity(new StaticWall(Vector2(190,  30), Vector2( 10, 80), Color::BLACK, "Ground"))); //wall right
+    es.DispatchEvent(EventSpawnEntity(new StaticWall(Vector2(110,  30), Vector2( 30, 10), Color::BLACK, "Ground"))); //air right
+    es.DispatchEvent(EventSpawnEntity(new StaticWall(Vector2( 40,  45), Vector2( 20, 10), Color::BLACK, "Ground"))); //air left
+    es.DispatchEvent(EventSpawnEntity(new StaticWall(Vector2(-10, -30), Vector2( 10, 80), Color::BLACK, "Ground"))); //wall left
+    es.DispatchEvent(EventSpawnEntity(new StaticWall(Vector2( 40, -40), Vector2( 50, 10), Color::BLACK, "Ground"))); //top
 
-    auto* cam = new FollowCamera(playerTransform, 1, 3, 30);
+    es.DispatchEvent(EventSpawnEntity(new JRGoal(Vector2( 750, -55), Vector2(10, 10)))); //goal
+
+    es.DispatchEvent(EventSpawnEntity(&jrManager));
+
+    auto* cam = new FollowCamera(playerTransform, 1, 1, 30);
     camObj = cam->GetComponent<CameraComponent>();
     es.DispatchEvent(EventSpawnEntity(cam));
 
@@ -43,14 +51,12 @@ JumpNRun::JumpNRun(GameManager &manager) : Game("Jump 'N' Run", manager), entity
 
     // --- UI entities ---
     myUIElements.push_back(std::make_unique<UITextObject>(Vector2(26, 8), "Jump 'N' Run", Color::BLACK, -1));
-
-    runGame = true; //temp
 }
 
 void JumpNRun::Update(Input &input, float deltaTime)
 {
     inputSystem.Update(myEntities, input);
-    actionSystem.Update(myEntities);
+    actionSystem.Update(myEntities, deltaTime);
     entityManager.Update();
     uiUpdateSystem.Update(myUIElements, input, myGameManager);
 
@@ -63,6 +69,11 @@ void JumpNRun::Update(Input &input, float deltaTime)
         physicsSystem.ResolveCollisions(myEntities);
         cameraSystem.Update(myEntities, deltaTime);
     }
+
+    if (playerTransform->currentPosition.y > 200)
+    {
+        ResetGame();
+    }
 }
 
 void JumpNRun::Render(Renderer &renderer)
@@ -71,6 +82,11 @@ void JumpNRun::Render(Renderer &renderer)
 
     renderSystem.Render(myEntities, renderer, camObj);
     uiRenderSystem.Render(myUIElements, renderer); //ui on top of world
+}
+
+void JumpNRun::StartGame()
+{
+    runGame = true;
 }
 
 void JumpNRun::ResetGame()

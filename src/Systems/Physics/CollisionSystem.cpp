@@ -39,7 +39,6 @@ void CollisionSystem::Update(const std::vector<std::unique_ptr<Entity>>& entitie
             auto colliderB = entities[j]->GetComponent<ColliderComponent>();
 
             if (!transformB || !colliderB) continue;
-            // if (colliderA->isStatic && colliderB->isStatic) continue;
 
             Vector2 collisionPos = {0, 0};
             bool overlap = SweptAABB(transformA, colliderA, transformB, colliderB, collisionPos);
@@ -64,8 +63,6 @@ void CollisionSystem::Update(const std::vector<std::unique_ptr<Entity>>& entitie
         }
     }
 }
-
-#include "CollisionSystem.h"
 
 bool CollisionSystem::CheckOverlap(TransformComponent* aT, ColliderComponent* aC, TransformComponent* bT, ColliderComponent* bC)
 {
