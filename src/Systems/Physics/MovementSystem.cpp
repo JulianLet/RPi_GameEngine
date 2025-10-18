@@ -17,12 +17,12 @@ void MovementSystem::Update(const std::vector<std::unique_ptr<Entity>> &entities
         PhysicsComponent* physics = entity->GetComponent<PhysicsComponent>();
         InputIntendComponent* intend = entity->GetComponent<InputIntendComponent>();
 
-        if (!movement) continue;
-
         if (transform) //update old position before any movement
         {
             transform->lastPosition = transform->currentPosition;
         }
+        
+        if (!movement) continue;
 
         //update velocity based on input
         if (physics && intend)

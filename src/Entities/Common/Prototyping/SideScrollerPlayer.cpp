@@ -29,8 +29,8 @@ SideScrollerPlayer::SideScrollerPlayer(Vector2 startPos, Vector2 size, float mov
     //add inputs mapping
     AddComponent<InputMappingComponent>();
     auto* mapping = GetComponent<InputMappingComponent>();
-    mapping->directionMapping[KEYCODE::LEFT] = {InputAction::HORIZONTAL, -1};
-    mapping->directionMapping[KEYCODE::RIGHT] = {InputAction::HORIZONTAL, 1};
+    mapping->directionMapping[KEYCODE::LEFT] = {InputAction::HORIZONTAL, -moveSpeed};
+    mapping->directionMapping[KEYCODE::RIGHT] = {InputAction::HORIZONTAL, moveSpeed};
     mapping->actionMapping[KEYCODE::A] = {InputAction::JUMP};
     
     //add collider responses

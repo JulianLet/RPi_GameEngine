@@ -18,10 +18,10 @@ void CollisionSystem::Update(const std::vector<std::unique_ptr<Entity>>& entitie
         auto collider = entity->GetComponent<ColliderComponent>();
         if (!collider) continue;
 
-        for (auto it = collider->currentCollisionsPos.begin(); it != collider->currentCollisionsPos.end(); )
+        for (auto it = collider->currentCollisions.begin(); it != collider->currentCollisions.end(); )
         {
             if (it->first == nullptr)
-                it = collider->currentCollisionsPos.erase(it);
+                it = collider->currentCollisions.erase(it);
             else
                 ++it;
         }
@@ -41,13 +41,17 @@ void CollisionSystem::Update(const std::vector<std::unique_ptr<Entity>>& entitie
 
             if (!transformB || !colliderB) continue;
 
-            Vector2 collisionPos = {0, 0};
-            bool overlap = SweptAABB(transformA, colliderA, transformB, colliderB, collisionPos);
+            float timeOfCollision = 0;
+            Vector2 normal = (0,0);
+
+            bool overlap = SweptAABB(transformA, colliderA, transformB, colliderB, timeOfCollision, normal);
             
             if (overlap)
             {
-                HandleEnterStayPos(entities[i].get(), colliderA, entities[j].get(), collisionPos);
-                HandleEnterStayPos(entities[j].get(), colliderB, entities[i].get(), collisionPos);
+                HandleEnterStayPos(entities[i].get(), colliderA, entities[j].get(), timeOfCollision, normal);
+
+                Vector2 normalForB = {-normal.x, -normal.y};
+                HandleEnterStayPos(entities[j].get(), colliderB, entities[i].get(), timeOfCollision, normalForB);
             }
             else
             {
@@ -58,7 +62,7 @@ void CollisionSystem::Update(const std::vector<std::unique_ptr<Entity>>& entitie
     }
 }
 
-bool CollisionSystem::SweptAABB(TransformComponent* aT, ColliderComponent* aC, TransformComponent* bT, ColliderComponent* bC, Vector2& intersection)
+bool CollisionSystem::SweptAABB(TransformComponent* aT, ColliderComponent* aC, TransformComponent* bT, ColliderComponent* bC, float& timeOfCollision, Vector2& normal)
 {
     //little bit of tolerance
     const float EPS = 0.001;
@@ -78,21 +82,11 @@ bool CollisionSystem::SweptAABB(TransformComponent* aT, ColliderComponent* aC, T
 
         if (overlapX && overlapY)
         {
-            intersection.x = (std::max(aT->currentPosition.x, bT->currentPosition.x) +
-                            std::min(aT->currentPosition.x + aC->size.x, bT->currentPosition.x + bC->size.x)) / 2;
-            intersection.y = (std::max(aT->currentPosition.y, bT->currentPosition.y) +
-                            std::min(aT->currentPosition.y + aC->size.y, bT->currentPosition.y + bC->size.y)) / 2;
+            timeOfCollision = 0; //collided even in the beginning of the frame
             return true;
         }
         return false;
     }
-
-
-    //extend "static" rectangle. I choose b -> extended to top left
-    float leftSide = bT->currentPosition.x - aC->size.x;
-    float rightSide = bT->currentPosition.x + bC->size.x;
-    float topSide = bT->currentPosition.y - aC->size.y;
-    float bottomSide = bT->currentPosition.y + bC->size.y;
 
     //projection on x
     // ax + entryX * vx = leftSide -> entryX = (leftside - ax) / vx
@@ -159,20 +153,31 @@ bool CollisionSystem::SweptAABB(TransformComponent* aT, ColliderComponent* aC, T
     if (entryTime > 1.f || exitTime < 0 || entryTime > exitTime) return false;
 
     if (entryTime < 0.f) entryTime = 0.f;
-    intersection = aT->lastPosition + entryTime * relativeVel;
+    timeOfCollision = entryTime;
+
+    normal = {0,0};
+    if (entryX > entryY) 
+    {        
+        normal.x = (relativeVel.x < 0) ? -1.f : 1.f;
+    }    
+    else 
+    {        
+        normal.y = (relativeVel.y > 0) ? -1.f : 1.f;
+    }
+    
     return true;
 }
 
-void CollisionSystem::HandleEnterStayPos(Entity *self, ColliderComponent *collider, Entity *other, Vector2& intersection)
+void CollisionSystem::HandleEnterStayPos(Entity *self, ColliderComponent *collider, Entity *other, float& timeOfCollision, Vector2& normal)
 {
     auto response = self->GetComponent<CollisionResponseComponent>();
     // self->GetComponent<RectangleComponent>()->currentColor = Color::RED;
 
-    auto [it, inserted] = collider->currentCollisionsPos.insert({other, intersection});
+    auto [it, inserted] = collider->currentCollisions.insert({other, CollisionInfo{timeOfCollision, normal}});
 
     if (!inserted)
     {
-        it->second = intersection;
+        it->second = CollisionInfo{timeOfCollision, normal};
         if (response && response->OnStay)
             response->OnStay(self, other);
     }
@@ -187,7 +192,7 @@ void CollisionSystem::HandleExitPos(Entity *self, ColliderComponent *collider, E
 {
     auto response = self->GetComponent<CollisionResponseComponent>();
     
-    if (collider->currentCollisionsPos.erase(other))
+    if (collider->currentCollisions.erase(other))
     {
         // self->GetComponent<RectangleComponent>()->Reset();
         if (response && response->OnExit)

@@ -64,7 +64,7 @@ void Menu::Update(Input &input, float deltaTime)
         movementSystem.Update(myEntities, deltaTime);
         physicsSystem.Update(myEntities, deltaTime);
         collisionSystem.Update(myEntities);
-        physicsSystem.ResolveCollisions(myEntities);
+        physicsSystem.ResolveCollisions(myEntities, deltaTime);
         cameraSystem.Update(myEntities, deltaTime);
     }
 }

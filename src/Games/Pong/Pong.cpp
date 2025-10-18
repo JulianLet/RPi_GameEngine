@@ -68,7 +68,7 @@ void Pong::Update(Input &input, float deltaTime)
         movementSystem.Update(myEntities, deltaTime);
         physicsSystem.Update(myEntities, deltaTime);
         collisionSystem.Update(myEntities);
-        physicsSystem.ResolveCollisions(myEntities);
+        physicsSystem.ResolveCollisions(myEntities, deltaTime);
         cameraSystem.Update(myEntities, deltaTime);
 
         if (ballTransform->currentPosition.x < -5 || ballTransform->currentPosition.x > playingFieldSize.x + 5)

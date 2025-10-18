@@ -43,8 +43,8 @@ Paddle::Paddle(Pong* pongRef, Vector2 startPos, KEYCODE up, KEYCODE down, bool i
         AddComponent<InputMappingComponent>();
 
         auto* mapping = GetComponent<InputMappingComponent>();
-        mapping->directionMapping[KEYCODE::UP] = {InputAction::VERTICAL, -1};
-        mapping->directionMapping[KEYCODE::DOWN] = {InputAction::VERTICAL, 1};
+        mapping->directionMapping[KEYCODE::UP] = {InputAction::VERTICAL, -speed};
+        mapping->directionMapping[KEYCODE::DOWN] = {InputAction::VERTICAL, speed};
     }
     else
     {
@@ -84,7 +84,7 @@ void Paddle::Think(Entity *self, float deltaTime)
     if (!myAI) myAI = GetComponent<AIComponent>();
 
     float deltaX = myTransform->GetCenterPos().x - ballTransform->GetCenterPos().x; //rest way to travel for ball
-    float estematedY = ballTransform->GetCenterPos().y + deltaX * ballPhysics->currentVelocity.y; //calculated height of ball at paddel position
+    float estematedY = ballTransform->GetCenterPos().y + deltaX * ballPhysics->currentVelocity.Normalize().y; //calculated height of ball at paddel position
 
     myAI->memory[PongAI::ESTEMATED_Y] = estematedY;
     myAI->memory[PongAI::BALL_TO_RIGHT] = ballPhysics->currentVelocity.x > 0 ? 1 : -1;
@@ -119,5 +119,5 @@ void Paddle::Act(Entity *self, float deltaTime)
 {
     if (!myIntend || !myAI) return;
 
-    myIntend->y = myAI->memory[PongAI::TARGET_DIR_Y];
+    myIntend->y = myAI->memory[PongAI::TARGET_DIR_Y] * speed;
 }

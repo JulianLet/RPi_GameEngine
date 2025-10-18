@@ -43,15 +43,20 @@ struct Vector2
     }
 
 
-    void Normalize()
+    Vector2 Normalize()
     {
         float length = std::sqrt(x * x + y * y);
 
+        float xN = 0;
+        float yN = 0;
+
         if (length != 0.0f) 
         {
-            x /= length;
-            y /= length;
+            xN = x / length;
+            yN = y / length;
         }
+
+        return Vector2(xN, yN);
     }
 
     float Magnitude()
@@ -70,6 +75,12 @@ inline Vector2 operator*(float scalar, const Vector2& vec)
 inline Vector2 operator/(float scalar, const Vector2& vec)
 {
     return Vector2(vec.x / scalar, vec.y / scalar);
+}
+
+// Dot product function
+inline float Dot(const Vector2& a, const Vector2& b)
+{
+    return a.x * b.x + a.y * b.y;
 }
 
 //component ID

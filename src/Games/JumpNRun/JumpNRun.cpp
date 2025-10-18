@@ -25,7 +25,7 @@ JumpNRun::JumpNRun(GameManager &manager) : Game("Jump 'N' Run", manager), action
     auto& es = EventSystem::GetInstance();
 
     // --- World entities ---
-    auto* player =  new SideScrollerPlayer(Vector2(0, 110), Vector2(8, 10), 45, Color::BLUE, 4);
+    auto* player =  new SideScrollerPlayer(Vector2(0, 110), Vector2(8, 10), 45, Color::BLUE, 80);
     playerTransform = player->GetComponent<TransformComponent>();
     es.DispatchEvent(EventSpawnEntity(player));
 
@@ -71,7 +71,7 @@ void JumpNRun::Update(Input &input, float deltaTime)
         movementSystem.Update(myEntities, deltaTime);
         physicsSystem.Update(myEntities, deltaTime);
         collisionSystem.Update(myEntities);
-        physicsSystem.ResolveCollisions(myEntities);
+        physicsSystem.ResolveCollisions(myEntities, deltaTime);
         cameraSystem.Update(myEntities, deltaTime);
     }
 
