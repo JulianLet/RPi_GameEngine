@@ -23,12 +23,7 @@
 JumpNRun::JumpNRun(GameManager &manager) : Game("Jump 'N' Run", manager), actionSystem(this, &jrManager), entityManager(myEntities, this), eventComponentSystem(myEntities, this), eventComponentSystemUI(myUIElements, this)
 {
     auto& es = EventSystem::GetInstance();
-
-    // --- World entities ---
-    auto* player =  new SideScrollerPlayer(Vector2(0, 110), Vector2(8, 10), 45, Color::BLUE, 80);
-    playerTransform = player->GetComponent<TransformComponent>();
-    es.DispatchEvent(EventSpawnEntity(player));
-
+    
     es.DispatchEvent(EventSpawnEntity(new StaticWall(Vector2(-50, 180), Vector2(210, 50), Color::BLACK, "Ground"))); //ground
     es.DispatchEvent(EventSpawnEntity(new StaticWall(Vector2( 80, 150), Vector2(120, 30), Color::BLACK, "Ground"))); //first step
     es.DispatchEvent(EventSpawnEntity(new StaticWall(Vector2(100, 110), Vector2(100, 40), Color::BLACK, "Ground"))); //second step
@@ -37,6 +32,11 @@ JumpNRun::JumpNRun(GameManager &manager) : Game("Jump 'N' Run", manager), action
     es.DispatchEvent(EventSpawnEntity(new StaticWall(Vector2( 35,  45), Vector2( 23, 10), Color::BLACK, "Ground"))); //air left
     es.DispatchEvent(EventSpawnEntity(new StaticWall(Vector2(-20, -30), Vector2( 10, 80), Color::BLACK, "Ground"))); //wall left
     es.DispatchEvent(EventSpawnEntity(new StaticWall(Vector2( 35, -40), Vector2( 55, 10), Color::BLACK, "Ground"))); //top
+
+    // --- World entities ---
+    auto* player =  new SideScrollerPlayer(Vector2(0, 110), Vector2(8, 10), 45, Color::BLUE, 80);
+    playerTransform = player->GetComponent<TransformComponent>();
+    es.DispatchEvent(EventSpawnEntity(player));
 
     es.DispatchEvent(EventSpawnEntity(new JRGoal(Vector2( 75, -55), Vector2(10, 10)))); //goal
 

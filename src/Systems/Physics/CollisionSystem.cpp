@@ -42,7 +42,7 @@ void CollisionSystem::Update(const std::vector<std::unique_ptr<Entity>>& entitie
             if (!transformB || !colliderB) continue;
 
             float timeOfCollision = 0;
-            Vector2 normal = (0,0);
+            Vector2 normal = {0, 0};
 
             bool overlap = SweptAABB(transformA, colliderA, transformB, colliderB, timeOfCollision, normal);
             
@@ -67,6 +67,9 @@ bool CollisionSystem::SweptAABB(TransformComponent* aT, ColliderComponent* aC, T
     //little bit of tolerance
     const float EPS = 0.001;
 
+    //reset variables
+    timeOfCollision = 0;
+    normal = {0,0};
 
     //calculate relative velocity
     Vector2 relativeVel = (aT->currentPosition - aT->lastPosition) - (bT->currentPosition - bT->lastPosition);
@@ -75,17 +78,22 @@ bool CollisionSystem::SweptAABB(TransformComponent* aT, ColliderComponent* aC, T
     if (std::abs(relativeVel.x) < EPS && std::abs(relativeVel.y) < EPS)
     {
         // proper static AABB overlap check
-        bool overlapX = (aT->currentPosition.x < bT->currentPosition.x + bC->size.x) &&
-                        (aT->currentPosition.x + aC->size.x > bT->currentPosition.x);
-        bool overlapY = (aT->currentPosition.y < bT->currentPosition.y + bC->size.y) &&
-                        (aT->currentPosition.y + aC->size.y > bT->currentPosition.y);
+        Vector2 overlaps = GetOverlaps(aT, bT);
 
-        if (overlapX && overlapY)
+        if (overlaps.x < EPS || overlaps.y < EPS) return false; // not enough penetration
+
+        timeOfCollision = 0; //if no movement they were colliding at the beginning of the frame as well
+
+        if (overlaps.x < overlaps.y) //smaller penetration
         {
-            timeOfCollision = 0; //collided even in the beginning of the frame
-            return true;
+            normal.x = (aT->currentPosition.x < bT->currentPosition.x) ? 1 : -1;
         }
-        return false;
+        else
+        {
+            normal.y = (aT->currentPosition.y < bT->currentPosition.y) ? -1 : 1;
+        }
+
+        return true;
     }
 
     //projection on x
@@ -152,19 +160,20 @@ bool CollisionSystem::SweptAABB(TransformComponent* aT, ColliderComponent* aC, T
     //no collision if entry after 1, exit before 0 or exit before enter
     if (entryTime > 1.f || exitTime < 0 || entryTime > exitTime) return false;
 
+    if (entryX > entryY) //hit is if the second axis enters
+    {
+        normal.x = (aT->GetCenterPos().x < bT->GetCenterPos().x) ? -1 : 1;
+        // normal.x = (relativeVel.x < 0) ? 1 : -1;
+    } 
+    else
+    {
+        normal.y = (aT->GetCenterPos().y < bT->GetCenterPos().y) ? -1 : 1;
+        // normal.y = (relativeVel.y < 0) ? 1 : -1;
+    }
+
     if (entryTime < 0.f) entryTime = 0.f;
     timeOfCollision = entryTime;
 
-    normal = {0,0};
-    if (entryX > entryY) 
-    {        
-        normal.x = (relativeVel.x < 0) ? -1.f : 1.f;
-    }    
-    else 
-    {        
-        normal.y = (relativeVel.y > 0) ? -1.f : 1.f;
-    }
-    
     return true;
 }
 
@@ -198,4 +207,27 @@ void CollisionSystem::HandleExitPos(Entity *self, ColliderComponent *collider, E
         if (response && response->OnExit)
             response->OnExit(self, other);
     }
+}
+
+Vector2 CollisionSystem::GetOverlaps(TransformComponent* self, TransformComponent* other)
+{
+    float selfLeft   = self->currentPosition.x;
+    float selfRight  = self->currentPosition.x + self->currentSize.x;
+    float selfTop    = self->currentPosition.y;
+    float selfBottom = self->currentPosition.y + self->currentSize.y;
+
+    float otherLeft   = other->currentPosition.x;
+    float otherRight  = other->currentPosition.x + other->currentSize.x;
+    float otherTop    = other->currentPosition.y;
+    float otherBottom = other->currentPosition.y + other->currentSize.y;
+
+    // Compute overlap
+    float overlapX = std::min(selfRight, otherRight) - std::max(selfLeft, otherLeft);
+    float overlapY = std::min(selfBottom, otherBottom) - std::max(selfTop, otherTop);
+
+    // Ensure non-negative overlap
+    if (overlapX < 0.f) overlapX = 0.f;
+    if (overlapY < 0.f) overlapY = 0.f;
+
+    return Vector2{overlapX, overlapY};
 }

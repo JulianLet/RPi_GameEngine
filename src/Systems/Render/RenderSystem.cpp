@@ -8,6 +8,7 @@
 #include "Entities/Components/Render/RectangleComponent.h"
 #include "Entities/Components/Render/RenderableComponent.h"
 #include "Entities/Components/Render/CameraComponent.h"
+#include "Entities/Components/Physics/ColliderComponent.h"
 
 
 void RenderSystem::Render(const std::vector<std::unique_ptr<Entity>>& entities, Renderer &renderer)
@@ -74,6 +75,7 @@ void RenderSystem::Render(const std::vector<std::unique_ptr<Entity>>& entities, 
             continue;
         }
     
+        //render position of last frame
         // renderer.DrawRectangle(
         //     (int)prevX,
         //     (int)prevY,
@@ -83,6 +85,7 @@ void RenderSystem::Render(const std::vector<std::unique_ptr<Entity>>& entities, 
         //     rectangle->filled
         // );
 
+        //render actual rec
         renderer.DrawRectangle(
             (int)screenX,
             (int)screenY,
@@ -91,5 +94,19 @@ void RenderSystem::Render(const std::vector<std::unique_ptr<Entity>>& entities, 
             rectangle->currentColor,
             rectangle->filled
         );
+
+
+        // //render collision normal
+        // auto* collider = entity->GetComponent<ColliderComponent>();
+        // if (collider)
+        // {
+        //     for (auto col : collider->currentCollisions)
+        //     {
+        //         for (int i = 0; i < 15; i++)
+        //         {
+        //             renderer.SetPixel(screenX + i * col.second.collisionNormal.x, screenY + i * col.second.collisionNormal.y, Color::MAGENTA);
+        //         }
+        //     }
+        // }
     }
 }

@@ -51,8 +51,6 @@ Pong::Pong(GameManager &manager) : Game("PONG", manager), actionSystem(this), en
     myUIElements.push_back(std::make_unique<UITextObject>(Vector2(57, 8), "PONG", Color::WHITE, 0));
     myUIElements.push_back(std::make_unique<ScoreText>(Vector2(65, 18), Color::WHITE));
     myUIElements.push_back(std::make_unique<UITextObject>(Vector2(80, 150), "by Julez", Color::WHITE, 0));
-
-    runGame = true;
 }
 
 void Pong::Update(Input &input, float deltaTime)

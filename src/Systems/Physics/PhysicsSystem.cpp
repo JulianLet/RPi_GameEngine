@@ -24,6 +24,12 @@ void PhysicsSystem::Update(const std::vector<std::unique_ptr<Entity>> &entities,
 
         if (!transform || !physics || !movement) continue;
 
+        if (physics->physicsType == PhysicsType::STATIC)
+        {
+            physics->currentVelocity = (0,0);
+            continue;
+        }
+
         if (physics->useGravity)
         {
             physics->currentVelocity.y += 300 * deltaTime; //add gravity acceleration
@@ -110,13 +116,20 @@ void PhysicsSystem::CollisionOneDynamic(Entity* dynamic, Entity* other, float& t
 
     // Move to exact collision point
     dynamicTransform->currentPosition = dynamicTransform->lastPosition + dynamicPhysics->currentVelocity * timeOfCollision * deltaTime;
-
+    
     // Reflect along normal with bounciness
     Vector2 v = dynamicPhysics->currentVelocity;
-    dynamicPhysics->currentVelocity = v - 2 * Dot(v, normal) * normal * bounciness;
+    Vector2 normalComponent = Dot(v, normal) * normal;
+    Vector2 tangentialComponent = v - normalComponent;
 
+    // Reverse the normal component and apply restitution
+    dynamicPhysics->currentVelocity = tangentialComponent - normalComponent * bounciness;
+
+    //move along for the rest of the frame after the bounce
+    dynamicTransform->currentPosition += dynamicPhysics->currentVelocity * (1 - timeOfCollision) * deltaTime;
+    
     // Small nudge to prevent sticking
-    dynamicTransform->currentPosition += normal * 0.1f;
+    dynamicTransform->currentPosition -= normal * 0.1f; // this pushes the player into the ground
 }
 
 

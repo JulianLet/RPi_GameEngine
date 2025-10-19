@@ -9,9 +9,9 @@ class Renderer
     ST7735& myDisplay;
     uint16_t myFramebuffer[ST7735::WIDTH * ST7735::HEIGHT]; //set RBG565 framebuffer
 
+    public:
     void SetPixel(int x, int y, uint16_t color); //basically draw pixel
 
-    public:
     Renderer(ST7735& display);
     ~Renderer() = default;
 

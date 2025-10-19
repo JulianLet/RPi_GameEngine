@@ -21,4 +21,5 @@ private:
 
     void HandleEnterStayPos(Entity* self, ColliderComponent* collider, Entity* other, float& timeOfCollision, Vector2& normal);
     void HandleExitPos(Entity* self, ColliderComponent* collider, Entity* other);
+    Vector2 GetOverlaps(TransformComponent* self, TransformComponent* other);
 };
