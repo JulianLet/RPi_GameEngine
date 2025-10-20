@@ -14,13 +14,18 @@ constexpr int PIN_A         = 7;
 constexpr int PIN_B         = 8;
 
 
-//layout of display pins
-constexpr int PIN_SCK   = 18; //SCL, SPI0 SCK
-constexpr int PIN_MOSI  = 19; //SDA, SPI0 TX
-constexpr int PIN_CS    = 17; //SPI0 CSN //chip select pin -> on low the device is selected it reads spi traffic
-constexpr int PIN_DC    = 21; //checks if its data or a command incomming (data/command pin)
-constexpr int PIN_RST   = 20; //if LOW it resets, if HIGH its active
-//MISO is SPI0 RX (master in, slave out)
+//SPIO PINS
+constexpr int PIN_SCK           = 18; //SCL, SPI0 SCK
+constexpr int PIN_MOSI          = 19; //SDA, SPI0 TX
+constexpr int PIN_MISO          = 16; //MISO, SPI0 RX
+
+//layout display pins
+constexpr int PIN_CS_DISPLAY    = 17; //SPI0 CSN //chip select pin -> on low the device is selected it reads spi traffic
+constexpr int PIN_DC_DISPLAY    = 21; //checks if its data or a command incomming (data/command pin)
+constexpr int PIN_RST_DISPLAY   = 20; //if LOW it resets, if HIGH its active
+
+//layout sd reader pins
+constexpr int PIN_CS_SD_MODULE  = 22;
 
 namespace Color
 {

@@ -5,9 +5,12 @@
 
 #include "Games/Pong/Pong.h"
 #include "Games/JumpNRun/JumpNRun.h"
+#include "Games/SDTest/SDTest.h"
 
 #include "Systems/Events/EventSystem.h"
 #include "Systems/Events/Event.h"
+
+#include "Systems/Debug/DebugManager.h"
 
 #include "Entities/Common/Prototyping/StaticCamera.h"
 #include "Entities/Common/UI/UIButtonObject.h"
@@ -49,6 +52,17 @@ Menu::Menu(GameManager &manager) : Game("MENU", manager), entityManager(myEntiti
     
     auto jnrButtonText = std::make_unique<UITextObject>(Vector2(65-36, 67),"JUMP 'N' RUN", Color::WHITE, -1);
     myUIElements.emplace_back(std::move(jnrButtonText));
+
+    auto sdButton = std::make_unique<UIButtonObject>(Vector2(10,90), Vector2(110,20), Color::BLACK, Color::YELLOW, 0);
+    sdButton->GetComponent<UIButtonComponent>()->OnClicked = [](GameManager& manager)
+    {
+        manager.SwitchGame(std::make_unique<SDTest>(manager));
+    };
+
+    myUIElements.emplace_back(std::move(sdButton));
+    
+    auto sdButtonText = std::make_unique<UITextObject>(Vector2(65-21, 97),"SD CARD", Color::WHITE, -1);
+    myUIElements.emplace_back(std::move(sdButtonText));
 }
 
 void Menu::Update(Input &input, float deltaTime)
