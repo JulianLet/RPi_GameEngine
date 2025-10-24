@@ -6,7 +6,7 @@ else()
 endif()
 set(sdkVersion 2.2.0)
 set(toolchainVersion 14_2_Rel1)
-set(picotoolVersion 2.2.0)
+set(picotoolVersion 2.2.0-a4)
 set(picoVscode ${USERHOME}/.pico-sdk/cmake/pico-vscode.cmake)
 if (EXISTS ${picoVscode})
     include(${picoVscode})
@@ -14,24 +14,12 @@ endif()
 # ====================================================================================
 cmake_minimum_required(VERSION 3.13)
 
-set(CMAKE_C_STANDARD 11)
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-
-# == DO NOT EDIT THE FOLLOWING LINES for the Raspberry Pi Pico VS Code Extension ==
+# Detect user home
 if(WIN32)
     set(USERHOME $ENV{USERPROFILE})
 else()
     set(USERHOME $ENV{HOME})
 endif()
-set(sdkVersion 2.2.0)
-set(toolchainVersion 14_2_Rel1)
-set(picotoolVersion 2.2.0)
-set(picoVscode ${USERHOME}/.pico-sdk/cmake/pico-vscode.cmake)
-if (EXISTS ${picoVscode})
-    include(${picoVscode})
-endif()
-# ====================================================================================
 
 set(PICO_BOARD pico_w CACHE STRING "Board type")
 
@@ -43,9 +31,17 @@ project(RPi_GameEngine C CXX ASM)
 # Initialise the Raspberry Pi Pico SDK
 pico_sdk_init()
 
+# Set C/C++ standards
+set(CMAKE_C_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 # -----------------------------
-# Gather all source files in src/
-file(GLOB_RECURSE SRC_FILES ${CMAKE_CURRENT_LIST_DIR}/src/*.cpp)
+# Gather all source files in src/ and lib/ (your own code)
+file(GLOB_RECURSE SRC_FILES
+    ${CMAKE_CURRENT_LIST_DIR}/src/*.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/lib/*.cpp
+)
 
 # Add main executable
 add_executable(RPi_GameEngine 
@@ -57,7 +53,7 @@ add_executable(RPi_GameEngine
 pico_set_program_name(RPi_GameEngine "RPi_GameEngine")
 pico_set_program_version(RPi_GameEngine "0.1")
 
-# Generate PIO header (if needed)
+# Generate PIO header if needed
 pico_generate_pio_header(RPi_GameEngine ${CMAKE_CURRENT_LIST_DIR}/blink.pio)
 
 # Enable stdio over UART/USB
@@ -68,13 +64,26 @@ pico_enable_stdio_usb(RPi_GameEngine 0)
 target_include_directories(RPi_GameEngine PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}
     ${CMAKE_CURRENT_LIST_DIR}/src
+    ${CMAKE_CURRENT_LIST_DIR}/lib
+    ${CMAKE_CURRENT_LIST_DIR}/lib/FreeRTOS-FAT-CLI-for-RPi-Pico/src/FreeRTOS+FAT+CLI/include/
+    ${CMAKE_CURRENT_LIST_DIR}/lib/FreeRTOS-FAT-CLI-for-RPi-Pico/src/FreeRTOS+FAT+CLI/portable/RP2040/
+    ${CMAKE_CURRENT_LIST_DIR}/lib/FreeRTOS-FAT-CLI-for-RPi-Pico/src/FreeRTOS+FAT+CLI/portable/RP2040/SPI/
+    ${CMAKE_CURRENT_LIST_DIR}/lib/FreeRTOS-FAT-CLI-for-RPi-Pico/src/FreeRTOS+FAT+CLI/portable/RP2040/SDIO/
+    ${CMAKE_CURRENT_LIST_DIR}/lib/Lab-Project-FreeRTOS-FAT/include/
+    ${CMAKE_CURRENT_LIST_DIR}/lib/FreeRTOS-Kernel/
+    ${CMAKE_CURRENT_LIST_DIR}/port/FreeRTOS-Kernel/
 )
 
 # Link libraries
 target_link_libraries(RPi_GameEngine
     pico_stdlib
+    FreeRTOS-Kernel-Heap4
+    freertos_config
     hardware_spi
+    hardware_dma
     hardware_pio
+    hardware_pwm
+    FreeRTOS_FAT
 )
 
 # Extra outputs (UF2, bin, etc)
