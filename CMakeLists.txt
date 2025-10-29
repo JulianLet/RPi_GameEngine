@@ -26,6 +26,10 @@ set(PICO_BOARD pico_w CACHE STRING "Board type")
 # Pull in Raspberry Pi Pico SDK
 include(pico_sdk_import.cmake)
 
+# Include pico-extras submodule helper
+set(PICO_EXTRAS_PATH ${CMAKE_CURRENT_LIST_DIR}/lib/pico-extras)
+include(${CMAKE_CURRENT_LIST_DIR}/lib/pico-extras/external/pico_extras_import.cmake)
+
 project(RPi_GameEngine C CXX ASM)
 
 # Initialise the Raspberry Pi Pico SDK
@@ -37,16 +41,23 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # -----------------------------
-# Gather all source files in src/ and lib/ (your own code)
-file(GLOB_RECURSE SRC_FILES
-    ${CMAKE_CURRENT_LIST_DIR}/src/*.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/lib/*.cpp
+
+add_subdirectory(lib/pico-extras pico-extras-build)
+
+# -----------------------------
+# Gather all source files in src/
+file(GLOB_RECURSE SRC_FILES ${CMAKE_CURRENT_LIST_DIR}/src/*.cpp)
+
+# Add FatFs source files
+file(GLOB FATFS_SRC 
+    ${CMAKE_CURRENT_LIST_DIR}/lib/FatF/source/*.c
 )
 
 # Add main executable
 add_executable(RPi_GameEngine 
     RPi_GameEngine.cpp
     ${SRC_FILES}
+    ${FATFS_SRC}
 )
 
 # Program name and version
@@ -64,26 +75,16 @@ pico_enable_stdio_usb(RPi_GameEngine 0)
 target_include_directories(RPi_GameEngine PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}
     ${CMAKE_CURRENT_LIST_DIR}/src
-    ${CMAKE_CURRENT_LIST_DIR}/lib
-    ${CMAKE_CURRENT_LIST_DIR}/lib/FreeRTOS-FAT-CLI-for-RPi-Pico/src/FreeRTOS+FAT+CLI/include/
-    ${CMAKE_CURRENT_LIST_DIR}/lib/FreeRTOS-FAT-CLI-for-RPi-Pico/src/FreeRTOS+FAT+CLI/portable/RP2040/
-    ${CMAKE_CURRENT_LIST_DIR}/lib/FreeRTOS-FAT-CLI-for-RPi-Pico/src/FreeRTOS+FAT+CLI/portable/RP2040/SPI/
-    ${CMAKE_CURRENT_LIST_DIR}/lib/FreeRTOS-FAT-CLI-for-RPi-Pico/src/FreeRTOS+FAT+CLI/portable/RP2040/SDIO/
-    ${CMAKE_CURRENT_LIST_DIR}/lib/Lab-Project-FreeRTOS-FAT/include/
-    ${CMAKE_CURRENT_LIST_DIR}/lib/FreeRTOS-Kernel/
-    ${CMAKE_CURRENT_LIST_DIR}/port/FreeRTOS-Kernel/
+    ${CMAKE_CURRENT_LIST_DIR}/lib/FatF/source
+    ${CMAKE_CURRENT_LIST_DIR}/lib/FatF/source
 )
 
 # Link libraries
 target_link_libraries(RPi_GameEngine
     pico_stdlib
-    FreeRTOS-Kernel-Heap4
-    freertos_config
     hardware_spi
-    hardware_dma
     hardware_pio
-    hardware_pwm
-    FreeRTOS_FAT
+    pico_sd_card
 )
 
 # Extra outputs (UF2, bin, etc)
