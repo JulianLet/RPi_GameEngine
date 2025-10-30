@@ -2,7 +2,7 @@
 #include "Globals.h"
 
 ResourceManager::ResourceManager()
-    : sdModule(spi0, PIN_CS_SD_MODULE), sdManager(sdModule)
+    : sdModule(spi0, PIN_CS_SD_MODULE), sdManager()
 {
 
 }

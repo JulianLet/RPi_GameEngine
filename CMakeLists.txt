@@ -43,21 +43,17 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 # -----------------------------
 
 add_subdirectory(lib/pico-extras pico-extras-build)
+add_subdirectory(lib/no-OS-FatFS-SD-SDIO-SPI-RPi-Pico/src build)
 
 # -----------------------------
 # Gather all source files in src/
 file(GLOB_RECURSE SRC_FILES ${CMAKE_CURRENT_LIST_DIR}/src/*.cpp)
 
-# Add FatFs source files
-file(GLOB FATFS_SRC 
-    ${CMAKE_CURRENT_LIST_DIR}/lib/FatF/source/*.c
-)
-
 # Add main executable
 add_executable(RPi_GameEngine 
     RPi_GameEngine.cpp
     ${SRC_FILES}
-    ${FATFS_SRC}
+    # ${FATFS_SRC}
 )
 
 # Program name and version
@@ -71,12 +67,15 @@ pico_generate_pio_header(RPi_GameEngine ${CMAKE_CURRENT_LIST_DIR}/blink.pio)
 pico_enable_stdio_uart(RPi_GameEngine 0)
 pico_enable_stdio_usb(RPi_GameEngine 0)
 
+target_sources(RPi_GameEngine PRIVATE
+    ${CMAKE_CURRENT_LIST_DIR}/lib/glue/hw_config.c
+)
+
 # Include directories
 target_include_directories(RPi_GameEngine PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}
     ${CMAKE_CURRENT_LIST_DIR}/src
-    ${CMAKE_CURRENT_LIST_DIR}/lib/FatF/source
-    ${CMAKE_CURRENT_LIST_DIR}/lib/FatF/source
+
 )
 
 # Link libraries
@@ -85,6 +84,7 @@ target_link_libraries(RPi_GameEngine
     hardware_spi
     hardware_pio
     pico_sd_card
+    no-OS-FatFS-SD-SDIO-SPI-RPi-Pico
 )
 
 # Extra outputs (UF2, bin, etc)

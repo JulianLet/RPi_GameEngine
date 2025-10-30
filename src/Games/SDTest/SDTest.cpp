@@ -29,10 +29,8 @@ SDTest::SDTest(GameManager &manager) : Game("SDTest", manager), entityManager(my
     // --- UI elements ---
     DebugManager::GetInstance().ClearLogs();
     ResourceManager& resources = ResourceManager::GetInstance();
-    uint8_t buffer[128];
 
-        // Test 1: init correctly
-    memset(buffer, 0, sizeof(buffer));
+    // Test 1: init correctly
     std::string initText = "init progressed"; 
     if (resources.Initialize()) 
     {
@@ -47,15 +45,12 @@ SDTest::SDTest(GameManager &manager) : Game("SDTest", manager), entityManager(my
     myUIElements.emplace_back(std::move(initTextObj));
 
     // Test 1: /config.txt
-    memset(buffer, 0, sizeof(buffer));
-    File configFile = resources.sdManager.Open("config.txt");
+    File configFile = resources.sdManager.Open("config.txt", FA_READ);
     std::string configText = "nothing worked";  // will hold file contents
     if (configFile.IsValid()) 
     {
-        size_t bytesRead = resources.sdManager.Read(configFile, buffer, sizeof(buffer) - 1);
-        buffer[bytesRead] = '\0';
-        configText = reinterpret_cast<char*>(buffer); // convert buffer to string
-        resources.sdManager.Close(configFile);
+        configText = configFile.Read();
+        configFile.Close();
     }
     else
     {
@@ -66,15 +61,12 @@ SDTest::SDTest(GameManager &manager) : Game("SDTest", manager), entityManager(my
     myUIElements.emplace_back(std::move(pongButtonText));
 
     // Test 2: /myfolder/long_filename.txt
-    memset(buffer, 0, sizeof(buffer));
-    File longnameFile = resources.sdManager.Open("myfolder/long_filename.txt");
+    File longnameFile = resources.sdManager.Open("myfolder/long_filename.txt", FA_READ);
     std::string longtext = "nothing worked";  // will hold file contents
     if (longnameFile.IsValid()) 
     {
-        size_t bytesRead = resources.sdManager.Read(longnameFile, buffer, sizeof(buffer) - 1);
-        buffer[bytesRead] = '\0';
-        longtext = reinterpret_cast<char*>(buffer); // convert buffer to string
-        resources.sdManager.Close(longnameFile);
+        longtext = longnameFile.Read();
+        longnameFile.Close();
     }
     else
     {
