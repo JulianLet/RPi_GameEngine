@@ -1,14 +1,11 @@
 #pragma once
 
-#include "Hardware/SDCardModule.h"
 #include "Hardware/SDCardManager.h"
 
 
 class ResourceManager
 {
     private:
-    SDCardModule sdModule;
-
     ResourceManager();
     ~ResourceManager() = default;
 

@@ -1,8 +1,9 @@
 #include "SDCardManager.h"
 
+#include "Systems/Debug/DebugManager.h"
+
 #include "hw_config.h"
 #include "ff.h"
-#include "sd_card.h"
 #include "f_util.h"
 
 File::File(FIL &fil, bool success)
@@ -59,13 +60,7 @@ void File::Close()
 
 SDCardManager::SDCardManager()
 {
-    // Get SD card handle (from sd_card_spi.c)
-    sd_card_t *pSD = sd_get_by_num(0); // 0 = first/only SD card
 
-    // Mount the filesystem (this triggers initialization automatically)
-    FRESULT fr = f_mount(&fs, "", 1); // "" = default drive
-
-    m_IsMounted = (fr == FR_OK);
 }
 
 SDCardManager::~SDCardManager()
@@ -76,10 +71,54 @@ SDCardManager::~SDCardManager()
     }
 }
 
+bool SDCardManager::Initialize()
+{    
+    spi_init(spi0, 400000); // 400 kHz for init
+
+    // Initialize all cards defined in hw_config.c
+    if (!sd_init_driver()) 
+    {
+        DebugManager::GetInstance().Log("sd init failed");
+        fr = FR_NOT_READY;
+        return false;
+    }
+    
+    // Get handle to first card
+    pSD = sd_get_by_num(0);
+
+    // Try to detect and initialize the card manually
+    if (!sd_card_detect(pSD)) {
+        DebugManager::GetInstance().Log("No SD card detected on bus");
+        fr = FR_NOT_READY;
+        return false;
+    }
+
+    DSTATUS stat = pSD->init(pSD);
+    DebugManager::GetInstance().Log("stat: " + std::to_string((int)stat));
+    if (stat & STA_NOINIT) {
+        DebugManager::GetInstance().Log("sd card init failed");
+        fr = FR_NOT_READY;
+        return false;
+    }
+    DebugManager::GetInstance().Log("sd card init succeeded");
+
+    
+    // Mount filesystem (FatFS automatically calls disk_initialize)
+    fr = f_mount(&fs, "", 1);
+    if (fr != FR_OK) 
+    {
+        DebugManager::GetInstance().Log("f_mount failed");
+        return false;
+    }
+
+    m_IsMounted = true;
+    return true;
+}
+
 File SDCardManager::Open(const char *path, BYTE mode)
 {
     FIL fil;
-    FRESULT fr = f_open(&fil, path, mode);
+    fr = f_open(&fil, path, mode);
 
     return File(fil, fr == FR_OK);
 }
@@ -87,4 +126,9 @@ File SDCardManager::Open(const char *path, BYTE mode)
 bool SDCardManager::IsMounted() const
 {
     return m_IsMounted;
+}
+
+int SDCardManager::Result() const
+{
+    return (int)fr;
 }

@@ -2,7 +2,6 @@
 #include "Globals.h"
 
 ResourceManager::ResourceManager()
-    : sdModule(spi0, PIN_CS_SD_MODULE), sdManager()
 {
 
 }
@@ -15,5 +14,5 @@ ResourceManager &ResourceManager::GetInstance()
 
 bool ResourceManager::Initialize()
 {
-    return sdModule.Initialize();
+    return sdManager.Initialize();
 }

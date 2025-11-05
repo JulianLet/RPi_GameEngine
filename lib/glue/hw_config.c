@@ -21,23 +21,24 @@ https://github.com/carlk3/no-OS-FatFS-SD-SDIO-SPI-RPi-Pico/tree/main#customizing
 */
 
 #include "hw_config.h"
+#include "Globals.h"
 
 /* Configuration of hardware SPI object */
 static spi_t spi = {
-    .hw_inst = spi0,  // SPI component
-    .sck_gpio = 2,    // GPIO number (not Pico pin number)
-    .mosi_gpio = 3,
-    .miso_gpio = 4,
-    //.baud_rate = 125 * 1000 * 1000 / 8  // 15625000 Hz
+    .hw_inst =      spi0,  // SPI component
+    .sck_gpio =     PIN_SCK,    // GPIO number (not Pico pin number)
+    .mosi_gpio =    PIN_MOSI,
+    .miso_gpio =    PIN_MISO,
+    .baud_rate = 125 * 1000 * 1000 / 8  // 15625000 Hz
     //.baud_rate = 125 * 1000 * 1000 / 6  // 20833333 Hz
-    .baud_rate = 125 * 1000 * 1000 / 4  // 31250000 Hz
+    // .baud_rate = 125 * 1000 * 1000 / 4  // 31250000 Hz
     //.baud_rate = 125 * 1000 * 1000 / 2  // 62500000 Hz
 };
 
 /* SPI Interface */
 static sd_spi_if_t spi_if = {
-    .spi = &spi,  // Pointer to the SPI driving this card
-    .ss_gpio = 7  // The SPI slave select GPIO for this SD card
+    .spi =      &spi,  // Pointer to the SPI driving this card
+    .ss_gpio =  PIN_CS_SD_MODULE  // The SPI slave select GPIO for this SD card
 };
 
 /* Configuration of the SD Card socket object */
@@ -67,5 +68,21 @@ sd_card_t *sd_get_by_num(size_t num) {
         return NULL;
     }
 }
+
+#include "my_debug.h"
+#include <stdio.h>
+
+void put_out_error_message(const char *s) {
+    printf("[ERR] %s\n", s);
+}
+
+void put_out_info_message(const char *s) {
+    printf("[INFO] %s\n", s);
+}
+
+void put_out_debug_message(const char *s) {
+    printf("[DBG] %s\n", s);
+}
+
 
 /* [] END OF FILE */

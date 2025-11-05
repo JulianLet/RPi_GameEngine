@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Common.h"
+#include "Common.hpp"
 #include "Entities/Component.h"
 #include <unordered_set>
 #include <unordered_map>

@@ -27,12 +27,12 @@ SDTest::SDTest(GameManager &manager) : Game("SDTest", manager), entityManager(my
     es.DispatchEvent(EventSpawnEntity(camera));
 
     // --- UI elements ---
-    DebugManager::GetInstance().ClearLogs();
+    // DebugManager::GetInstance().ClearLogs();
     ResourceManager& resources = ResourceManager::GetInstance();
 
     // Test 1: init correctly
     std::string initText = "init progressed"; 
-    if (resources.Initialize()) 
+    if (resources.sdManager.IsMounted()) 
     {
         initText = "init worked";
     }
@@ -41,8 +41,10 @@ SDTest::SDTest(GameManager &manager) : Game("SDTest", manager), entityManager(my
         initText = "init failed";
     }
 
-    auto initTextObj = std::make_unique<UITextObject>(Vector2(2, 37), initText.c_str(), Color::WHITE, -1);
-    myUIElements.emplace_back(std::move(initTextObj));
+    DebugManager::GetInstance().Log(initText);
+
+    std::string result = "result : " + std::to_string(resources.sdManager.Result());
+    DebugManager::GetInstance().Log(result);
 
     // Test 1: /config.txt
     File configFile = resources.sdManager.Open("config.txt", FA_READ);
@@ -57,8 +59,7 @@ SDTest::SDTest(GameManager &manager) : Game("SDTest", manager), entityManager(my
         configText = "could not load file";
     }
 
-    auto pongButtonText = std::make_unique<UITextObject>(Vector2(2, 67), configText.c_str(), Color::WHITE, -1);
-    myUIElements.emplace_back(std::move(pongButtonText));
+    DebugManager::GetInstance().Log(configText);
 
     // Test 2: /myfolder/long_filename.txt
     File longnameFile = resources.sdManager.Open("myfolder/long_filename.txt", FA_READ);
@@ -73,8 +74,7 @@ SDTest::SDTest(GameManager &manager) : Game("SDTest", manager), entityManager(my
         longtext = "could not load file";
     }
 
-    auto jnrButtonText = std::make_unique<UITextObject>(Vector2(2, 97),longtext.c_str(), Color::WHITE, -1);
-    myUIElements.emplace_back(std::move(jnrButtonText));
+    DebugManager::GetInstance().Log(longtext);
 
     DebugManager::GetInstance().PrintLogsOnScreen(myUIElements, Color::RED);
 }

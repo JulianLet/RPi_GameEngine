@@ -26,10 +26,6 @@ set(PICO_BOARD pico_w CACHE STRING "Board type")
 # Pull in Raspberry Pi Pico SDK
 include(pico_sdk_import.cmake)
 
-# Include pico-extras submodule helper
-set(PICO_EXTRAS_PATH ${CMAKE_CURRENT_LIST_DIR}/lib/pico-extras)
-include(${CMAKE_CURRENT_LIST_DIR}/lib/pico-extras/external/pico_extras_import.cmake)
-
 project(RPi_GameEngine C CXX ASM)
 
 # Initialise the Raspberry Pi Pico SDK
@@ -42,7 +38,6 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # -----------------------------
 
-add_subdirectory(lib/pico-extras pico-extras-build)
 add_subdirectory(lib/no-OS-FatFS-SD-SDIO-SPI-RPi-Pico/src build)
 
 # -----------------------------
@@ -53,7 +48,6 @@ file(GLOB_RECURSE SRC_FILES ${CMAKE_CURRENT_LIST_DIR}/src/*.cpp)
 add_executable(RPi_GameEngine 
     RPi_GameEngine.cpp
     ${SRC_FILES}
-    # ${FATFS_SRC}
 )
 
 # Program name and version
@@ -65,7 +59,7 @@ pico_generate_pio_header(RPi_GameEngine ${CMAKE_CURRENT_LIST_DIR}/blink.pio)
 
 # Enable stdio over UART/USB
 pico_enable_stdio_uart(RPi_GameEngine 0)
-pico_enable_stdio_usb(RPi_GameEngine 0)
+pico_enable_stdio_usb(RPi_GameEngine 1)
 
 target_sources(RPi_GameEngine PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}/lib/glue/hw_config.c
@@ -83,7 +77,6 @@ target_link_libraries(RPi_GameEngine
     pico_stdlib
     hardware_spi
     hardware_pio
-    pico_sd_card
     no-OS-FatFS-SD-SDIO-SPI-RPi-Pico
 )
 

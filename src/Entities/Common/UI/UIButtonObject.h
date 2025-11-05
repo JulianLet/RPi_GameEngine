@@ -2,7 +2,7 @@
 
 #include "Entities/Entity.h"
 
-#include "Common.h"
+#include "Common.hpp"
 #include <cstdint>
 
 class UIButtonObject : public Entity

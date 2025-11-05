@@ -1,6 +1,6 @@
 #pragma once
 #include "Entities/Component.h"
-#include "Common.h"
+#include "Common.hpp"
 
 struct MovementComponent : public Component
 {

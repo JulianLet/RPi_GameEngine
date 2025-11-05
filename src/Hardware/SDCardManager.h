@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ff.h"
+#include "sd_card.h"
 #include <string>
 
 class File
@@ -20,15 +21,19 @@ class File
 
 class SDCardManager
 {
+    sd_card_t *pSD;
     FATFS fs;     // FatF Filesystem object
+    FRESULT fr = FR_NO_FILE;
     bool m_IsMounted = false;
 
     public:
     SDCardManager();
     ~SDCardManager();
 
+    bool Initialize();
     File Open(const char* path, BYTE mode);
     bool IsMounted() const;
+    int Result() const;
 };
 
 

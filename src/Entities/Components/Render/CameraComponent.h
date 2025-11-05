@@ -2,7 +2,7 @@
 
 #include "Entities/Component.h"
 
-#include "Common.h"
+#include "Common.hpp"
 
 class TransformComponent;
 

@@ -1,3 +1,7 @@
+#define USE_DBG_PRINTF 1
+#define USE_PRINTF 1
+
+
 #include "Globals.h"
 
 #include "Hardware/Input.h"
@@ -11,14 +15,21 @@
 
 #include "pico/stdlib.h"
 
+
 const float TARGET_FPS = 60.0f;
 const float FRAME_TIME = 1.0f / TARGET_FPS;
+
+void HardwareSetUp();
 
 
 int main()
 {
     srand(time_us_64() & 0xFFFFFFFF); //use time to seed RNG
     stdio_init_all();
+    HardwareSetUp();
+
+    sleep_ms(5000);  //delay to open serial monitor
+    printf("start programm\n");
 
     //Initialize 
     DebugManager::GetInstance().ClearLogs();
@@ -27,6 +38,8 @@ int main()
     Renderer myRenderer(myDisplay);
     GameManager myGameManager;
     ResourceManager& resources = ResourceManager::GetInstance();
+
+    sleep_ms(200);
     
     resources.Initialize();
     myDisplay.Initialize();
@@ -61,3 +74,38 @@ int main()
     return 0;
 }
 
+void HardwareSetUp()
+{
+    // --- SPI0 Initialization ---
+    // Start SPI0 at a conservative 400 kHz for SD card startup
+    spi_init(spi0, 400 * 1000);
+
+    // Set SPI functions on common pins
+    gpio_set_function(PIN_MISO, GPIO_FUNC_SPI);
+    gpio_set_function(PIN_MOSI, GPIO_FUNC_SPI);
+    gpio_set_function(PIN_SCK,  GPIO_FUNC_SPI);
+
+    // --- Display CS + control pins ---
+    gpio_init(PIN_CS_DISPLAY);
+    gpio_set_dir(PIN_CS_DISPLAY, GPIO_OUT);
+    gpio_put(PIN_CS_DISPLAY, 1); // deselect display
+
+    gpio_init(PIN_DC_DISPLAY);
+    gpio_set_dir(PIN_DC_DISPLAY, GPIO_OUT);
+    gpio_put(PIN_DC_DISPLAY, 1);
+
+    gpio_init(PIN_RST_DISPLAY);
+    gpio_set_dir(PIN_RST_DISPLAY, GPIO_OUT);
+    gpio_put(PIN_RST_DISPLAY, 1);
+
+    // --- SD Card CS pin ---
+    gpio_init(PIN_CS_SD_MODULE);
+    gpio_set_dir(PIN_CS_SD_MODULE, GPIO_OUT);
+    gpio_put(PIN_CS_SD_MODULE, 1); // deselect SD card
+
+    // Optional: ensure MISO line has pull-up for stability
+    gpio_pull_up(PIN_MISO);
+
+    // Allow the SD card to power up and settle
+    sleep_ms(50);
+}

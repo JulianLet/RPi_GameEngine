@@ -1,6 +1,6 @@
 #include "Cloud.h"
 
-#include "Common.h"
+#include "Common.hpp"
 
 #include "Entities/Components/Core/TransformComponent.h"
 #include "Entities/Components/Render/RectangleComponent.h"
