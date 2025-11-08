@@ -1,6 +1,8 @@
 #pragma once
 #include "Hardware/DisplayST7735.h"
 
+#include <vector>
+
 class Sprite;
 
 class Renderer
@@ -24,5 +26,5 @@ class Renderer
     void DrawChar(int x, int y, char c, uint16_t color);
     void DrawText(int x, int y, const char* text, uint16_t color);
 
-    void DrawSprite(int x, int y, const Sprite& sprite); 
+    void DrawSprite(int x, int y, int width, std::vector<uint16_t>& pixels); 
 };

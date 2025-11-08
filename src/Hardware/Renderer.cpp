@@ -107,13 +107,20 @@ void Renderer::DrawText(int x, int y, const char *text, uint16_t color)
     }
 }
 
-void Renderer::DrawSprite(int x, int y, const Sprite& sprite)
+void Renderer::DrawSprite(int x, int y, int width, std::vector<uint16_t>& pixels)
 {
-    // for (int i = 0; i < sprite.myHeight; i++)
-    // {
-    //     for (int j = 0; j < sprite.myWidth; j++)
-    //     {
-    //         SetPixel(x + j, y + i, sprite.myPixelData[i * sprite.myWidth + j]); //just copy over the sprite
-    //     }
-    // }
+    int currentX = 0;
+    int currentY = 0;
+
+    for (uint16_t p : pixels)
+    {
+        SetPixel(x + currentX, y + currentY, p);
+        currentX++;
+
+        if (currentX >= width)
+        {
+            currentY++;
+            currentX = 0;
+        }
+    }
 }

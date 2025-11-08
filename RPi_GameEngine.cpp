@@ -28,7 +28,7 @@ int main()
     stdio_init_all();
     HardwareSetUp();
 
-    sleep_ms(5000);  //delay to open serial monitor
+    sleep_ms(1000);  //delay to open serial monitor
     printf("start programm\n");
 
     //Initialize 

@@ -10,7 +10,10 @@
 #include "Systems/Resource/ResourceManager.h"
 
 #include "Entities/Common/Prototyping/StaticCamera.h"
-#include "Entities/Common/UI/UITextObject.h"
+
+#include "Entities/Components/Core/TransformComponent.h"
+#include "Entities/Components/Render/RenderableComponent.h"
+#include "Entities/Components/Render/SpriteComponent.h"
 
 #include "Entities/Components/Render/CameraComponent.h"
 #include "pico/stdlib.h"
@@ -26,57 +29,31 @@ SDTest::SDTest(GameManager &manager) : Game("SDTest", manager), entityManager(my
     camRef = camera->GetComponent<CameraComponent>();
     es.DispatchEvent(EventSpawnEntity(camera));
 
+    auto* blueRec = new Entity();
+    blueRec->AddComponent<TransformComponent>(Vector2(10,10), Vector2(20,10));
+    blueRec->AddComponent<RenderableComponent>(0);
+    blueRec->AddComponent<SpriteComponent>(20, 10, "bluerec.txt");
+    es.DispatchEvent(EventSpawnEntity(blueRec));
+    
+    auto* bR = new Entity(); 
+    bR->AddComponent<TransformComponent>(Vector2(10,30), Vector2(20,10));
+    bR->AddComponent<RenderableComponent>(0);
+    bR->AddComponent<SpriteComponent>(20, 10, "recsheet.txt", 0);
+    es.DispatchEvent(EventSpawnEntity(bR));
+
+    auto* rR = new Entity();
+    rR->AddComponent<TransformComponent>(Vector2(50,30), Vector2(20,10));
+    rR->AddComponent<RenderableComponent>(0);
+    rR->AddComponent<SpriteComponent>(20, 10, "recsheet.txt", 1);
+    es.DispatchEvent(EventSpawnEntity(rR));
+    
+    auto* yR = new Entity();
+    yR->AddComponent<TransformComponent>(Vector2(90,30), Vector2(20,10));
+    yR->AddComponent<RenderableComponent>(0);
+    yR->AddComponent<SpriteComponent>(20, 10, "recsheet.txt", 2);
+    es.DispatchEvent(EventSpawnEntity(yR));
+
     // --- UI elements ---
-    // DebugManager::GetInstance().ClearLogs();
-    ResourceManager& resources = ResourceManager::GetInstance();
-
-    // Test 1: init correctly
-    std::string initText = "init progressed"; 
-    if (resources.sdManager.IsMounted()) 
-    {
-        initText = "init worked";
-    }
-    else
-    {
-        initText = "init failed";
-    }
-
-    DebugManager::GetInstance().Log(initText);
-
-    std::string result = "result : " + std::to_string(resources.sdManager.Result());
-    DebugManager::GetInstance().Log(result);
-
-    // Test 1: /config.txt
-    File configFile = resources.sdManager.Open("config.txt", FA_READ);
-    std::string configText = "nothing worked";  // will hold file contents
-    if (configFile.IsValid()) 
-    {
-        configText = configFile.Read();
-        configFile.Close();
-    }
-    else
-    {
-        configText = "could not load file";
-    }
-
-    DebugManager::GetInstance().Log(configText);
-
-    // Test 2: /myfolder/long_filename.txt
-    File longnameFile = resources.sdManager.Open("myfolder/long_filename.txt", FA_READ);
-    std::string longtext = "nothing worked";  // will hold file contents
-    if (longnameFile.IsValid()) 
-    {
-        longtext = longnameFile.Read();
-        longnameFile.Close();
-    }
-    else
-    {
-        longtext = "could not load file";
-    }
-
-    DebugManager::GetInstance().Log(longtext);
-
-    DebugManager::GetInstance().PrintLogsOnScreen(myUIElements, Color::RED);
 }
 
 void SDTest::Update(Input &input, float deltaTime)

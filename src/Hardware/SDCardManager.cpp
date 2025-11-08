@@ -115,6 +115,8 @@ bool SDCardManager::Initialize()
     return true;
 }
 
+	//mode &= FF_FS_READONLY ? FA_READ : FA_READ | FA_WRITE | FA_CREATE_ALWAYS | FA_CREATE_NEW | FA_OPEN_ALWAYS | FA_OPEN_APPEND;
+
 File SDCardManager::Open(const char *path, BYTE mode)
 {
     FIL fil;

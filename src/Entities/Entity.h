@@ -31,7 +31,7 @@ public:
     T* GetComponent()
     {
         ComponentID id = GetComponentID<T>();
-        auto it = myComponents.find(id);
+        auto it = myComponents.find(id); 
 
         if (it != myComponents.end())
         {
