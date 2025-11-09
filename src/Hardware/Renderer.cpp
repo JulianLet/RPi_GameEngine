@@ -107,20 +107,27 @@ void Renderer::DrawText(int x, int y, const char *text, uint16_t color)
     }
 }
 
-void Renderer::DrawSprite(int x, int y, int width, std::vector<uint16_t>& pixels)
+void Renderer::DrawSprite(int x, int y, int width, int height, const std::vector<uint16_t>& pixels, float zoom)
 {
-    int currentX = 0;
-    int currentY = 0;
+    int scaledWidth  = (int)(width  * zoom);
+    int scaledHeight = (int)(height * zoom);
 
-    for (uint16_t p : pixels)
+    for (int dy = 0; dy < scaledHeight; ++dy)
     {
-        SetPixel(x + currentX, y + currentY, p);
-        currentX++;
+        // Map destination Y back to source sprite Y
+        int srcY = (int)(dy / zoom);
+        if (srcY >= height) srcY = height - 1;
 
-        if (currentX >= width)
+        for (int dx = 0; dx < scaledWidth; ++dx)
         {
-            currentY++;
-            currentX = 0;
+            // Map destination X back to source sprite X
+            int srcX = (int)(dx / zoom);
+            if (srcX >= width) srcX = width - 1;
+
+            uint16_t color = pixels[srcY * width + srcX];
+
+            // Draw at screen position
+            SetPixel(x + dx, y + dy, color);
         }
     }
 }

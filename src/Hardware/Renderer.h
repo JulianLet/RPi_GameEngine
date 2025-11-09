@@ -26,5 +26,5 @@ class Renderer
     void DrawChar(int x, int y, char c, uint16_t color);
     void DrawText(int x, int y, const char* text, uint16_t color);
 
-    void DrawSprite(int x, int y, int width, std::vector<uint16_t>& pixels); 
+    void DrawSprite(int x, int y, int width, int height, const std::vector<uint16_t>& pixels, float zoom); 
 };

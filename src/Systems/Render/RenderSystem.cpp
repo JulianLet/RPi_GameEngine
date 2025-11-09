@@ -69,12 +69,12 @@ void RenderSystem::Render(const std::vector<std::unique_ptr<Entity>>& entities, 
         float prevX = (transform->lastPosition.x - parallaxX) * currentZoom;
         float prevY = (transform->lastPosition.y - parallaxY) * currentZoom;
 
-        float width = transform->currentSize.x * currentZoom;
-        float height = transform->currentSize.y * currentZoom;
+        float screenWidth = transform->currentSize.x * currentZoom;
+        float screenHeight = transform->currentSize.y * currentZoom;
 
         // cull entities outside screen
-        if (screenX + width < 0 || screenX > ST7735::WIDTH ||
-            screenY + height < 0 || screenY > ST7735::HEIGHT)
+        if (screenX + screenWidth < 0 || screenX > ST7735::WIDTH ||
+            screenY + screenHeight < 0 || screenY > ST7735::HEIGHT)
         {
             continue;
         }
@@ -95,11 +95,22 @@ void RenderSystem::Render(const std::vector<std::unique_ptr<Entity>>& entities, 
             renderer.DrawRectangle(
                 (int)screenX,
                 (int)screenY,
-                (int)width,
-                (int)height,
+                (int)screenWidth,
+                (int)screenHeight,
                 rectangle->currentColor,
                 rectangle->filled
             );
+        }
+
+        if (sprite)
+        {
+            renderer.DrawSprite((int)screenX, (int)screenY, sprite->width, sprite->height, sprite->pixels, currentZoom);
+        }
+
+        if (animation)
+        {
+            renderer.DrawSprite((int)screenX, (int)screenY, animation->width, animation->height, animation->GetCurrentFrame(), currentZoom);
+        }
 
             // //render collision normal
             // auto* collider = entity->GetComponent<ColliderComponent>();
@@ -114,17 +125,5 @@ void RenderSystem::Render(const std::vector<std::unique_ptr<Entity>>& entities, 
             //     }
             // }
 
-            continue;
-        }
-
-        if (sprite)
-        {
-            renderer.DrawSprite((int)transform->currentPosition.x, (int)transform->currentPosition.y, sprite->width, sprite->pixels);
-        }
-
-        if (animation)
-        {
-            renderer.DrawSprite((int)transform->currentPosition.x, (int)transform->currentPosition.y, animation->width, animation->GetCurrentFrame());
-        }
     }
 }

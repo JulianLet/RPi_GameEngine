@@ -26,7 +26,7 @@ SDTest::SDTest(GameManager &manager) : Game("SDTest", manager), entityManager(my
     auto& es = EventSystem::GetInstance();
 
     // --- World entities ---
-    auto* camera = new StaticCamera(Vector2(65, 81), 1.f, 1.f);
+    auto* camera = new StaticCamera(Vector2(65, 81), 3.f, 0.5f);
     camRef = camera->GetComponent<CameraComponent>();
     es.DispatchEvent(EventSpawnEntity(camera));
 
