@@ -14,6 +14,7 @@
 #include "Entities/Components/Core/TransformComponent.h"
 #include "Entities/Components/Render/RenderableComponent.h"
 #include "Entities/Components/Render/SpriteComponent.h"
+#include "Entities/Components/Render/AnimationComponent.h"
 
 #include "Entities/Components/Render/CameraComponent.h"
 #include "pico/stdlib.h"
@@ -38,22 +39,27 @@ SDTest::SDTest(GameManager &manager) : Game("SDTest", manager), entityManager(my
     auto* bR = new Entity(); 
     bR->AddComponent<TransformComponent>(Vector2(10,30), Vector2(20,10));
     bR->AddComponent<RenderableComponent>(0);
-    bR->AddComponent<SpriteComponent>(20, 10, "recsheet.txt", 0);
+    bR->AddComponent<AnimationComponent>(20,10);
+    bR->GetComponent<AnimationComponent>()->AddAnimation(0, AnimationMode::BOUNCE, 3, 3, "recsheet.txt");
     es.DispatchEvent(EventSpawnEntity(bR));
 
-    auto* rR = new Entity();
-    rR->AddComponent<TransformComponent>(Vector2(50,30), Vector2(20,10));
-    rR->AddComponent<RenderableComponent>(0);
-    rR->AddComponent<SpriteComponent>(20, 10, "recsheet.txt", 1);
-    es.DispatchEvent(EventSpawnEntity(rR));
-    
-    auto* yR = new Entity();
-    yR->AddComponent<TransformComponent>(Vector2(90,30), Vector2(20,10));
-    yR->AddComponent<RenderableComponent>(0);
-    yR->AddComponent<SpriteComponent>(20, 10, "recsheet.txt", 2);
-    es.DispatchEvent(EventSpawnEntity(yR));
+    auto* lR = new Entity(); 
+    lR->AddComponent<TransformComponent>(Vector2(50,30), Vector2(20,10));
+    lR->AddComponent<RenderableComponent>(0);
+    lR->AddComponent<AnimationComponent>(20,10);
+    lR->GetComponent<AnimationComponent>()->AddAnimation(0, AnimationMode::LOOP, 3, 2, "recsheet.txt");
+    es.DispatchEvent(EventSpawnEntity(lR));
+
+    auto* sR = new Entity(); 
+    sR->AddComponent<TransformComponent>(Vector2(90,30), Vector2(20,10));
+    sR->AddComponent<RenderableComponent>(0);
+    sR->AddComponent<AnimationComponent>(20,10);
+    sR->GetComponent<AnimationComponent>()->AddAnimation(0, AnimationMode::SINGLE, 3, 1, "recsheet.txt");
+    es.DispatchEvent(EventSpawnEntity(sR));
+
 
     // --- UI elements ---
+    runGame = true;
 }
 
 void SDTest::Update(Input &input, float deltaTime)
@@ -62,7 +68,7 @@ void SDTest::Update(Input &input, float deltaTime)
     actionSystem.Update(myEntities);
     entityManager.Update();
     uiUpdateSystem.Update(myUIElements, input, myGameManager);
-
+    
     if (runGame)
     {
         aiSystem.Update(myEntities, deltaTime);
@@ -70,6 +76,7 @@ void SDTest::Update(Input &input, float deltaTime)
         physicsSystem.Update(myEntities, deltaTime);
         collisionSystem.Update(myEntities);
         physicsSystem.ResolveCollisions(myEntities, deltaTime);
+        animationSystem.Update(myEntities, deltaTime);
         cameraSystem.Update(myEntities, deltaTime);
     }
 }

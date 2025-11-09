@@ -7,6 +7,7 @@
 #include "Entities/Components/Core/TransformComponent.h"
 #include "Entities/Components/Render/RectangleComponent.h"
 #include "Entities/Components/Render/SpriteComponent.h"
+#include "Entities/Components/Render/AnimationComponent.h"
 #include "Entities/Components/Render/RenderableComponent.h"
 #include "Entities/Components/Render/CameraComponent.h"
 #include "Entities/Components/Physics/ColliderComponent.h"
@@ -54,31 +55,32 @@ void RenderSystem::Render(const std::vector<std::unique_ptr<Entity>>& entities, 
         auto* transform = entity->GetComponent<TransformComponent>();
         auto* rectangle = entity->GetComponent<RectangleComponent>();
         auto* sprite = entity->GetComponent<SpriteComponent>();
+        auto* animation = entity->GetComponent<AnimationComponent>();
 
         if (!transform || !renderable || !renderable->doRender) continue;
         
+        // Calculate position relative to camera with parallax
+        float parallaxX = cameraPos.x * renderable->parallaxFactor;
+        float parallaxY = cameraPos.y * renderable->parallaxFactor;
+        
+        float screenX = (transform->currentPosition.x - parallaxX) * currentZoom;
+        float screenY = (transform->currentPosition.y - parallaxY) * currentZoom;
+
+        float prevX = (transform->lastPosition.x - parallaxX) * currentZoom;
+        float prevY = (transform->lastPosition.y - parallaxY) * currentZoom;
+
+        float width = transform->currentSize.x * currentZoom;
+        float height = transform->currentSize.y * currentZoom;
+
+        // cull entities outside screen
+        if (screenX + width < 0 || screenX > ST7735::WIDTH ||
+            screenY + height < 0 || screenY > ST7735::HEIGHT)
+        {
+            continue;
+        }
+
         if (rectangle)
         {
-            // Calculate position relative to camera with parallax
-            float parallaxX = cameraPos.x * renderable->parallaxFactor;
-            float parallaxY = cameraPos.y * renderable->parallaxFactor;
-            
-            float screenX = (transform->currentPosition.x - parallaxX) * currentZoom;
-            float screenY = (transform->currentPosition.y - parallaxY) * currentZoom;
-
-            float prevX = (transform->lastPosition.x - parallaxX) * currentZoom;
-            float prevY = (transform->lastPosition.y - parallaxY) * currentZoom;
-
-            float width = transform->currentSize.x * currentZoom;
-            float height = transform->currentSize.y * currentZoom;
-
-            // cull entities outside screen
-            if (screenX + width < 0 || screenX > ST7735::WIDTH ||
-                screenY + height < 0 || screenY > ST7735::HEIGHT)
-            {
-                continue;
-            }
-        
             //render position of last frame
             // renderer.DrawRectangle(
             //     (int)prevX,
@@ -118,6 +120,11 @@ void RenderSystem::Render(const std::vector<std::unique_ptr<Entity>>& entities, 
         if (sprite)
         {
             renderer.DrawSprite((int)transform->currentPosition.x, (int)transform->currentPosition.y, sprite->width, sprite->pixels);
+        }
+
+        if (animation)
+        {
+            renderer.DrawSprite((int)transform->currentPosition.x, (int)transform->currentPosition.y, animation->width, animation->GetCurrentFrame());
         }
     }
 }

@@ -14,6 +14,7 @@
 #include "Systems/Physics/PhysicsSystem.h"
 #include "Systems/Physics/CollisionSystem.h"
 #include "Systems/Render/CameraSystem.h"
+#include "Systems/Render/AnimationSystem.h"
 #include "Systems/Render/RenderSystem.h"
 #include "Systems/UI/UIRenderSystem.h"
 #include "Systems/UI/UIUpdateSystem.h"
@@ -29,7 +30,7 @@ class SDTest : public Game
     private:
     CameraComponent* camRef = nullptr;
 
-    uint16_t backgroundColor = Color::WHITE;
+    uint16_t backgroundColor = Color::BLACK;
     
     AISystem aiSystem;
     EntityManager entityManager;
@@ -48,6 +49,7 @@ class SDTest : public Game
     EventComponentSystem eventComponentSystemUI;
 
     //Render
+    AnimationSystem animationSystem;
     CameraSystem cameraSystem;
     RenderSystem renderSystem;
 
