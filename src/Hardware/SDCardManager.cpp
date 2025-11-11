@@ -1,7 +1,5 @@
 #include "SDCardManager.h"
 
-#include "Systems/Debug/DebugManager.h"
-
 #include "hw_config.h"
 #include "ff.h"
 #include "f_util.h"
@@ -41,6 +39,27 @@ std::string File::Read()
     return content;
 }
 
+UINT File::Read(uint8_t* buffer, UINT length)
+{
+    if (!isValid) return 0;
+
+    UINT bytesRead = 0;
+    FRESULT res = f_read(&fil, buffer, length, &bytesRead);
+    if (res != FR_OK) return 0;
+
+    return bytesRead;
+}
+
+
+bool File::Seek(int offset)
+{
+    FRESULT res = f_lseek(&fil, (FSIZE_t)offset);
+
+    if (res == FR_OK) return true;
+
+    return false;
+}
+
 bool File::Write(std::string text)
 {
     FRESULT result;
@@ -78,7 +97,6 @@ bool SDCardManager::Initialize()
     // Initialize all cards defined in hw_config.c
     if (!sd_init_driver()) 
     {
-        DebugManager::GetInstance().Log("sd init failed");
         fr = FR_NOT_READY;
         return false;
     }
@@ -88,26 +106,21 @@ bool SDCardManager::Initialize()
 
     // Try to detect and initialize the card manually
     if (!sd_card_detect(pSD)) {
-        DebugManager::GetInstance().Log("No SD card detected on bus");
         fr = FR_NOT_READY;
         return false;
     }
 
     DSTATUS stat = pSD->init(pSD);
-    DebugManager::GetInstance().Log("stat: " + std::to_string((int)stat));
     if (stat & STA_NOINIT) {
-        DebugManager::GetInstance().Log("sd card init failed");
         fr = FR_NOT_READY;
         return false;
     }
-    DebugManager::GetInstance().Log("sd card init succeeded");
 
     
     // Mount filesystem (FatFS automatically calls disk_initialize)
     fr = f_mount(&fs, "", 1);
     if (fr != FR_OK) 
     {
-        DebugManager::GetInstance().Log("f_mount failed");
         return false;
     }
 

@@ -10,6 +10,7 @@ class Renderer
     private:
     ST7735& myDisplay;
     uint16_t myFramebuffer[ST7735::WIDTH * ST7735::HEIGHT]; //set RBG565 framebuffer
+    uint16_t transparentColor = 0xFFE0; 
 
     public:
     void SetPixel(int x, int y, uint16_t color); //basically draw pixel

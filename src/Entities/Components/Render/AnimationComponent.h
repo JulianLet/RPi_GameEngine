@@ -1,26 +1,38 @@
 #pragma once
 
 #include "Entities/Component.h"
+#include "Hardware/SDCardManager.h"
+
 
 #include <unordered_map>
 #include <vector>
+#include <memory>
 #include <cstdint>
+
 
 enum AnimationMode {SINGLE = 0, BOUNCE, LOOP};
 
 struct Animation
 {
-    std::vector<std::vector<uint16_t>> animationFrames;
+    File file;
     AnimationMode mode;
     int frameAmount;
     int currentFrame = 0;
 
+    std::vector<uint16_t> frameBuffer;
+
+    int width;
+    int height;
+
     Animation(AnimationMode mode, int frameAmount, int width, int height, const char* filePath);
+    ~Animation();
+
+    void UpdateFrame();
 };
 
 struct AnimationComponent : public Component
 {
-    std::unordered_map<int, Animation> animationList;
+    std::unordered_map<int, std::unique_ptr<Animation>> animationList;
     int currentAnimation = 0;
 
     int width;
@@ -33,7 +45,7 @@ struct AnimationComponent : public Component
     AnimationComponent(int spriteWidth, int spriteHeight);
     ~AnimationComponent() override;
     void AddAnimation(int ID, AnimationMode mode, int frameAmount, int framesPerSecond, const char* filePath);
-    std::vector<uint16_t>& GetCurrentFrame();
+    const std::vector<uint16_t>& GetCurrentFrame();
 
     void Reset() override;
 };

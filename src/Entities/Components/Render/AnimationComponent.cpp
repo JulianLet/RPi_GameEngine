@@ -2,37 +2,33 @@
 #include "Systems/Resource/ResourceManager.h"
 
 Animation::Animation(AnimationMode mode, int frameAmount, int width, int height, const char *filePath)
-    : frameAmount(frameAmount), mode(mode)
+    : frameAmount(frameAmount), mode(mode), width(width), height(height), file(ResourceManager::GetInstance().sdManager.Open(filePath, FA_READ))
 {
+    currentFrame = 0;
+    UpdateFrame();
+}
 
-    File f = ResourceManager::GetInstance().sdManager.Open(filePath, FA_READ);
-    std::string text = f.Read();
-    f.Close();
+Animation::~Animation()
+{
+    file.Close();
+}
 
-    size_t totalPixels = text.size() / 2;
 
-    //combine two bytes from string to color
-    std::vector<uint16_t> sheetPixels(totalPixels);
-    for (size_t i = 0; i < totalPixels; ++i)
+void Animation::UpdateFrame()
+{
+    size_t frameSizeBytes = width * height * 2;
+    size_t offset = currentFrame * frameSizeBytes;
+
+    file.Seek(offset);
+    frameBuffer.resize(width * height);
+    std::vector<uint8_t> raw(frameSizeBytes);
+    file.Read(raw.data(), frameSizeBytes);
+
+    for (size_t i = 0; i < width * height; ++i)
     {
-        uint8_t lo = static_cast<uint8_t>(text[i * 2]);
-        uint8_t hi = static_cast<uint8_t>(text[i * 2 + 1]);
-        sheetPixels[i] = static_cast<uint16_t>(lo) | (static_cast<uint16_t>(hi) << 8);
-    }
-
-    for (int i = 0; i < frameAmount; i++)
-    {
-        std::vector<uint16_t> pixels;
-        pixels.resize(width * height);
-        
-        int offset = i * width * height; 
-
-        for (int j = 0; j < width * height; j++)
-        {
-            pixels[j] = sheetPixels[offset + j];
-        }
-
-        animationFrames.push_back(pixels);
+        uint8_t lo = raw[i * 2];
+        uint8_t hi = raw[i * 2 + 1];
+        frameBuffer[i] = (hi << 8) | lo;
     }
 }
 
@@ -51,13 +47,13 @@ AnimationComponent::~AnimationComponent()
 void AnimationComponent::AddAnimation(int ID, AnimationMode mode, int frameAmount, int framesPerSecond, const char *filePath)
 {
     FPS = framesPerSecond;
-    animationList.emplace(ID, Animation(mode, frameAmount, width, height, filePath));
+    animationList[ID] = std::make_unique<Animation>(mode, frameAmount, width, height, filePath);
 }
 
-std::vector<uint16_t> &AnimationComponent::GetCurrentFrame()
+const std::vector<uint16_t> &AnimationComponent::GetCurrentFrame()
 {
-    Animation& current = animationList.at(currentAnimation);
-    return current.animationFrames[current.currentFrame];
+    auto& current = animationList.at(currentAnimation);
+    return current->frameBuffer;
 }
 
 void AnimationComponent::Reset()

@@ -126,6 +126,8 @@ void Renderer::DrawSprite(int x, int y, int width, int height, const std::vector
 
             uint16_t color = pixels[srcY * width + srcX];
 
+            if (color == transparentColor) continue;
+
             // Draw at screen position
             SetPixel(x + dx, y + dy, color);
         }

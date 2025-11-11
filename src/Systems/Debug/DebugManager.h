@@ -3,19 +3,26 @@
 #include <string>
 #include <vector>
 #include <memory>
+#include <cstdint>
+#include "Common.hpp"
+#include "Entities/Entity.h"
 
-class Entity;
+class Renderer;
 
 class DebugManager
 {
     private:
     DebugManager() {};
     ~DebugManager() = default;
-    std::vector<std::string> messages;
 
+    const int MAX_LOGS = 8;
+    std::vector<std::unique_ptr<Entity>> textElements;
+    
     public:
+    bool printLogs = false;
+    
     static DebugManager& GetInstance();
     void ClearLogs();
-    void Log(std::string msg);
-    void PrintLogsOnScreen(std::vector<std::unique_ptr<Entity>> &uiElements, uint16_t color);
+    void Log(std::string msg, uint16_t color = Color::RED);
+    void Render(Renderer& renderer);
 };

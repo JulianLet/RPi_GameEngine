@@ -15,6 +15,8 @@ class File
 
     bool IsValid();
     std::string Read();
+    UINT Read(uint8_t* buffer, UINT length);
+    bool Seek(int offset);
     bool Write(std::string text);
     void Close();
 };

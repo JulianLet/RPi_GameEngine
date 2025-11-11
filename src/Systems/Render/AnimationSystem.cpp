@@ -23,37 +23,37 @@ void AnimationSystem::Update(const std::vector<std::unique_ptr<Entity>> &entitie
             auto it = animation->animationList.find(animation->currentAnimation);
             if (it == animation->animationList.end()) continue; // not found
             
-            Animation& currentAnimation = it->second;
+            Animation* currentAnimation = it->second.get();
             
-            currentAnimation.currentFrame += animation->direction;
+            currentAnimation->currentFrame += animation->direction;
             animation->currentTime = 0;
             
-            printf("increased Frame: %d of %d\n", currentAnimation.currentFrame, currentAnimation.frameAmount);
-
-            if (currentAnimation.currentFrame < 0)
+            if (currentAnimation->currentFrame < 0)
             {
-                currentAnimation.currentFrame = 1;
+                currentAnimation->currentFrame = 1;
                 animation->direction = 1;
             }
-            else if (currentAnimation.currentFrame >= currentAnimation.frameAmount)
+            else if (currentAnimation->currentFrame >= currentAnimation->frameAmount)
             {
-                switch (currentAnimation.mode)
+                switch (currentAnimation->mode)
                 {
                 case AnimationMode::LOOP:
-                    currentAnimation.currentFrame = 0;
+                    currentAnimation->currentFrame = 0;
                     break;
 
                 case AnimationMode::BOUNCE:
-                    currentAnimation.currentFrame = currentAnimation.frameAmount - 2;
+                    currentAnimation->currentFrame = currentAnimation->frameAmount - 2;
                     animation->direction = -1;
                     break;
 
                 case AnimationMode::SINGLE:
-                    currentAnimation.currentFrame = currentAnimation.frameAmount - 1;
+                    currentAnimation->currentFrame = currentAnimation->frameAmount - 1;
                     animation->direction = 0; //stop
                     break;
                 }
             }
+
+            currentAnimation->UpdateFrame();
         }
     }
 }
