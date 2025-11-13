@@ -10,11 +10,11 @@ struct TransformComponent;
 struct RectangleComponent : public Component
 {
     TransformComponent* transform = nullptr;
-    uint16_t startColor = 0;
-    uint16_t currentColor = 0;
+    uint8_t startColor = 0;
+    uint8_t currentColor = 0;
     bool filled = false;
 
-    RectangleComponent(uint16_t color, bool filled) : startColor(color), filled(filled) 
+    RectangleComponent(uint8_t color, bool filled) : startColor(color), filled(filled) 
     {
         currentColor = startColor;
     };

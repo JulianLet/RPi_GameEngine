@@ -2,6 +2,7 @@
 
 #include "Hardware/SDCardManager.h"
 
+#include <vector>
 
 class ResourceManager
 {
@@ -18,4 +19,5 @@ class ResourceManager
 
     static ResourceManager& GetInstance();
     bool Initialize();
+    std::vector<uint8_t> GetSprite(File* file, int width, int height, int index);
 };

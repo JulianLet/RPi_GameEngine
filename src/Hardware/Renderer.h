@@ -9,23 +9,23 @@ class Renderer
 {
     private:
     ST7735& myDisplay;
-    uint16_t myFramebuffer[ST7735::WIDTH * ST7735::HEIGHT]; //set RBG565 framebuffer
-    uint16_t transparentColor = 0xFFE0; 
+    uint8_t myFramebuffer[ST7735::WIDTH * ST7735::HEIGHT]; //set RBG565 framebuffer
+    uint8_t transparentColor = 0xC7; 
 
     public:
-    void SetPixel(int x, int y, uint16_t color); //basically draw pixel
+    void SetPixel(int x, int y, uint8_t color); //basically draw pixel
 
     Renderer(ST7735& display);
     ~Renderer() = default;
 
-    void Clear(uint16_t = 0x0000); //default black
+    void Clear(uint8_t = 0x0000); //default black
     void Display();
 
-    void DrawRectangle(int x, int y, int w, int h, uint16_t color, bool filled = true);
-    void DrawCircle(int x, int y, int radius, uint16_t color, bool filled = true);
+    void DrawRectangle(int x, int y, int w, int h, uint8_t color, bool filled = true);
+    void DrawCircle(int x, int y, int radius, uint8_t color, bool filled = true);
 
-    void DrawChar(int x, int y, char c, uint16_t color);
-    void DrawText(int x, int y, const char* text, uint16_t color);
+    void DrawChar(int x, int y, char c, uint8_t color);
+    void DrawText(int x, int y, const char* text, uint8_t color);
 
-    void DrawSprite(int x, int y, int width, int height, const std::vector<uint16_t>& pixels, float zoom); 
+    void DrawSprite(int x, int y, int width, int height, const std::vector<uint8_t>& pixels, float zoom); 
 };

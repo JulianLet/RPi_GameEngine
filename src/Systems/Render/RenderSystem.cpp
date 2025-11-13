@@ -10,6 +10,7 @@
 #include "Entities/Components/Render/AnimationComponent.h"
 #include "Entities/Components/Render/RenderableComponent.h"
 #include "Entities/Components/Render/CameraComponent.h"
+#include "Entities/Components/Tiles/TilemapComponent.h"
 #include "Entities/Components/Physics/ColliderComponent.h"
 
 
@@ -56,6 +57,7 @@ void RenderSystem::Render(const std::vector<std::unique_ptr<Entity>>& entities, 
         auto* rectangle = entity->GetComponent<RectangleComponent>();
         auto* sprite = entity->GetComponent<SpriteComponent>();
         auto* animation = entity->GetComponent<AnimationComponent>();
+        auto* tilemap = entity->GetComponent<TilemapComponent>();
 
         if (!transform || !renderable || !renderable->doRender) continue;
         
@@ -112,18 +114,22 @@ void RenderSystem::Render(const std::vector<std::unique_ptr<Entity>>& entities, 
             renderer.DrawSprite((int)screenX, (int)screenY, animation->width, animation->height, animation->GetCurrentFrame(), currentZoom);
         }
 
-            // //render collision normal
-            // auto* collider = entity->GetComponent<ColliderComponent>();
-            // if (collider)
-            // {
-            //     for (auto col : collider->currentCollisions)
-            //     {
-            //         for (int i = 0; i < 15; i++)
-            //         {
-            //             renderer.SetPixel(screenX + i * col.second.collisionNormal.x, screenY + i * col.second.collisionNormal.y, Color::MAGENTA);
-            //         }
-            //     }
-            // }
+        if (tilemap)
+        {
+            tilemap->Render(renderer, (int)screenX, (int)screenY , currentZoom);
+        }
 
+        // //render collision normal
+        // auto* collider = entity->GetComponent<ColliderComponent>();
+        // if (collider)
+        // {
+        //     for (auto col : collider->currentCollisions)
+        //     {
+        //         for (int i = 0; i < 15; i++)
+        //         {
+        //             renderer.SetPixel(screenX + i * col.second.collisionNormal.x, screenY + i * col.second.collisionNormal.y, Color::MAGENTA);
+        //         }
+        //     }
+        // }
     }
 }

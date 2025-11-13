@@ -119,7 +119,7 @@ void ST7735::Initialize()
     sleep_ms(100);
 
     // --- Clear display to black ---
-    uint16_t black[WIDTH * HEIGHT] = {0};
+    uint8_t black[WIDTH * HEIGHT] = {0};
     Present(black);
 }
 
@@ -137,14 +137,38 @@ void ST7735::SetAddressWindow(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1
     WriteCommand(0x2C); //sets that next bytes will be pixel data
 }
 
-void ST7735::Present(uint16_t *buffer)
+uint16_t RBG332_to_RBG565(uint8_t color8)
+{
+    uint8_t r3 = (color8 >> 5) & 0x07; // extract 3-bit red
+    uint8_t b3 = (color8 >> 2) & 0x07; // extract 3-bit blue
+    uint8_t g2 = color8 & 0x03;        // extract 2-bit green
+
+    // expand to 5/6/5 bits
+    uint16_t r5 = (r3 * 31) / 7;
+    uint16_t b6 = (b3 * 63) / 7;
+    uint16_t g5 = (g2 * 31) / 3;
+
+    // combine into 16-bit RGB565
+    return (r5 << 11) | (b6 << 5) | g5;
+}
+
+void ST7735::Present(uint8_t *buffer)
 {
     SetAddressWindow(0,0, WIDTH - 1, HEIGHT - 1);
     gpio_put(myDcPin, 1);
     gpio_put(myCsPin, 0);
-    spi_write_blocking(spiPort, (uint8_t*)buffer, WIDTH * HEIGHT * 2);
+
+    for (int i = 0; i < WIDTH*HEIGHT; i++)
+    {
+        uint16_t pix16 = RBG332_to_RBG565(buffer[i]);
+        uint8_t bytes[2] = { uint8_t(pix16 >> 8), uint8_t(pix16 & 0xFF) };
+        spi_write_blocking(spiPort, bytes, 2);
+    }
+
+    // spi_write_blocking(spiPort, (uint8_t*)buffer, WIDTH * HEIGHT * 2);
     gpio_put(myCsPin, 1);
 }
+
 
 
 

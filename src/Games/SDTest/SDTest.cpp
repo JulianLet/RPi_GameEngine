@@ -9,14 +9,16 @@
 #include "Systems/Debug/DebugManager.h"
 #include "Systems/Resource/ResourceManager.h"
 
-#include "Systems/Debug/DebugManager.h"
-
-#include "Entities/Common/Prototyping/StaticCamera.h"
+#include "Entities/Common/Prototyping/FollowCamera.h"
+#include "Entities/Common/Prototyping/TopDownPlayer.h"
 
 #include "Entities/Components/Core/TransformComponent.h"
 #include "Entities/Components/Render/RenderableComponent.h"
 #include "Entities/Components/Render/SpriteComponent.h"
 #include "Entities/Components/Render/AnimationComponent.h"
+#include "Entities/Components/Render/RectangleComponent.h"
+
+#include "Entities/Components/Tiles/TilemapComponent.h"
 
 #include "Entities/Components/Render/CameraComponent.h"
 #include "pico/stdlib.h"
@@ -28,41 +30,40 @@ SDTest::SDTest(GameManager &manager) : Game("SDTest", manager), entityManager(my
     auto& es = EventSystem::GetInstance();
 
     // --- World entities ---
-    auto* camera = new StaticCamera(Vector2(65, 81), 1.f, 1.f);
+    Entity* player = new TopDownPlayer(Vector2(40, 40), Vector2(5,10), 80.f, Color::RED);
+    auto* playerTransform = player->GetComponent<TransformComponent>();
+    es.DispatchEvent(EventSpawnEntity(player));
+
+    auto* camera = new FollowCamera(playerTransform, 1.f, 1.f, 30.f);
     camRef = camera->GetComponent<CameraComponent>();
     es.DispatchEvent(EventSpawnEntity(camera));
+    
+    // auto* r = new Entity();
+    // r->AddComponent<TransformComponent>(Vector2(0,0), Vector2(30,30));
+    // r->AddComponent<RenderableComponent>(0);
+    // r->AddComponent<SpriteComponent>(32, 32, "PngTest.bin", 0);
+    // es.DispatchEvent(EventSpawnEntity(r));
+    
+    // auto* g = new Entity();
+    // g->AddComponent<TransformComponent>(Vector2(35,0), Vector2(30,30));
+    // g->AddComponent<RenderableComponent>(0);
+    // g->AddComponent<SpriteComponent>(32, 32, "PngTest.bin", 1);
+    // es.DispatchEvent(EventSpawnEntity(g));
+    
+    // auto* b = new Entity();
+    // b->AddComponent<TransformComponent>(Vector2(70,0), Vector2(30,30));
+    // b->AddComponent<RenderableComponent>(0);
+    // b->AddComponent<SpriteComponent>(32, 32, "PngTest.bin", 2);
+    // es.DispatchEvent(EventSpawnEntity(b));
 
-    auto* redRec = new Entity();
-    redRec->AddComponent<TransformComponent>(Vector2(10,10), Vector2(32,32));
-    redRec->AddComponent<RenderableComponent>(0);
-    redRec->AddComponent<SpriteComponent>(32, 32, "PngTest.bin", 0);
-    es.DispatchEvent(EventSpawnEntity(redRec));
+    Tileset tileset(32,32,4,"TilesetTest.bin");
+    tileset.solidTiles[3] = true;
 
-    auto* greenRec = new Entity();
-    greenRec->AddComponent<TransformComponent>(Vector2(50,10), Vector2(32,32));
-    greenRec->AddComponent<RenderableComponent>(0);
-    greenRec->AddComponent<SpriteComponent>(32, 32, "PngTest.bin", 1);
-    es.DispatchEvent(EventSpawnEntity(greenRec));    
-
-    auto* ablueRec = new Entity();
-    ablueRec->AddComponent<TransformComponent>(Vector2(90,10), Vector2(32,32));
-    ablueRec->AddComponent<RenderableComponent>(0);
-    ablueRec->AddComponent<SpriteComponent>(32, 32, "PngTest.bin", 2);
-    es.DispatchEvent(EventSpawnEntity(ablueRec));
-
-    auto* blueRec = new Entity();
-    blueRec->AddComponent<TransformComponent>(Vector2(90,10), Vector2(32,32));
-    blueRec->AddComponent<RenderableComponent>(0);
-    blueRec->AddComponent<SpriteComponent>(32, 32, "PngTest.bin", 3);
-    es.DispatchEvent(EventSpawnEntity(blueRec));
-
-    // auto* animTest = new Entity();
-    // animTest->AddComponent<TransformComponent>(Vector2(32, 80), Vector2(64,64));
-    // animTest->AddComponent<RenderableComponent>(1);
-    // animTest->AddComponent<AnimationComponent>(64,64);
-    // animTest->GetComponent<AnimationComponent>()->AddAnimation(0, AnimationMode::LOOP, 11, 64, "animTest.bin");
-    // es.DispatchEvent(EventSpawnEntity(animTest)); 
-
+    Entity* tiles = new Entity();
+    tiles->AddComponent<TransformComponent>(Vector2(0,0), Vector2(320, 320)); //size of whole map
+    tiles->AddComponent<RenderableComponent>(0);
+    tiles->AddComponent<TilemapComponent>(10, 10, "Tilemap.txt", tileset);
+    es.DispatchEvent(EventSpawnEntity(tiles));
 
     // --- UI elements ---
     runGame = true;

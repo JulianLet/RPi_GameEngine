@@ -1,7 +1,7 @@
 #include "Hardware/Renderer.h"
 #include "Font.h"
 
-void Renderer::SetPixel(int x, int y, uint16_t color)
+void Renderer::SetPixel(int x, int y, uint8_t color)
 {
     if (x < 0 || x >= ST7735::WIDTH || y < 0 || y >= ST7735::HEIGHT) return;
     myFramebuffer[ y * ST7735::WIDTH + x] = color;
@@ -13,7 +13,7 @@ Renderer::Renderer(ST7735 &display)
     Clear();
 }
 
-void Renderer::Clear(uint16_t color)
+void Renderer::Clear(uint8_t color)
 {
     for (int i = 0; i < ST7735::WIDTH * ST7735::HEIGHT; i++)
     {
@@ -26,7 +26,7 @@ void Renderer::Display()
     myDisplay.Present(myFramebuffer);
 }
 
-void Renderer::DrawRectangle(int x, int y, int w, int h, uint16_t color, bool filled)
+void Renderer::DrawRectangle(int x, int y, int w, int h, uint8_t color, bool filled)
 {
     if (filled)
     {
@@ -54,7 +54,7 @@ void Renderer::DrawRectangle(int x, int y, int w, int h, uint16_t color, bool fi
     }
 }
 
-void Renderer::DrawCircle(int x, int y, int radius, uint16_t color, bool filled)
+void Renderer::DrawCircle(int x, int y, int radius, uint8_t color, bool filled)
 {
     float radiusSqr = radius * radius;
 
@@ -75,7 +75,7 @@ void Renderer::DrawCircle(int x, int y, int radius, uint16_t color, bool filled)
     }
 }
 
-void Renderer::DrawChar(int x, int y, char c, uint16_t color)
+void Renderer::DrawChar(int x, int y, char c, uint8_t color)
 {
     const uint8_t* bitmap;
     
@@ -95,7 +95,7 @@ void Renderer::DrawChar(int x, int y, char c, uint16_t color)
 }
 
 
-void Renderer::DrawText(int x, int y, const char *text, uint16_t color)
+void Renderer::DrawText(int x, int y, const char *text, uint8_t color)
 {
     int cursorX = x;
     int charWidth = 5;
@@ -107,7 +107,7 @@ void Renderer::DrawText(int x, int y, const char *text, uint16_t color)
     }
 }
 
-void Renderer::DrawSprite(int x, int y, int width, int height, const std::vector<uint16_t>& pixels, float zoom)
+void Renderer::DrawSprite(int x, int y, int width, int height, const std::vector<uint8_t>& pixels, float zoom)
 {
     int scaledWidth  = (int)(width  * zoom);
     int scaledHeight = (int)(height * zoom);

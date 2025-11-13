@@ -16,20 +16,21 @@ Animation::~Animation()
 
 void Animation::UpdateFrame()
 {
-    size_t frameSizeBytes = width * height * 2;
-    size_t offset = currentFrame * frameSizeBytes;
+    frameBuffer = ResourceManager::GetInstance().GetSprite(&file, width, height, currentFrame);
+    // size_t frameSizeBytes = width * height * 2;
+    // size_t offset = currentFrame * frameSizeBytes;
 
-    file.Seek(offset);
-    frameBuffer.resize(width * height);
-    std::vector<uint8_t> raw(frameSizeBytes);
-    file.Read(raw.data(), frameSizeBytes);
+    // file.Seek(offset);
+    // frameBuffer.resize(width * height);
+    // std::vector<uint8_t> raw(frameSizeBytes);
+    // file.Read(raw.data(), frameSizeBytes);
 
-    for (size_t i = 0; i < width * height; ++i)
-    {
-        uint8_t lo = raw[i * 2];
-        uint8_t hi = raw[i * 2 + 1];
-        frameBuffer[i] = (hi << 8) | lo;
-    }
+    // for (size_t i = 0; i < width * height; ++i)
+    // {
+    //     uint8_t lo = raw[i * 2];
+    //     uint8_t hi = raw[i * 2 + 1];
+    //     frameBuffer[i] = (hi << 8) | lo;
+    // }
 }
 
 AnimationComponent::AnimationComponent(int spriteWidth, int spriteHeight)
@@ -50,7 +51,7 @@ void AnimationComponent::AddAnimation(int ID, AnimationMode mode, int frameAmoun
     animationList[ID] = std::make_unique<Animation>(mode, frameAmount, width, height, filePath);
 }
 
-const std::vector<uint16_t> &AnimationComponent::GetCurrentFrame()
+const std::vector<uint8_t> &AnimationComponent::GetCurrentFrame()
 {
     auto& current = animationList.at(currentAnimation);
     return current->frameBuffer;

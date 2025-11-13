@@ -19,7 +19,7 @@ struct Animation
     int frameAmount;
     int currentFrame = 0;
 
-    std::vector<uint16_t> frameBuffer;
+    std::vector<uint8_t> frameBuffer;
 
     int width;
     int height;
@@ -45,7 +45,7 @@ struct AnimationComponent : public Component
     AnimationComponent(int spriteWidth, int spriteHeight);
     ~AnimationComponent() override;
     void AddAnimation(int ID, AnimationMode mode, int frameAmount, int framesPerSecond, const char* filePath);
-    const std::vector<uint16_t>& GetCurrentFrame();
+    const std::vector<uint8_t>& GetCurrentFrame();
 
     void Reset() override;
 };
