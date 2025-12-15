@@ -51,6 +51,14 @@ void AnimationComponent::AddAnimation(int ID, AnimationMode mode, int frameAmoun
     animationList[ID] = std::make_unique<Animation>(mode, frameAmount, width, height, filePath);
 }
 
+void AnimationComponent::SwapAnimation(int ID)
+{
+    currentTime = 0;
+    direction = 1;
+    auto& current = animationList.at(currentAnimation)->currentFrame = 0;
+    currentAnimation = ID;
+}
+
 const std::vector<uint8_t> &AnimationComponent::GetCurrentFrame()
 {
     auto& current = animationList.at(currentAnimation);

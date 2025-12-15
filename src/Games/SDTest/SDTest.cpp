@@ -30,7 +30,7 @@ SDTest::SDTest(GameManager &manager) : Game("SDTest", manager), entityManager(my
     auto& es = EventSystem::GetInstance();
 
     // --- World entities ---
-    Entity* player = new TopDownPlayer(Vector2(40, 40), Vector2(5,10), 80.f, Color::RED);
+    Entity* player = new TopDownPlayer(Vector2(40, 40), Vector2(5,10), 20.f, Color::RED);
     auto* playerTransform = player->GetComponent<TransformComponent>();
     es.DispatchEvent(EventSpawnEntity(player));
 
@@ -41,7 +41,7 @@ SDTest::SDTest(GameManager &manager) : Game("SDTest", manager), entityManager(my
     // auto* r = new Entity();
     // r->AddComponent<TransformComponent>(Vector2(0,0), Vector2(30,30));
     // r->AddComponent<RenderableComponent>(0);
-    // r->AddComponent<SpriteComponent>(32, 32, "PngTest.bin", 0);
+    // r->AddComponent<SpriteComponent>(32, 32, "PngTest.bin", 0);s
     // es.DispatchEvent(EventSpawnEntity(r));
     
     // auto* g = new Entity();

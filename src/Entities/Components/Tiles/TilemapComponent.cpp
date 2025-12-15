@@ -132,7 +132,8 @@ void TilemapComponent::Render(Renderer &renderer, int screenX, int screenY, floa
                 tileset.tileWidth,
                 tileset.tileHeight,
                 spritePixels,
-                zoom
+                zoom,
+                false
             );
         }
     }

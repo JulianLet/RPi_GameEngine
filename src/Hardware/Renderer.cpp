@@ -107,7 +107,7 @@ void Renderer::DrawText(int x, int y, const char *text, uint8_t color)
     }
 }
 
-void Renderer::DrawSprite(int x, int y, int width, int height, const std::vector<uint8_t>& pixels, float zoom)
+void Renderer::DrawSprite(int x, int y, int width, int height, const std::vector<uint8_t>& pixels, float zoom, bool flipX)
 {
     int scaledWidth  = (int)(width  * zoom);
     int scaledHeight = (int)(height * zoom);
@@ -123,6 +123,9 @@ void Renderer::DrawSprite(int x, int y, int width, int height, const std::vector
             // Map destination X back to source sprite X
             int srcX = (int)(dx / zoom);
             if (srcX >= width) srcX = width - 1;
+
+            if (flipX)
+                srcX = width - 1 - srcX;
 
             uint16_t color = pixels[srcY * width + srcX];
 

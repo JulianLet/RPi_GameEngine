@@ -14,6 +14,22 @@ void AnimationSystem::Update(const std::vector<std::unique_ptr<Entity>> &entitie
         auto* animation = entity->GetComponent<AnimationComponent>();
 
         if (!animation) continue;
+
+        //check if should swap the animation
+        bool swapped = false;
+        if (auto it = animation->transitions.find(animation->currentAnimation); it != animation->transitions.end()) 
+        {
+            for (auto& transition : it->second) 
+            {
+                transition(swapped);
+
+                if (swapped) break;
+            }
+        }
+
+        if (swapped) continue;
+
+        //check if it should progress the animation frames
         if (animation->direction == 0) continue;
         
         animation->currentTime += deltaTime;

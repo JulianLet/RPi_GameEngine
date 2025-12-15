@@ -12,6 +12,7 @@
 #include "Entities/Components/Render/CameraComponent.h"
 #include "Entities/Components/Tiles/TilemapComponent.h"
 #include "Entities/Components/Physics/ColliderComponent.h"
+#include "Entities/Components/Physics/PhysicsComponent.h"
 
 
 void RenderSystem::Render(const std::vector<std::unique_ptr<Entity>>& entities, Renderer &renderer)
@@ -58,6 +59,8 @@ void RenderSystem::Render(const std::vector<std::unique_ptr<Entity>>& entities, 
         auto* sprite = entity->GetComponent<SpriteComponent>();
         auto* animation = entity->GetComponent<AnimationComponent>();
         auto* tilemap = entity->GetComponent<TilemapComponent>();
+        auto* physics = entity->GetComponent<PhysicsComponent>();
+
 
         if (!transform || !renderable || !renderable->doRender) continue;
         
@@ -104,14 +107,17 @@ void RenderSystem::Render(const std::vector<std::unique_ptr<Entity>>& entities, 
             );
         }
 
+        bool flipX = false;
+        if (physics && physics->currentVelocity.x < 0) flipX = true;
+
         if (sprite)
         {
-            renderer.DrawSprite((int)screenX, (int)screenY, sprite->width, sprite->height, sprite->pixels, currentZoom);
+            renderer.DrawSprite((int)screenX, (int)screenY, sprite->width, sprite->height, sprite->pixels, currentZoom, flipX);
         }
 
         if (animation)
         {
-            renderer.DrawSprite((int)screenX, (int)screenY, animation->width, animation->height, animation->GetCurrentFrame(), currentZoom);
+            renderer.DrawSprite((int)screenX, (int)screenY, animation->width, animation->height, animation->GetCurrentFrame(), currentZoom, flipX);
         }
 
         if (tilemap)

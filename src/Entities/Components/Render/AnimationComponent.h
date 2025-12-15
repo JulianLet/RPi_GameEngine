@@ -8,6 +8,7 @@
 #include <vector>
 #include <memory>
 #include <cstdint>
+#include <functional>
 
 
 enum AnimationMode {SINGLE = 0, BOUNCE, LOOP};
@@ -33,6 +34,8 @@ struct Animation
 struct AnimationComponent : public Component
 {
     std::unordered_map<int, std::unique_ptr<Animation>> animationList;
+    std::unordered_map<int, std::vector<std::function<void(bool&)>>> transitions;
+
     int currentAnimation = 0;
 
     int width;
@@ -45,6 +48,7 @@ struct AnimationComponent : public Component
     AnimationComponent(int spriteWidth, int spriteHeight);
     ~AnimationComponent() override;
     void AddAnimation(int ID, AnimationMode mode, int frameAmount, int framesPerSecond, const char* filePath);
+    void SwapAnimation(int ID);
     const std::vector<uint8_t>& GetCurrentFrame();
 
     void Reset() override;
