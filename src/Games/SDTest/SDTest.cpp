@@ -37,11 +37,31 @@ SDTest::SDTest(GameManager &manager) : Game("SDTest", manager), entityManager(my
     auto* camera = new FollowCamera(playerTransform, 1.f, 1.f, 30.f);
     camRef = camera->GetComponent<CameraComponent>();
     es.DispatchEvent(EventSpawnEntity(camera));
+
+    //colored rec
+    // auto* r = new Entity();
+    // r->AddComponent<TransformComponent>(Vector2(10,10), Vector2(30,30));
+    // r->AddComponent<RenderableComponent>(0);
+    // r->AddComponent<RectangleComponent>(Color::RED, FILLED);
+    // es.DispatchEvent(EventSpawnEntity(r));
     
+    // auto* g = new Entity();
+    // g->AddComponent<TransformComponent>(Vector2(50,10), Vector2(30,30));
+    // g->AddComponent<RenderableComponent>(0);
+    // g->AddComponent<RectangleComponent>(Color::GREEN, FILLED);
+    // es.DispatchEvent(EventSpawnEntity(g));
+    
+    // auto* b = new Entity();
+    // b->AddComponent<TransformComponent>(Vector2(90,10), Vector2(30,30));
+    // b->AddComponent<RenderableComponent>(0);
+    // b->AddComponent<RectangleComponent>(Color::BLUE, FILLED);
+    // es.DispatchEvent(EventSpawnEntity(b));
+    
+    //colored blobs
     // auto* r = new Entity();
     // r->AddComponent<TransformComponent>(Vector2(0,0), Vector2(30,30));
     // r->AddComponent<RenderableComponent>(0);
-    // r->AddComponent<SpriteComponent>(32, 32, "PngTest.bin", 0);s
+    // r->AddComponent<SpriteComponent>(32, 32, "PngTest.bin", 0);
     // es.DispatchEvent(EventSpawnEntity(r));
     
     // auto* g = new Entity();
@@ -64,6 +84,12 @@ SDTest::SDTest(GameManager &manager) : Game("SDTest", manager), entityManager(my
     tiles->AddComponent<RenderableComponent>(0);
     tiles->AddComponent<TilemapComponent>(10, 10, "Tilemap.txt", tileset);
     es.DispatchEvent(EventSpawnEntity(tiles));
+    
+    // auto* bit = new Entity();
+    // bit->AddComponent<TransformComponent>(Vector2(0,0), Vector2(225,225));
+    // bit->AddComponent<RenderableComponent>(0);
+    // bit->AddComponent<SpriteComponent>(225, 225, "8bitcolor.bin", 0);
+    // es.DispatchEvent(EventSpawnEntity(bit));
 
     // --- UI elements ---
     runGame = true;

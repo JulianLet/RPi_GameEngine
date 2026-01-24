@@ -93,7 +93,8 @@ void ST7735::Initialize()
     WriteData(0x0E);
 
     WriteCommand(0x36); // MADCTL
-    WriteData(0xC8); // BGR order, upside down orientation
+    WriteData(0xC0); // RGB order, upside down orientation
+    //WriteData(0xC8); // BGR order, upside down orientation
     //0x08 would be for normal orientation
     //0xC8 upside down?
 
@@ -137,37 +138,35 @@ void ST7735::SetAddressWindow(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1
     WriteCommand(0x2C); //sets that next bytes will be pixel data
 }
 
-uint16_t RBG332_to_RBG565(uint8_t color8)
+static inline uint16_t RGB332_to_RGB565(uint8_t c)
 {
-    uint8_t r3 = (color8 >> 5) & 0x07; // extract 3-bit red
-    uint8_t b3 = (color8 >> 2) & 0x07; // extract 3-bit blue
-    uint8_t g2 = color8 & 0x03;        // extract 2-bit green
+    uint8_t r3 = (c >> 5) & 0x07;
+    uint8_t g3 = (c >> 2) & 0x07;
+    uint8_t b2 =  c       & 0x03;
 
-    // expand to 5/6/5 bits
     uint16_t r5 = (r3 * 31) / 7;
-    uint16_t b6 = (b3 * 63) / 7;
-    uint16_t g5 = (g2 * 31) / 3;
+    uint16_t g6 = (g3 * 63) / 7;
+    uint16_t b5 = (b2 * 31) / 3;
 
-    // combine into 16-bit RGB565
-    return (r5 << 11) | (b6 << 5) | g5;
+    return (r5 << 11) | (g6 << 5) | b5;
 }
 
 void ST7735::Present(uint8_t *buffer)
 {
-    SetAddressWindow(0,0, WIDTH - 1, HEIGHT - 1);
+    SetAddressWindow(0, 0, WIDTH - 1, HEIGHT - 1);
     gpio_put(myDcPin, 1);
     gpio_put(myCsPin, 0);
 
-    for (int i = 0; i < WIDTH*HEIGHT; i++)
+    for (int i = 0; i < WIDTH * HEIGHT; i++)
     {
-        uint16_t pix16 = RBG332_to_RBG565(buffer[i]);
-        uint8_t bytes[2] = { uint8_t(pix16 >> 8), uint8_t(pix16 & 0xFF) };
-        spi_write_blocking(spiPort, bytes, 2);
+        uint16_t pix = RGB332_to_RGB565(buffer[i]);
+        uint8_t out[2] = { uint8_t(pix >> 8), uint8_t(pix & 0xFF) };
+        spi_write_blocking(spiPort, out, 2);
     }
 
-    // spi_write_blocking(spiPort, (uint8_t*)buffer, WIDTH * HEIGHT * 2);
     gpio_put(myCsPin, 1);
 }
+
 
 
 

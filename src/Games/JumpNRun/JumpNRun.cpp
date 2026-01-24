@@ -29,12 +29,12 @@ JumpNRun::JumpNRun(GameManager &manager) : Game("Jump 'N' Run", manager), action
     es.DispatchEvent(EventSpawnEntity(new StaticWall(Vector2( 80, 150), Vector2(120, 30), Color::BLACK, "Ground"))); //first step
     es.DispatchEvent(EventSpawnEntity(new StaticWall(Vector2(100, 110), Vector2(100, 40), Color::BLACK, "Ground"))); //second step
     es.DispatchEvent(EventSpawnEntity(new StaticWall(Vector2(190,  30), Vector2( 10, 80), Color::BLACK, "Ground"))); //wall right
-    es.DispatchEvent(EventSpawnEntity(new StaticWall(Vector2(110,  30), Vector2( 40, 10), Color::BLACK, "Ground"))); //air right
-    es.DispatchEvent(EventSpawnEntity(new StaticWall(Vector2( 35,  45), Vector2( 23, 10), Color::BLACK, "Ground"))); //air left
-    es.DispatchEvent(EventSpawnEntity(new StaticWall(Vector2(-20, -30), Vector2( 10, 80), Color::BLACK, "Ground"))); //wall left
-    es.DispatchEvent(EventSpawnEntity(new StaticWall(Vector2( 35, -40), Vector2( 55, 10), Color::BLACK, "Ground"))); //top
+    es.DispatchEvent(EventSpawnEntity(new StaticWall(Vector2(110,  30), Vector2( 50, 10), Color::BLACK, "Ground"))); //air right
+    es.DispatchEvent(EventSpawnEntity(new StaticWall(Vector2( 32,  45), Vector2( 30, 10), Color::BLACK, "Ground"))); //air left
+    es.DispatchEvent(EventSpawnEntity(new StaticWall(Vector2(-20, -30), Vector2( 10, 85), Color::BLACK, "Ground"))); //wall left
+    es.DispatchEvent(EventSpawnEntity(new StaticWall(Vector2( 20, -40), Vector2( 70, 10), Color::BLACK, "Ground"))); //top
 
-    auto* player =  new SideScrollerPlayer(Vector2(0, 110), Vector2(8, 10), 45, Color::BLUE, 80);
+    auto* player =  new SideScrollerPlayer(Vector2(0, 110), Vector2(8, 10), 45, Color::BLUE, 85);
     playerTransform = player->GetComponent<TransformComponent>();
     es.DispatchEvent(EventSpawnEntity(player));
 
