@@ -14,7 +14,7 @@ void TimerSystem::Update(const std::vector<std::unique_ptr<Entity>> &entities, f
             timer->currentTime += deltaTime;
         }
 
-        //timeed events
+        //timed events
         //currenttime-= deltaTime
         //if currentime < 0
         //Eventsystem call event on countown
