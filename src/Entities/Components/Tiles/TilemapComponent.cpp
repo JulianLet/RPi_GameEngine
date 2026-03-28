@@ -34,21 +34,6 @@ bool Tileset::IsSolid(int index)
 std::vector<uint8_t> Tileset::GetSprite(int index)
 {
     return ResourceManager::GetInstance().GetSprite(&spritesheet, tileWidth, tileHeight, index);
-    // std::vector<uint8_t> frameBuffer;
-    // size_t frameSizeBytes = tileWidth * tileHeight * 2;
-    // size_t offset = index * frameSizeBytes;
-
-    // spritesheet.Seek(offset);
-    // frameBuffer.resize(tileWidth * tileHeight);
-    // std::vector<uint8_t> raw(frameSizeBytes);
-    // spritesheet.Read(raw.data(), frameSizeBytes);
-
-    // for (size_t i = 0; i < tileWidth * tileHeight; ++i)
-    // {
-    //     frameBuffer[i] = raw[i];
-    // }
-
-    // return frameBuffer;
 }
 
 TilemapComponent::TilemapComponent(int width, int height, const char *filePath, Tileset tileset)
@@ -85,8 +70,6 @@ TilemapComponent::TilemapComponent(int width, int height, const char *filePath, 
         );
         e->AddComponent<ColliderComponent>(Vector2(0,0), Vector2(tileset.tileWidth, tileset.tileHeight), SOLID);
         e->AddComponent<PhysicsComponent>(NO_GRAVITY, Vector2(0,0), PhysicsType::STATIC);
-        // e->AddComponent<RenderableComponent>(5);
-        // e->AddComponent<RectangleComponent>(Color::RED, FILLED);
         EventSystem::GetInstance().DispatchEvent(EventSpawnEntity(e));
     }
 }
@@ -107,8 +90,6 @@ void TilemapComponent::Render(Renderer &renderer, int screenX, int screenY, floa
     int endTileX = std::min(width, startTileX + tilesXOnScreen);
     int endTileY = std::min(height, startTileY + tilesYOnScreen);
 
-    // printf("Drawing tiles from (%d,%d) to (%d,%d)\n", startTileX, startTileY, endTileX - 1, endTileY - 1);
-
     for (int y = startTileY; y < endTileY; y++)
     {
         for (int x = startTileX; x < endTileX; x++)
@@ -120,9 +101,6 @@ void TilemapComponent::Render(Renderer &renderer, int screenX, int screenY, floa
 
             float tileScreenX = screenX + x * tileset.tileWidth * zoom;
             float tileScreenY = screenY + y * tileset.tileHeight * zoom;
-            // float tileScreenX = x * tileset->tileWidth * zoom; 
-            // float tileScreenY = y * tileset->tileHeight * zoom;
-
 
             printf("Tile (%d,%d) screen pos: %.1f, %.1f\n", x, y, tileScreenX, tileScreenY);
 
