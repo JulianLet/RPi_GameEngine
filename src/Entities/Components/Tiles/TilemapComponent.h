@@ -14,12 +14,13 @@ struct Tileset
     int tileHeight;
     File spritesheet;
     std::vector<bool> solidTiles;
+    std::vector<std::vector<uint8_t>> tiles;
 
     Tileset(int w, int h, int tileCount, const char* filePath);
     ~Tileset();
 
     bool IsSolid(int index);
-    std::vector<uint8_t> GetSprite(int index);
+    std::vector<uint8_t>& GetSprite(int index);
 };
 
 struct TilemapComponent : public Component
@@ -29,7 +30,7 @@ struct TilemapComponent : public Component
     Tileset tileset;
     std::vector<uint8_t> tileIndices;
 
-    TilemapComponent(int width, int height, const char* filePath, Tileset tileset);
+    TilemapComponent(int width, int height, const char* filePath, Tileset& tileset);
     ~TilemapComponent();
 
     void Render(Renderer& renderer, int screenX, int screenY, float zoom);

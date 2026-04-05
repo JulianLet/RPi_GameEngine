@@ -17,8 +17,11 @@ Tileset::Tileset(int w, int h, int tileCount, const char *filePath)
 {
     for (int i = 0; i < tileCount; i++)
     {
+        tiles.emplace_back(ResourceManager::GetInstance().GetSprite(&spritesheet, tileWidth, tileHeight, i));
         solidTiles.emplace_back(false); //init all as false
     }
+
+    printf("Tileset init done");
 }
 
 Tileset::~Tileset()
@@ -31,12 +34,16 @@ bool Tileset::IsSolid(int index)
     return solidTiles.at(index);
 }
 
-std::vector<uint8_t> Tileset::GetSprite(int index)
+std::vector<uint8_t>& Tileset::GetSprite(int index)
 {
-    return ResourceManager::GetInstance().GetSprite(&spritesheet, tileWidth, tileHeight, index);
+    
+    if (index > tiles.size() - 1) return tiles.at(0);
+
+    return tiles.at(index);
+    //return ResourceManager::GetInstance().GetSprite(&spritesheet, tileWidth, tileHeight, index);
 }
 
-TilemapComponent::TilemapComponent(int width, int height, const char *filePath, Tileset tileset)
+TilemapComponent::TilemapComponent(int width, int height, const char *filePath, Tileset& tileset)
     : width(width), height(height), tileset(tileset)
 {
     File tilemap = ResourceManager::GetInstance().sdManager.Open(filePath, FA_READ);
@@ -61,8 +68,6 @@ TilemapComponent::TilemapComponent(int width, int height, const char *filePath, 
         int xPos = idx % width; // tile X position in map
         int yPos = idx / width; // tile Y position in map
 
-        printf("Created solid tile at (%d,%d) for tileID %d\n", xPos, yPos, tileID);
-
         Entity* e = new Entity();
         e->AddComponent<TransformComponent>(
             Vector2(xPos * tileset.tileWidth, yPos * tileset.tileHeight),
@@ -72,6 +77,8 @@ TilemapComponent::TilemapComponent(int width, int height, const char *filePath, 
         e->AddComponent<PhysicsComponent>(NO_GRAVITY, Vector2(0,0), PhysicsType::STATIC);
         EventSystem::GetInstance().DispatchEvent(EventSpawnEntity(e));
     }
+
+    printf("Tilemap init done");
 }
 
 TilemapComponent::~TilemapComponent() = default;
@@ -95,18 +102,16 @@ void TilemapComponent::Render(Renderer &renderer, int screenX, int screenY, floa
         for (int x = startTileX; x < endTileX; x++)
         {
             int tileIndex = tileIndices[x + y * width];
-            std::vector<uint8_t> spritePixels = tileset.GetSprite(tileIndex);
+            std::vector<uint8_t>& spritePixels = tileset.GetSprite(tileIndex);
 
             if (spritePixels.empty()) continue;
 
-            float tileScreenX = screenX + x * tileset.tileWidth * zoom;
-            float tileScreenY = screenY + y * tileset.tileHeight * zoom;
-
-            printf("Tile (%d,%d) screen pos: %.1f, %.1f\n", x, y, tileScreenX, tileScreenY);
+            int tileScreenX = (int)(screenX + x * tileset.tileWidth * zoom);
+            int tileScreenY = (int)(screenY + y * tileset.tileHeight * zoom);
 
             renderer.DrawSprite(
-                (int)tileScreenX,
-                (int)tileScreenY,
+                tileScreenX,
+                tileScreenY,
                 tileset.tileWidth,
                 tileset.tileHeight,
                 spritePixels,

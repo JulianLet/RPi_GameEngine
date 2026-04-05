@@ -76,7 +76,7 @@ SDTest::SDTest(GameManager &manager) : Game("SDTest", manager), entityManager(my
     // b->AddComponent<SpriteComponent>(32, 32, "PngTest.bin", 2);
     // es.DispatchEvent(EventSpawnEntity(b));
 
-    Tileset tileset(32,32,4,"TilesetTest.bin");
+    Tileset tileset(32,32,5,"TilesetTest.bin");
     tileset.solidTiles[3] = true;
 
     Entity* tiles = new Entity();

@@ -9,6 +9,7 @@
 GameManager::GameManager()
 {
     currentGame = std::make_unique<Menu>(*this);
+    DebugManager::GetInstance().printLogs = true;
 }
 
 void GameManager::Update(Input& input, float deltaTime)
@@ -25,6 +26,21 @@ void GameManager::Update(Input& input, float deltaTime)
     {
         SwitchGame(std::make_unique<Menu>(*this));
     }
+
+    std::string msg = "DT: " + std::to_string(deltaTime);
+    DebugManager::GetInstance().Log(msg);
+
+    //delta times when saving the sprite and drawing on framebuffer
+    //menu: 0,05 (20 FPS)
+    //pong: 0,05 (20 FPS)
+    //jnr:  0,05 (20 FPS)
+    //sd:   0,16 ( 6 FPS) (0,14 if not drawing the whole screen)
+
+    //delta times when saving sprite but drawing directly on screen
+    //menu: 0,12
+    //pong: 0,15
+    //jrn:  0,14
+    //sd:   0,45
 }
 
 void GameManager::Render(Renderer& renderer)
