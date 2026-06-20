@@ -1,20 +1,8 @@
 #pragma once
-
-#include "Entities/Component.h"
-
-#include <vector>
 #include <cstdint>
 
-struct SpriteComponent : public Component
+struct SpriteComponent
 {
-    int width;
-    int height;
-    std::vector<uint8_t> pixels;
-
-    //spritesheet with flat binary
-    SpriteComponent(int width, int height, const char *path, int index = 0);
-
-    ~SpriteComponent() override;
-
-    void Reset() override;
+    uint16_t frame = 0;       // final frame to render
+    uint16_t frameIndex = 0;  // local animation frame
 };

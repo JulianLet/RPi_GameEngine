@@ -1,75 +1,65 @@
 #include "AnimationSystem.h"
+#include "Systems/Core/World.h"
 
-#include "Hardware/Renderer.h"
-
-#include "Entities/Entity.h"
-#include "Entities/Components/Render/AnimationComponent.h"
-
-#include "Systems/Debug/DebugManager.h"
-
-void AnimationSystem::Update(const std::vector<std::unique_ptr<Entity>> &entities, float deltaTime)
+void AnimationSystem::Update(World& world, float dt)
 {
-    for (auto& entity : entities)
+    for (uint8_t i = 0; i < MAX_ENTITIES; i++)
     {
-        auto* animation = entity->GetComponent<AnimationComponent>();
+        if (!world.entities[i].isAlive) continue;
+        if (!(world.entities[i].mask & (1 << 5))) continue; // AnimationBit (adjust index)
 
-        if (!animation) continue;
+        auto& anim = world.animations[i];
 
-        //check if should swap the animation
-        bool swapped = false;
-        if (auto it = animation->transitions.find(animation->currentAnimation); it != animation->transitions.end()) 
+        if (!anim.active) continue;
+
+        AnimationClip& clip =
+            world.animationDB.clips[anim.currentAnimation];
+
+        // advance time
+        anim.currentTime += dt;
+
+        float frameTime = 1.0f / clip.fps;
+
+        if (anim.currentTime < frameTime)
+            continue;
+
+        anim.currentTime = 0.0f;
+
+        // advance frame
+        anim.direction; // kept for bounce logic
+
+        u_int16_t& frameIndex = world.sprites[i].frameIndex;
+
+        frameIndex += anim.direction;
+
+        // boundary handling
+        if (frameIndex < 0)
         {
-            for (auto& transition : it->second) 
+            frameIndex = 1;
+            anim.direction = 1;
+        }
+        else if (frameIndex >= clip.frameCount)
+        {
+            switch (clip.mode)
             {
-                transition(swapped);
+                case LOOP:
+                    frameIndex = 0;
+                    break;
 
-                if (swapped) break;
+                case BOUNCE:
+                    frameIndex = clip.frameCount - 2;
+                    anim.direction = -1;
+                    break;
+
+                case SINGLE:
+                    frameIndex = clip.frameCount - 1;
+                    anim.active = false;
+                    break;
             }
         }
 
-        if (swapped) continue;
-
-        //check if it should progress the animation frames
-        if (animation->direction == 0) continue;
-        
-        animation->currentTime += deltaTime;
-
-        if (animation->currentTime >= (1.0f / animation->FPS))
-        {
-            auto it = animation->animationList.find(animation->currentAnimation);
-            if (it == animation->animationList.end()) continue; // not found
-            
-            Animation* currentAnimation = it->second.get();
-            
-            currentAnimation->currentFrame += animation->direction;
-            animation->currentTime = 0;
-            
-            if (currentAnimation->currentFrame < 0)
-            {
-                currentAnimation->currentFrame = 1;
-                animation->direction = 1;
-            }
-            else if (currentAnimation->currentFrame >= currentAnimation->frameAmount)
-            {
-                switch (currentAnimation->mode)
-                {
-                case AnimationMode::LOOP:
-                    currentAnimation->currentFrame = 0;
-                    break;
-
-                case AnimationMode::BOUNCE:
-                    currentAnimation->currentFrame = currentAnimation->frameAmount - 2;
-                    animation->direction = -1;
-                    break;
-
-                case AnimationMode::SINGLE:
-                    currentAnimation->currentFrame = currentAnimation->frameAmount - 1;
-                    animation->direction = 0; //stop
-                    break;
-                }
-            }
-
-            currentAnimation->UpdateFrame();
-        }
+        // compute final sprite frame index
+        world.sprites[i].frame =
+            clip.frameStart + frameIndex;
     }
 }

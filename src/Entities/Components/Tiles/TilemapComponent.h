@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Systems/Resource/ResourceManager.h"
-#include "Entities/Component.h"
 #include "Entities/Entity.h"
 
 #include <vector>
@@ -12,29 +11,18 @@ struct Tileset
 {
     int tileWidth;
     int tileHeight;
-    File spritesheet;
-    std::vector<bool> solidTiles;
+
     std::vector<std::vector<uint8_t>> tiles;
-
-    Tileset(int w, int h, int tileCount, const char* filePath);
-    ~Tileset();
-
-    bool IsSolid(int index);
-    std::vector<uint8_t>& GetSprite(int index);
+    std::vector<bool> solidTiles;
 };
 
-struct TilemapComponent : public Component
+struct TilemapComponent
 {
     int width;
     int height;
-    Tileset tileset;
+
+    uint16_t tilesetId;   // reference to global Tileset
     std::vector<uint8_t> tileIndices;
-
-    TilemapComponent(int width, int height, const char* filePath, Tileset& tileset);
-    ~TilemapComponent();
-
-    void Render(Renderer& renderer, int screenX, int screenY, float zoom);
-    void Reset() override;
 };
 
 //on tilemap creation create entities with colliders in position

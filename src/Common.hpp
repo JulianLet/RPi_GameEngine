@@ -140,3 +140,47 @@ namespace Color
         return (r << 5) | (g << 2) | b;
     }
 }
+
+// uint32_t RenderSystemMask = TransformBit | RenderableBit | SpriteBit; <-- to use like this
+// if (e->maks & RenderSystemMask)
+// {
+//    ...
+// }
+enum ComponentBit : uint32_t
+{
+    // AI
+    AIBit                  = 1u << 0,
+
+    // Core
+    MovementBit            = 1u << 1,
+    TimerBit               = 1u << 2,
+    TransformBit           = 1u << 3,
+
+    // Events
+    OnEventBit             = 1u << 4,
+
+    // Input
+    InputIntentBit         = 1u << 5,
+    InputMappingBit        = 1u << 6,
+
+    // Physics
+    ColliderBit            = 1u << 7,
+    CollisionResponseBit   = 1u << 8,
+    PhysicsBit             = 1u << 9,
+    PhysicsMaterialBit     = 1u << 10,
+    AnimationBit           = 1u << 11,
+
+    // Rendering
+    CameraBit              = 1u << 12,
+    FollowTargetBit        = 1u << 13,
+    RectangleBit           = 1u << 14,
+    RenderableBit          = 1u << 15,
+    SpriteBit              = 1u << 16,
+
+    // Tilemap
+    TilemapBit             = 1u << 17,
+
+    // UI
+    UIButtonBit            = 1u << 18,
+    UITextBit              = 1u << 19
+};

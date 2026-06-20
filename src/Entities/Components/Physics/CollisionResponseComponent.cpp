@@ -1,7 +1,0 @@
-#include "CollisionResponseComponent.h"
-
-CollisionResponseComponent::~CollisionResponseComponent() = default;
-
-void CollisionResponseComponent::Reset()
-{
-}
