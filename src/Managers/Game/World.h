@@ -1,7 +1,11 @@
 #pragma once
 #include "Common.hpp"
+
 #include "Entities/Entity.h"
 #include "Entities/Component.h"
+
+#include "Assets/AnimationDatabase.h"
+#include "Assets/Tileset.h"
 
 #include <cstdint>
 
@@ -29,6 +33,9 @@ struct World
     ColliderComponent colliders[MAX_ENTITIES];
     CollisionResponseComponent collisionResponses[MAX_ENTITIES];
     PhysicsMaterialComponent physicsMaterials[MAX_ENTITIES];
+
+    // ===== Events =====
+    OnEventComponent events[MAX_ENTITIES];
     
     // ===== Render =====
     SpriteComponent sprites[MAX_ENTITIES];

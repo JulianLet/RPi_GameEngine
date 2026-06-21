@@ -2,11 +2,11 @@
 
 struct World;
 
-class AISystem
+class MovementSystem
 {
     public:
-    AISystem() = default;
-    ~AISystem() = default;
-    
+    MovementSystem() = default;
+    ~MovementSystem() = default;
+
     void Update(World& world, float deltaTime);
 };

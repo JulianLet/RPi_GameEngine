@@ -6,9 +6,9 @@ class Entity;
 
 struct AIComponent
 {
-    std::function<void(Entity*, float)> think;
-    std::function<void(Entity*, float)> decide;
-    std::function<void(Entity*, float)> act;
+    std::function<void(World& world, uint8_t id, float)> think;
+    std::function<void(World& world, uint8_t id, float)> decide;
+    std::function<void(World& world, uint8_t id, float)> act;
 
     float memory[5];
 };

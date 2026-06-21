@@ -1,16 +1,12 @@
 #pragma once
 
-#include <vector>
-#include <memory>
-
-class Entity;
+struct World;
 
 class CameraSystem
 {
-
     public:
     CameraSystem() = default;
     ~CameraSystem() = default;
 
-    void Update(const std::vector<std::unique_ptr<Entity>>& entities, float deltaTime);
+    void Update(World& world, float deltaTime);
 };

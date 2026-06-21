@@ -1,10 +1,8 @@
 #pragma once
 
 #include "Common.hpp"
-#include <vector>
-#include <memory>
 
-class Entity;
+struct World;
 struct TransformComponent;
 struct ColliderComponent;
 
@@ -14,7 +12,7 @@ public:
     CollisionSystem() = default;
     ~CollisionSystem() = default;
     
-    void Update(const std::vector<std::unique_ptr<Entity>>& entities);
+    void Update(World& world);
 
 private:
     bool SweptAABB(TransformComponent* aT, ColliderComponent* aC, TransformComponent* bT, ColliderComponent* bC, float& timeOfCollision, Vector2& normal);

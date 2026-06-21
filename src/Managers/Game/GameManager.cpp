@@ -1,8 +1,8 @@
 #include "GameManager.h"
 
 #include "Hardware/Input.h"
-#include "Systems/Events/EventSystem.h"
-#include "Systems/Debug/DebugManager.h"
+#include "Managers/Event/EventManager.h"
+#include "Managers/Core/DebugManager.h"
 
 #include "Games/Menu/Menu.h"
 
@@ -16,7 +16,7 @@ void GameManager::Update(Input& input, float deltaTime)
 {
     if (pendingGame) //switch game before anything gets updated
     {
-        EventSystem::GetInstance().RemoveListenersForGame(currentGame.get());
+        EventManager::GetInstance().RemoveListenersForGame(currentGame.get());
         currentGame = std::move(pendingGame);
     }
 

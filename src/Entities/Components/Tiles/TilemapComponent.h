@@ -1,20 +1,7 @@
 #pragma once
 
-#include "Systems/Resource/ResourceManager.h"
-#include "Entities/Entity.h"
-
 #include <vector>
 
-class Renderer;
-
-struct Tileset
-{
-    int tileWidth;
-    int tileHeight;
-
-    std::vector<std::vector<uint8_t>> tiles;
-    std::vector<bool> solidTiles;
-};
 
 struct TilemapComponent
 {

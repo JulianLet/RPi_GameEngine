@@ -1,9 +1,6 @@
 #pragma once
 
-#include <vector>
-#include <memory>
-
-class Entity;
+struct World;
 class Input;
 class GameManager;
 
@@ -15,5 +12,5 @@ class UIUpdateSystem
     UIUpdateSystem() = default;
     ~UIUpdateSystem() = default;
 
-    void Update(const std::vector<std::unique_ptr<Entity>>& entities, Input& input, GameManager& gameManager);
+    void Update(World& world, Input& input, GameManager& gameManager);
 };

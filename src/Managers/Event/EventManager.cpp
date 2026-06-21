@@ -1,16 +1,16 @@
-#include "EventSystem.h"
+#include "EventManager.h"
 #include <algorithm>
 
 #include "EventListener.h"
 #include "Games/Game.h"
 
 
-void EventSystem::AddListener(EventListener *listener, Game *game)
+void EventManager::AddListener(EventListener *listener, Game *game)
 {
     listenerEntries.emplace_back(ListenerEntry{listener, game});
 }
 
-void EventSystem::DispatchEvent(const Event &event)
+void EventManager::DispatchEvent(const Event &event)
 {
     for (auto& listener : listenerEntries)
     {
@@ -19,7 +19,7 @@ void EventSystem::DispatchEvent(const Event &event)
 }
 
 //otherwise saved as nullptr if game gets destroyed
-void EventSystem::RemoveListenersForGame(Game* game)
+void EventManager::RemoveListenersForGame(Game* game)
 {
     listenerEntries.erase(
         std::remove_if(listenerEntries.begin(), listenerEntries.end(),

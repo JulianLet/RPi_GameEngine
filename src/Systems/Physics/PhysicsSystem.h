@@ -1,10 +1,8 @@
 #pragma once
 
 #include "Common.hpp"
-#include <vector>
-#include <memory>
 
-class Entity;
+struct World;
 class TransformComponent;
 
 class PhysicsSystem
@@ -13,8 +11,8 @@ class PhysicsSystem
     PhysicsSystem() = default;
     ~PhysicsSystem() = default;
 
-    void Update(const std::vector<std::unique_ptr<Entity>>& entities, float deltaTime);
-    void ResolveCollisions(const std::vector<std::unique_ptr<Entity>>& entities, float deltaTime);
+    void Update(World& world, float deltaTime);
+    void ResolveCollisions(World& world, float deltaTime);
 
     private:
     void CollisionOneDynamic(Entity* dynamic, Entity* other, float& timeOfCollision, Vector2& normal, float deltaTime);

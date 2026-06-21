@@ -1,18 +1,17 @@
 #include "TimerSystem.h"
 
-#include "Entities/Entity.h"
+#include "Managers/Game/World.h"
 #include "Entities/Components/Core/TimerComponent.h"
 
-void TimerSystem::Update(const std::vector<std::unique_ptr<Entity>> &entities, float deltaTime)
+void TimerSystem::Update(World& world, float deltaTime)
 {
-    for (auto& entity : entities)
+    for (uint8_t e = 0; e < MAX_ENTITIES; e++)
     {
-        auto* timer = entity->GetComponent<TimerComponent>();
+        if (!world.entities[e].mask & TimerBit) continue;
 
-        if (timer)
-        {
-            timer->currentTime += deltaTime;
-        }
+        auto& timer = world.timers[e];
+        
+        timer.currentTime += deltaTime;
 
         //timed events
         //currenttime-= deltaTime

@@ -1,13 +1,9 @@
 #include "UIRenderSystem.h"
 
+#include "Managers/Game/World.h"
 #include "Hardware/Renderer.h"
-#include "Entities/Entity.h"
 
-#include "Entities/Components/Core/TransformComponent.h"
-#include "Entities/Components/Render/RectangleComponent.h"
-#include "Entities/Components/UI/UITextComponent.h"
-
-void UIRenderSystem::Render(const std::vector<std::unique_ptr<Entity>> &entities, Renderer &renderer)
+void UIRenderSystem::Render(World& world, Renderer &renderer)
 {
     for (auto& entity : entities)
     {

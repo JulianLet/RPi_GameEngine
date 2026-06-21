@@ -2,13 +2,10 @@
 
 #include "Hardware/Input.h"
 
-#include "Entities/Entity.h"
-#include "Entities/Components/Core/TimerComponent.h"
-#include "Entities/Components/UI/UITextComponent.h"
-#include "Entities/Components/UI/UIButtonComponent.h"
-#include "Entities/Components/Render/RectangleComponent.h"
+#include "Managers/Game/World.h"
 
-void UIUpdateSystem::Update(const std::vector<std::unique_ptr<Entity>> &entities, Input& input, GameManager& gameManager)
+
+void UIUpdateSystem::Update(World& world, Input& input, GameManager& gameManager)
 {
     std::vector<Entity*> buttons;
     buttons.reserve(entities.size());

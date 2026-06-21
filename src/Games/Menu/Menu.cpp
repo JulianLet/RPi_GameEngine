@@ -1,7 +1,7 @@
 #include "Menu.h"
 
 #include "Entities/Entity.h"
-#include "Systems/Core/GameManager.h"
+#include "Managers/Game/GameManager.h"
 
 #include "Games/Pong/Pong.h"
 #include "Games/JumpNRun/JumpNRun.h"
@@ -10,15 +10,14 @@
 #include "Systems/Events/EventSystem.h"
 #include "Systems/Events/Event.h"
 
-#include "Systems/Debug/DebugManager.h"
+#include "Managers/Core/DebugManager.h"
 
 #include "Entities/Common/Prototyping/StaticCamera.h"
 #include "Entities/Common/UI/UIButtonObject.h"
 #include "Entities/Common/UI/UITextObject.h"
 
-#include "Entities/Components/UI/UIButtonComponent.h"
+#include "Entities/Component.h"
 
-#include "Entities/Components/Render/CameraComponent.h"
 #include "pico/stdlib.h"
 #include <algorithm>
 

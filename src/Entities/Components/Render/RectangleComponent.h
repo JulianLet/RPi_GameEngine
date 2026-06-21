@@ -4,11 +4,8 @@
 constexpr bool FILLED = true;
 constexpr bool OUTLINE = false;
 
-struct TransformComponent;
-
 struct RectangleComponent
 {
-    TransformComponent* transform = nullptr;
     uint8_t currentColor = 0;
     bool filled = false;
 }; 

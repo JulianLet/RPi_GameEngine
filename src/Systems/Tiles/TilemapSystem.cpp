@@ -1,6 +1,6 @@
 #include "TilemapSystem.h"
 
-#include "Systems/Core/World.h"
+#include "Managers/Game/World.h"
 #include "Hardware/Renderer.h"
 
 // Components
@@ -9,7 +9,7 @@
 #include "Entities/Components/Physics/ColliderComponent.h"
 #include "Entities/Components/Physics/PhysicsComponent.h"
 
-// Bitmask (adjust to your system)
+// Bitmask
 #include "Globals.h"
 #include "Common.hpp"
 

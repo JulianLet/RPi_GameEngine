@@ -1,28 +1,26 @@
 #include "CameraSystem.h"
 
-#include "Entities/Entity.h"
-#include "Entities/Components/Render/CameraComponent.h"
+#include "Managers/Game/World.h"
 
-void CameraSystem::Update(const std::vector<std::unique_ptr<Entity>> &entities, float deltaTime)
+void CameraSystem::Update(World& world, float deltaTime)
 {
-    //currently just updates zoom
-    for (auto& entity : entities)
+    for (uint8_t e = 0; e < MAX_ENTITIES; e++)
     {
-        CameraComponent* camera = entity->GetComponent<CameraComponent>();
+        if (!world.entities[e].mask & CameraBit) continue;
 
-        if (!camera) continue;
+        auto& camera = world.cameras[e];
 
-        if (camera->currentZoom < camera->targetZoom - camera->zoomSpeed * deltaTime)
+        if (camera.currentZoom < camera.targetZoom - camera.zoomSpeed * deltaTime)
         {
-            camera->currentZoom += camera->zoomSpeed * deltaTime;
+            camera.currentZoom += camera.zoomSpeed * deltaTime;
         }
-        else if (camera->currentZoom > camera->targetZoom + camera->zoomSpeed * deltaTime)
+        else if (camera.currentZoom > camera.targetZoom + camera.zoomSpeed * deltaTime)
         {
-            camera->currentZoom -= camera->zoomSpeed * deltaTime;
+            camera.currentZoom -= camera.zoomSpeed * deltaTime;
         }
         else
         {
-            camera->currentZoom = camera->targetZoom;
+            camera.currentZoom = camera.targetZoom;
         }
     }
 }

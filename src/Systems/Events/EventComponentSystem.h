@@ -1,19 +1,16 @@
 #pragma once
 
-#include "EventListener.h"
+#include "Managers/Event/EventListener.h"
 
-#include <vector>
-#include <memory>
-
-class Entity;
+struct World;
 class Game;
 
 class EventComponentSystem : public EventListener
 {
-    std::vector<std::unique_ptr<Entity>>* entities;
+    World* world;
 
     public:
-    EventComponentSystem(std::vector<std::unique_ptr<Entity>>& entities, Game* game);
+    EventComponentSystem(World& world, Game* game);
     ~EventComponentSystem() = default;
 
     void HandleEvent(const Event& event);

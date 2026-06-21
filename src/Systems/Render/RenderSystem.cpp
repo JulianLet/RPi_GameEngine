@@ -3,19 +3,10 @@
 #include "Hardware/Renderer.h"
 #include "Hardware/DisplayST7735.h"
 
-#include "Entities/Entity.h"
-#include "Entities/Components/Core/TransformComponent.h"
-#include "Entities/Components/Render/RectangleComponent.h"
-#include "Entities/Components/Render/SpriteComponent.h"
-#include "Entities/Components/Render/AnimationComponent.h"
-#include "Entities/Components/Render/RenderableComponent.h"
-#include "Entities/Components/Render/CameraComponent.h"
-#include "Entities/Components/Tiles/TilemapComponent.h"
-#include "Entities/Components/Physics/ColliderComponent.h"
-#include "Entities/Components/Physics/PhysicsComponent.h"
+#include "Managers/Game/World.h"
 
 
-void RenderSystem::Render(const std::vector<std::unique_ptr<Entity>>& entities, Renderer &renderer)
+void RenderSystem::Render(World& world, Renderer &renderer)
 {
     for (auto& entity : entities)
     {
@@ -35,7 +26,7 @@ void RenderSystem::Render(const std::vector<std::unique_ptr<Entity>>& entities, 
     }
 }
 
-void RenderSystem::Render(const std::vector<std::unique_ptr<Entity>>& entities, Renderer &renderer, CameraComponent* camera)
+void RenderSystem::Render(World& world, Renderer &renderer, CameraComponent* camera)
 {
     Vector2 cameraPos = Vector2(0,0);
     float currentZoom = 1;

@@ -1,5 +1,7 @@
 #include "AnimationSystem.h"
-#include "Systems/Core/World.h"
+#include "Managers/World.h"
+
+#include <cstdint>
 
 void AnimationSystem::Update(World& world, float dt)
 {

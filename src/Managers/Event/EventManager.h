@@ -12,19 +12,19 @@ struct ListenerEntry {
 };
 
 
-class EventSystem
+class EventManager
 {
 private:
     std::vector<ListenerEntry> listenerEntries;
-    EventSystem() = default; //is private for singelton
+    EventManager() = default; //is private for singelton
 
-    EventSystem(const EventSystem&) = delete;
-    EventSystem& operator=(const EventSystem&) = delete;
+    EventManager(const EventManager&) = delete;
+    EventManager& operator=(const EventManager&) = delete;
 
 public:
-    static EventSystem& GetInstance()
+    static EventManager& GetInstance()
     {
-        static EventSystem instance;
+        static EventManager instance;
         return instance;
     }
 

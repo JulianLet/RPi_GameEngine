@@ -1,17 +1,13 @@
 #pragma once
 
-#include <vector>
-#include <memory>
-
+struct World;
 class Input;
-class Entity;
 
 class InputSystem
 {
-
     public:
     InputSystem() = default;
     ~InputSystem() = default;
 
-    void Update(const std::vector<std::unique_ptr<Entity>>& entities, Input& input);
+    void Update(World& world, Input& input);
 };

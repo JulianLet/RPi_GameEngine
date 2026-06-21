@@ -14,7 +14,7 @@
 
 inline int sign(float v) { return (v > 0.f) - (v < 0.f); }
 
-void PhysicsSystem::Update(const std::vector<std::unique_ptr<Entity>> &entities, float deltaTime)
+void PhysicsSystem::Update(World& world, float deltaTime)
 {
     for (auto& entity : entities)
     {
@@ -41,7 +41,7 @@ void PhysicsSystem::Update(const std::vector<std::unique_ptr<Entity>> &entities,
     }
 }
 
-void PhysicsSystem::ResolveCollisions(const std::vector<std::unique_ptr<Entity>> &entities, float deltaTime)
+void PhysicsSystem::ResolveCollisions(World& world, float deltaTime)
 {
     std::unordered_set<Entity*> alreadyChecked;
 

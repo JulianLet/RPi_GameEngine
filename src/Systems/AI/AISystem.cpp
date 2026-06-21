@@ -1,19 +1,19 @@
 #include "AISystem.h"
 
-#include "Entities/Components/AI/AIComponent.h"
-#include "Entities/Entity.h"
+#include "Managers/Game/World.h"
+#include "Entities/Component.h"
 
 
-void AISystem::Update(const std::vector<std::unique_ptr<Entity>> &entities, float deltaTime)
+void AISystem::Update(World& world, float deltaTime)
 {
-    for (auto& entity : entities)
+    for (uint8_t e = 0; e < MAX_ENTITIES; e++)
     {
-        AIComponent* myAI = entity->GetComponent<AIComponent>();
+        if (!(world.entities[e].mask & AIBit)) continue;
 
-        if (!myAI) continue;
+        auto& myAI = world.ai[e];
 
-        if (myAI->think) myAI->think(entity.get(), deltaTime);
-        if (myAI->decide) myAI->decide(entity.get(), deltaTime);
-        if (myAI->act) myAI->act(entity.get(), deltaTime);
+        if (myAI.think) myAI.think(world, e, deltaTime);
+        if (myAI.decide) myAI.decide(world, e, deltaTime);
+        if (myAI.act) myAI.act(world, e, deltaTime);
     }
 }

@@ -1,28 +1,28 @@
 #include "EventComponentSystem.h"
 
 #include "Globals.h"
-#include "EventSystem.h"
+#include "Managers/Event/EventManager.h"
 
 #include "Games/Game.h"
 
-#include "Entities/Entity.h"
-#include "Entities/Components/Events/OnEventComponent.h"
+#include "Managers/Event/Event.h"
+#include "Managers/Game/World.h"
 
-EventComponentSystem::EventComponentSystem(std::vector<std::unique_ptr<Entity>>& entities, Game* game)
-    : entities(&entities)
+EventComponentSystem::EventComponentSystem(World& world, Game* game)
+    : world(&world)
 {
-    EventSystem::GetInstance().AddListener(this, game);
+    EventManager::GetInstance().AddListener(this, game);
 }
 
 void EventComponentSystem::HandleEvent(const Event &event)
 {
-    for (auto& entity : *entities)
+    for (uint8_t e = 0; e < MAX_ENTITIES; e++)
     {
-        auto* onEvent = entity->GetComponent<OnEventComponent>();
+        if (!world->entities[e].mask & OnEventBit) continue;
 
-        if (!onEvent) continue;
+        auto& onEvent = world->events[e];
 
-        auto it = onEvent->events.find(event.GetEventType());
+        auto it = onEvent.events.find(event.GetEventType());
 
         if (it != onEvent->events.end())
             it->second(event);

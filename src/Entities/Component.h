@@ -8,6 +8,9 @@
 // AI
 #include "Components/AI/AIComponent.h"
 
+// Events
+#include "Components/Events/OnEventComponent.h"
+
 // Input
 #include "Components/Input/InputIntendComponent.h"
 #include "Components/Input/InputMappingComponent.h"

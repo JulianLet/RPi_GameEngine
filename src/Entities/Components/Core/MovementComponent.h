@@ -3,5 +3,5 @@
 
 struct MovementComponent
 {
-    float startSpeed = 0;
+    float speed = 0;
 };

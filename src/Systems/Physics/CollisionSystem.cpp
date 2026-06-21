@@ -1,16 +1,12 @@
 #include "CollisionSystem.h"
 
 #include "Globals.h"
-#include "Entities/Entity.h"
-#include "Entities/Components/Core/TransformComponent.h"
-#include "Entities/Components/Render/RectangleComponent.h"
-#include "Entities/Components/Physics/ColliderComponent.h"
-#include "Entities/Components/Physics/CollisionResponseComponent.h"
+#include "Managers/Game/World.h"
 
 #include <cfloat>
 #include <algorithm>
 
-void CollisionSystem::Update(const std::vector<std::unique_ptr<Entity>>& entities)
+void CollisionSystem::Update(World& world)
 {
     // Cleanup invalid collisions
     for (auto& entity : entities)

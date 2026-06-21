@@ -69,7 +69,6 @@ target_sources(RPi_GameEngine PRIVATE
 target_include_directories(RPi_GameEngine PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}
     ${CMAKE_CURRENT_LIST_DIR}/src
-
 )
 
 # Link libraries

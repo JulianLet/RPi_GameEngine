@@ -1,8 +1,7 @@
 #pragma once
 
-#include "Entities/Component.h"
 #include "Globals.h"
-#include "Systems/Core/GameManager.h"
+#include "Managers/Game/GameManager.h"
 
 #include <functional>
 

@@ -3,8 +3,8 @@
 #include "Entities/Entity.h"
 #include "Entities/Components/Render/RenderableComponent.h"
 
-#include "Systems/Events/Event.h"
-#include "Systems/Events/EventSystem.h"
+#include "Managers/Event/Event.h"
+#include "Managers/Event/EventManager.h"
 
 #include "Games/Game.h"
 
@@ -13,7 +13,7 @@
 EntityManager::EntityManager(std::vector<std::unique_ptr<Entity>> &entities, Game* game)
  : entities(&entities)
 {
-    EventSystem::GetInstance().AddListener(this, game);
+    EventManager::GetInstance().AddListener(this, game);
 }
 
 void EntityManager::Update()

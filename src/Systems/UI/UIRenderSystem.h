@@ -1,17 +1,13 @@
 #pragma once
 
-#include <vector>
-#include <memory>
-
-class Entity;
+struct World;
 class Renderer;
 
 class UIRenderSystem
 {
-
     public: 
     UIRenderSystem() = default;
     ~UIRenderSystem() = default;
 
-    void Render(const std::vector<std::unique_ptr<Entity>>& entities, Renderer& renderer);
+    void Render(World& world, Renderer& renderer);
 };

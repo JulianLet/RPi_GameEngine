@@ -1,17 +1,13 @@
 #pragma once
 
-#include <vector>
-#include <memory>
-
 class Input;
-class Entity;
+struct World;
 
 class TimerSystem
 {
-
     public:
     TimerSystem() = default;
     ~TimerSystem() = default;
 
-    void Update(const std::vector<std::unique_ptr<Entity>>& entities, float deltaTime);
+    void Update(World& world, float deltaTime);
 };

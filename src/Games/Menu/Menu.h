@@ -7,7 +7,7 @@
 #include "Games/Menu/Systems/MenuActionSystem.h"
 
 #include "Systems/AI/AISystem.h"
-#include "Systems/Core/EntityManager.h"
+#include "Managers/Core/EntityManager.h"
 #include "Systems/Events/EventComponentSystem.h"
 #include "Systems/Input/InputSystem.h"
 #include "Systems/Physics/MovementSystem.h"
