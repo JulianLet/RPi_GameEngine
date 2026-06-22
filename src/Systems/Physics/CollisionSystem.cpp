@@ -6,59 +6,66 @@
 #include <cfloat>
 #include <algorithm>
 
-void CollisionSystem::Update(World& world)
+void CleanupCollisions(World& world)
 {
-    // Cleanup invalid collisions
-    for (auto& entity : entities)
+    for (uint32_t i = 0; i < MAX_ENTITIES; i++)
     {
-        auto collider = entity->GetComponent<ColliderComponent>();
-        if (!collider) continue;
+        if (!(world.entities[i].mask & ColliderBit)) continue;
 
-        for (auto it = collider->currentCollisions.begin(); it != collider->currentCollisions.end(); )
+        auto& col = world.colliders[i];
+
+        for (int c = 0; c < MAX_COLLISIONS; c++)
         {
-            if (it->first == nullptr)
-                it = collider->currentCollisions.erase(it);
-            else
-                ++it;
-        }
-    }
+            if (col.currentCollisions[c].otherID == UINT32_MAX)
+                continue;
 
-    for (int i = 0; i < entities.size(); i++)
-    {
-        auto transformA = entities[i]->GetComponent<TransformComponent>();
-        auto colliderA = entities[i]->GetComponent<ColliderComponent>();
+            uint32_t other = col.currentCollisions[c].otherID;
 
-        if (!transformA || !colliderA) continue;
-
-        for (int j = i + 1; j < entities.size(); j++)
-        {
-            auto transformB = entities[j]->GetComponent<TransformComponent>();
-            auto colliderB = entities[j]->GetComponent<ColliderComponent>();
-
-            if (!transformB || !colliderB) continue;
-
-            float timeOfCollision = 0;
-            Vector2 normal = {0, 0};
-
-            bool overlap = SweptAABB(transformA, colliderA, transformB, colliderB, timeOfCollision, normal);
-            
-            if (overlap)
+            if (other >= MAX_ENTITIES || !(world.entities[other].mask & ColliderBit))
             {
-                HandleEnterStayPos(entities[i].get(), colliderA, entities[j].get(), timeOfCollision, normal);
-
-                Vector2 normalForB = {-normal.x, -normal.y};
-                HandleEnterStayPos(entities[j].get(), colliderB, entities[i].get(), timeOfCollision, normalForB);
-            }
-            else
-            {
-                HandleExitPos(entities[i].get(), colliderA, entities[j].get());
-                HandleExitPos(entities[j].get(), colliderB, entities[i].get());
+                col.currentCollisions[c].otherID = UINT32_MAX;
             }
         }
     }
 }
 
-bool CollisionSystem::SweptAABB(TransformComponent* aT, ColliderComponent* aC, TransformComponent* bT, ColliderComponent* bC, float& timeOfCollision, Vector2& normal)
+int FindCollisionSlot(ColliderComponent& col, uint32_t other)
+{
+    for (int i = 0; i < MAX_COLLISIONS; i++)
+    {
+        if (col.currentCollisions[i].otherID == other)
+            return i;
+    }
+    return -1;
+}
+
+int AddCollision(ColliderComponent& col, uint32_t other, CollisionInfo info)
+{
+    for (int i = 0; i < MAX_COLLISIONS; i++)
+    {
+        if (col.currentCollisions[i].otherID == UINT32_MAX ||
+            col.currentCollisions[i].otherID == 0)
+        {
+            col.currentCollisions[i] = {other, info};
+            return i;
+        }
+    }
+    return -1; // full
+}
+
+void RemoveCollision(ColliderComponent& col, uint32_t other)
+{
+    for (int i = 0; i < MAX_COLLISIONS; i++)
+    {
+        if (col.currentCollisions[i].otherID == other)
+        {
+            col.currentCollisions[i].otherID = UINT32_MAX;
+            return;
+        }
+    }
+}
+
+bool SweptAABB(TransformComponent* aT, ColliderComponent* aC, TransformComponent* bT, ColliderComponent* bC, float& timeOfCollision, Vector2& normal)
 {
     //little bit of tolerance
     const float EPS = 0.001;
@@ -156,15 +163,19 @@ bool CollisionSystem::SweptAABB(TransformComponent* aT, ColliderComponent* aC, T
     //no collision if entry after 1, exit before 0 or exit before enter
     if (entryTime > 1.f || exitTime < 0 || entryTime > exitTime) return false;
 
-    if (entryX > entryY) //hit is if the second axis enters
+    float aCenterX = aT->currentPosition.x + (aT->currentSize.x * 0.5f);
+    float aCenterY = aT->currentPosition.y + (aT->currentSize.y * 0.5f);
+
+    float bCenterX = bT->currentPosition.x + (bT->currentSize.x * 0.5f);
+    float bCenterY = bT->currentPosition.y + (bT->currentSize.y * 0.5f);
+
+    if (entryX > entryY)
     {
-        normal.x = (aT->GetCenterPos().x < bT->GetCenterPos().x) ? -1 : 1;
-        // normal.x = (relativeVel.x < 0) ? 1 : -1;
-    } 
+        normal.x = (aCenterX < bCenterX) ? -1 : 1;
+    }
     else
     {
-        normal.y = (aT->GetCenterPos().y < bT->GetCenterPos().y) ? -1 : 1;
-        // normal.y = (relativeVel.y < 0) ? 1 : -1;
+        normal.y = (aCenterY < bCenterY) ? -1 : 1;
     }
 
     if (entryTime < 0.f) entryTime = 0.f;
@@ -173,39 +184,48 @@ bool CollisionSystem::SweptAABB(TransformComponent* aT, ColliderComponent* aC, T
     return true;
 }
 
-void CollisionSystem::HandleEnterStayPos(Entity *self, ColliderComponent *collider, Entity *other, float& timeOfCollision, Vector2& normal)
+void HandleEnterStay(World& world, uint32_t a, uint32_t b, float toi, Vector2 normal)
 {
-    auto response = self->GetComponent<CollisionResponseComponent>();
-    // self->GetComponent<RectangleComponent>()->currentColor = Color::RED;
+    auto& col = world.colliders[a];
+    auto& response = world.collisionResponses[a];
 
-    auto [it, inserted] = collider->currentCollisions.insert({other, CollisionInfo{timeOfCollision, normal}});
+    int slot = FindCollisionSlot(col, b);
 
-    if (!inserted)
+    CollisionInfo info{toi, normal};
+
+    if (slot >= 0)
     {
-        it->second = CollisionInfo{timeOfCollision, normal};
-        if (response && response->OnStay)
-            response->OnStay(self, other);
+        col.currentCollisions[slot].info = info;
+
+        if (response.OnStay)
+            response.OnStay(a, b);
     }
     else
     {
-        if (response && response->OnEnter)
-            response->OnEnter(self, other);
+        AddCollision(col, b, info);
+
+        if (response.OnEnter)
+            response.OnEnter(a, b);
     }
 }
 
-void CollisionSystem::HandleExitPos(Entity *self, ColliderComponent *collider, Entity *other)
+void HandleExit(World& world, uint32_t a, uint32_t b)
 {
-    auto response = self->GetComponent<CollisionResponseComponent>();
-    
-    if (collider->currentCollisions.erase(other))
+    auto& col = world.colliders[a];
+    auto& response = world.collisionResponses[a];
+
+    int slot = FindCollisionSlot(col, b);
+
+    if (slot >= 0)
     {
-        // self->GetComponent<RectangleComponent>()->Reset();
-        if (response && response->OnExit)
-            response->OnExit(self, other);
+        col.currentCollisions[slot].otherID = UINT32_MAX;
+
+        if (response.OnExit)
+            response.OnExit(a, b);
     }
 }
 
-Vector2 CollisionSystem::GetOverlaps(TransformComponent* self, TransformComponent* other)
+Vector2 GetOverlaps(TransformComponent* self, TransformComponent* other)
 {
     float selfLeft   = self->currentPosition.x;
     float selfRight  = self->currentPosition.x + self->currentSize.x;
@@ -226,4 +246,48 @@ Vector2 CollisionSystem::GetOverlaps(TransformComponent* self, TransformComponen
     if (overlapY < 0.f) overlapY = 0.f;
 
     return Vector2{overlapX, overlapY};
+}
+
+void CollisionSystem::Update(World& world)
+{
+    uint32_t requiredMask = TransformBit | ColliderBit;
+
+    CleanupCollisions(world);
+
+    // check collisions
+    for (uint32_t i = 0; i < MAX_ENTITIES; i++)
+    {
+        if ((world.entities[i].mask & requiredMask) != requiredMask) continue;
+
+        auto& transformA = world.transforms[i];
+        auto& colliderA  = world.colliders[i];
+
+        for (uint32_t j = i + 1; j < MAX_ENTITIES; j++)
+        {
+            if ((world.entities[j].mask & requiredMask) != requiredMask) continue;
+
+            auto& transformB = world.transforms[j];
+            auto& colliderB  = world.colliders[j];
+
+            float toi = 0.f;
+            Vector2 normal{0, 0};
+
+            bool hit = SweptAABB(
+                &transformA, &colliderA,
+                &transformB, &colliderB,
+                toi, normal
+            );
+
+            if (hit)
+            {
+                HandleEnterStay(world, i, j, toi, normal);
+                HandleEnterStay(world, j, i, toi, {-normal.x, -normal.y});
+            }
+            else
+            {
+                HandleExit(world, i, j);
+                HandleExit(world, j, i);
+            }
+        }
+    }
 }

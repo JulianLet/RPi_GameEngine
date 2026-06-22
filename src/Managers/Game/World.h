@@ -5,6 +5,7 @@
 #include "Entities/Component.h"
 
 #include "Assets/AnimationDatabase.h"
+#include "Assets/SpriteDatabase.h"
 #include "Assets/Tileset.h"
 
 #include <cstdint>
@@ -13,8 +14,11 @@ struct World
 {
     Entity entities[MAX_ENTITIES];
     uint8_t entityCount = 0;
+    uint8_t activeCamera = INVALID_ENTITY;
 
     AnimationDatabase animationDB;
+    SpriteDatabase spriteDB;
+    SpriteCache spriteCache;
     
     // ===== Core =====
     TransformComponent transforms[MAX_ENTITIES];

@@ -1,4 +1,5 @@
 #include "Hardware/Renderer.h"
+#include "Assets/SpriteDatabase.h"
 #include "Font.h"
 
 void Renderer::SetPixel(int x, int y, uint8_t color)
@@ -107,27 +108,27 @@ void Renderer::DrawText(int x, int y, const char *text, uint8_t color)
     }
 }
 
-void Renderer::DrawSprite(int x, int y, int width, int height, const std::vector<uint8_t>& pixels, float zoom, bool flipX)
+void Renderer::DrawSprite(int x, int y, Sprite& sprite, float zoom, bool flipX)
 {
-    int scaledWidth  = (int)(width  * zoom);
-    int scaledHeight = (int)(height * zoom);
+    int scaledWidth  = (int)(sprite.width  * zoom);
+    int scaledHeight = (int)(sprite.height * zoom);
 
     for (int dy = 0; dy < scaledHeight; ++dy)
     {
         // Map destination Y back to source sprite Y
         int srcY = (int)(dy / zoom);
-        if (srcY >= height) srcY = height - 1;
+        if (srcY >= sprite.height) srcY = sprite.height - 1;
 
         for (int dx = 0; dx < scaledWidth; ++dx)
         {
             // Map destination X back to source sprite X
             int srcX = (int)(dx / zoom);
-            if (srcX >= width) srcX = width - 1;
+            if (srcX >= sprite.width) srcX = sprite.width - 1;
 
             if (flipX)
-                srcX = width - 1 - srcX;
+                srcX = sprite.width - 1 - srcX;
 
-            uint16_t color = pixels[srcY * width + srcX];
+            uint16_t color = sprite.pixels[srcY * sprite.width + srcX];
 
             if (color == transparentColor) continue;
 

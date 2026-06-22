@@ -2,6 +2,7 @@
 #include "hardware/spi.h"
 
 // Entites
+constexpr uint8_t INVALID_ENTITY = 255;
 constexpr int MAX_ENTITIES = 20;
 
 // Layout of button pins

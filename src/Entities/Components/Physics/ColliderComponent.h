@@ -15,11 +15,19 @@ struct CollisionInfo
     Vector2 collisionNormal;    //direction of collision
 };
 
+struct CollisionEntry
+{
+    uint32_t otherID = UINT32_MAX;
+    CollisionInfo info;
+};
+
+constexpr int MAX_COLLISIONS = 5;
+
 struct ColliderComponent
 {
     Vector2 offset = {0,0};
     Vector2 size = {0,0};
     bool isTrigger;
 
-    std::unordered_map<Entity*, CollisionInfo> currentCollisions;
+    CollisionEntry currentCollisions[MAX_COLLISIONS];
 };

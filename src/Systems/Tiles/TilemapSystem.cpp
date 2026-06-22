@@ -86,8 +86,7 @@ void TilemapSystem::Render(World& world, Renderer& renderer, float screenX, floa
             {
                 int tileIndex = tilemap.tileIndices[x + y * tilemap.width];
 
-                const auto& sprite =
-                    tileset.tiles[tileIndex];
+                const auto& sprite = tileset.tiles[tileIndex];
 
                 int drawX = (int)(screenX + x * tileset.tileWidth * zoom);
                 int drawY = (int)(screenY + y * tileset.tileHeight * zoom);

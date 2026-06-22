@@ -1,36 +1,36 @@
 #include "AnimationSystem.h"
-#include "Managers/World.h"
+#include "Managers/Game/World.h"
 
 #include <cstdint>
 
 void AnimationSystem::Update(World& world, float dt)
 {
-    for (uint8_t i = 0; i < MAX_ENTITIES; i++)
-    {
-        if (!world.entities[i].isAlive) continue;
-        if (!(world.entities[i].mask & (1 << 5))) continue; // AnimationBit (adjust index)
+    uint32_t requiredMask = AnimationBit | SpriteBit;
 
-        auto& anim = world.animations[i];
+    for (uint8_t e = 0; e < MAX_ENTITIES; e++)
+    {
+        if ((world.entities[e].mask & requiredMask) != requiredMask) continue;
+
+        auto& anim = world.animations[e];
+        auto& sprite = world.sprites[e];
 
         if (!anim.active) continue;
 
-        AnimationClip& clip =
-            world.animationDB.clips[anim.currentAnimation];
+        AnimationClip& clip = world.animationDB.clips[anim.currentAnimation];
 
         // advance time
         anim.currentTime += dt;
 
         float frameTime = 1.0f / clip.fps;
 
-        if (anim.currentTime < frameTime)
-            continue;
+        if (anim.currentTime < frameTime) continue;
 
         anim.currentTime = 0.0f;
 
         // advance frame
         anim.direction; // kept for bounce logic
 
-        u_int16_t& frameIndex = world.sprites[i].frameIndex;
+        uint16_t& frameIndex = anim.currentFrame;
 
         frameIndex += anim.direction;
 
@@ -61,7 +61,7 @@ void AnimationSystem::Update(World& world, float dt)
         }
 
         // compute final sprite frame index
-        world.sprites[i].frame =
-            clip.frameStart + frameIndex;
+        anim.currentFrame = frameIndex;
+        sprite.frame = clip.frameStart + anim.currentFrame;
     }
 }

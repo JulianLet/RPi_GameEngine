@@ -1,228 +1,205 @@
 #include "PhysicsSystem.h"
 
-
-#include "Entities/Entity.h"
-#include "Entities/Components/Core/TransformComponent.h"
-#include "Entities/Components/Core/MovementComponent.h"
-
-#include "Entities/Components/Physics/PhysicsComponent.h"
-#include "Entities/Components/Physics/PhysicsMaterialComponent.h"
-#include "Entities/Components/Physics/ColliderComponent.h"
+#include "Managers/Game/World.h"
 
 #include <unordered_set>
 #include <cmath>
+#include <algorithm>
 
 inline int sign(float v) { return (v > 0.f) - (v < 0.f); }
 
-void PhysicsSystem::Update(World& world, float deltaTime)
+Vector2 GetOverlaps(const TransformComponent& a, const TransformComponent& b)
 {
-    for (auto& entity : entities)
-    {
-        TransformComponent* transform = entity->GetComponent<TransformComponent>();
-        PhysicsComponent* physics = entity->GetComponent<PhysicsComponent>();
-        MovementComponent* movement = entity->GetComponent<MovementComponent>();
+    float aL = a.currentPosition.x;
+    float aR = a.currentPosition.x + a.currentSize.x;
+    float aT = a.currentPosition.y;
+    float aB = a.currentPosition.y + a.currentSize.y;
 
-        if (!transform || !physics || !movement) continue;
+    float bL = b.currentPosition.x;
+    float bR = b.currentPosition.x + b.currentSize.x;
+    float bT = b.currentPosition.y;
+    float bB = b.currentPosition.y + b.currentSize.y;
 
-        if (physics->physicsType == PhysicsType::STATIC)
-        {
-            physics->currentVelocity = (0,0);
-            continue;
-        }
+    float ox = std::min(aR, bR) - std::max(aL, bL);
+    float oy = std::min(aB, bB) - std::max(aT, bT);
 
-        if (physics->useGravity)
-        {
-            physics->currentVelocity.y += 300 * deltaTime; //add gravity acceleration
-        }
+    if (ox < 0) ox = 0;
+    if (oy < 0) oy = 0;
 
-        //move entity
-        transform->currentPosition.x += physics->currentVelocity.x * deltaTime; //velocity shoudld have speed in
-        transform->currentPosition.y += physics->currentVelocity.y * deltaTime;
-    }
+    return { ox, oy };
 }
 
-void PhysicsSystem::ResolveCollisions(World& world, float deltaTime)
+void CollisionOneDynamic(World& world, uint32_t a, uint32_t b, float toi, Vector2 normal, float dt)
 {
-    std::unordered_set<Entity*> alreadyChecked;
+    auto& ta = world.transforms[a];
+    auto& pa = world.physics[a];
 
-    for (auto& entity : entities)
-    {
-        alreadyChecked.insert(entity.get()); //add to checked list
+    auto& tb = world.transforms[b];
 
-        ColliderComponent* myCollider = entity->GetComponent<ColliderComponent>();
-        PhysicsComponent* myPhysics = entity->GetComponent<PhysicsComponent>();
+    float bounce = 0.0f;
 
-        if (!myCollider || !myPhysics) continue;
+    bounce += world.physicsMaterials[a].bounciness;
+    bounce += world.physicsMaterials[b].bounciness;
+    bounce *= 0.5f;
 
+    ta.currentPosition = ta.lastPosition + pa.currentVelocity * toi * dt;
 
-        for (auto& other : myCollider->currentCollisions)
-        {
-            if (alreadyChecked.find(other.first) != alreadyChecked.end()) continue; //skip if already checked
+    Vector2 v = pa.currentVelocity;
+    Vector2 nComp = normal * (v.x * normal.x + v.y * normal.y);
+    Vector2 tComp = v - nComp;
 
-            ColliderComponent* otherCollider = other.first->GetComponent<ColliderComponent>();
-            PhysicsComponent* otherPhysics = other.first->GetComponent<PhysicsComponent>();
+    pa.currentVelocity = tComp - nComp * bounce;
 
-            if (!otherCollider || !otherPhysics) continue;
-            if (myCollider->isTrigger || otherCollider->isTrigger) continue; //skip if only trigger collision
-
-            const auto myType    = myPhysics->physicsType;
-            const auto otherType = otherPhysics->physicsType;
-
-            if (myType == PhysicsType::STATIC && otherType == PhysicsType::STATIC)
-                continue;
-
-            //one kin one static
-            if (myType == PhysicsType::KINEMATIC && otherType == PhysicsType::STATIC)
-            {
-                CollisionKinematicStatic(entity.get(), other.first, other.second.timeOfCollision);
-            }
-            else if (myType == PhysicsType::STATIC && otherType == PhysicsType::KINEMATIC)
-            {
-                CollisionKinematicStatic(other.first, entity.get(), other.second.timeOfCollision);
-            }
-
-            //both dynamic
-            else if (myType == PhysicsType::DYNAMIC && otherType == PhysicsType::DYNAMIC)
-            {
-                CollisionDynamicDynamic(entity.get(), other.first, other.second.timeOfCollision, other.second.collisionNormal, deltaTime);
-            }
-
-            //one dynamic
-            else if (myType == PhysicsType::DYNAMIC && otherType != PhysicsType::DYNAMIC)
-            {
-                CollisionOneDynamic(entity.get(), other.first, other.second.timeOfCollision, other.second.collisionNormal, deltaTime);
-            }
-            else if (otherType == PhysicsType::DYNAMIC && myType != PhysicsType::DYNAMIC)
-            {
-                CollisionOneDynamic(other.first, entity.get(), other.second.timeOfCollision, other.second.collisionNormal, deltaTime);
-            }
-        }
-    }
+    ta.currentPosition += pa.currentVelocity * (1.0f - toi) * dt;
+    ta.currentPosition -= normal * 0.1f;
 }
 
-
-void PhysicsSystem::CollisionOneDynamic(Entity* dynamic, Entity* other, float& timeOfCollision, Vector2& normal, float deltaTime)
+void CollisionKinematicStatic(World& world, uint32_t k, uint32_t s)
 {
-    auto dynamicTransform = dynamic->GetComponent<TransformComponent>();
-    auto dynamicPhysics = dynamic->GetComponent<PhysicsComponent>();
-    auto dynamicPM = dynamic->GetComponent<PhysicsMaterialComponent>();
+    auto& kt = world.transforms[k];
+    auto& kp = world.physics[k];
+    auto& st = world.transforms[s];
 
-    auto otherPM = other->GetComponent<PhysicsMaterialComponent>();
+    Vector2 overlap = GetOverlaps(kt, st);
 
-    float bounciness = 0.f;
-    if (dynamicPM) bounciness += dynamicPM->bounciness;
-    if (otherPM)   bounciness += otherPM->bounciness;
-    bounciness /= 2.f;
+    if (overlap.x <= 0 && overlap.y <= 0) return;
 
-    // Move to exact collision point
-    dynamicTransform->currentPosition = dynamicTransform->lastPosition + dynamicPhysics->currentVelocity * timeOfCollision * deltaTime;
-    
-    // Reflect along normal with bounciness
-    Vector2 v = dynamicPhysics->currentVelocity;
-    Vector2 normalComponent = Dot(v, normal) * normal;
-    Vector2 tangentialComponent = v - normalComponent;
-
-    // Reverse the normal component and apply restitution
-    dynamicPhysics->currentVelocity = tangentialComponent - normalComponent * bounciness;
-
-    //move along for the rest of the frame after the bounce
-    dynamicTransform->currentPosition += dynamicPhysics->currentVelocity * (1 - timeOfCollision) * deltaTime;
-    
-    // Small nudge to prevent sticking
-    dynamicTransform->currentPosition -= normal * 0.1f; // this pushes the player into the ground
-}
-
-
-void PhysicsSystem::CollisionKinematicStatic(Entity* kinematic, Entity* other, float& timeOfCollision)
-{
-    TransformComponent* kTransform = kinematic->GetComponent<TransformComponent>();
-    TransformComponent* oTransform = other->GetComponent<TransformComponent>();
-
-    Vector2 overlaps = GetOverlaps(kTransform, oTransform);
-
-    if (overlaps.x <= 1.f && overlaps.y <= 1.f) return;
-
-    // Move kinematic out of overlap along smallest axis
-    if (overlaps.x < overlaps.y)
+    if (overlap.x < overlap.y)
     {
-        //direction agains the old
-        int dir = kinematic->GetComponent<PhysicsComponent>()->currentVelocity.x < 0 ? 1 : -1;
-        kTransform->currentPosition.x += dir * overlaps.x;
+        int dir = (kp.currentVelocity.x < 0) ? 1 : -1;
+        kt.currentPosition.x += dir * overlap.x;
     }
     else
     {
-        //direction agains the old
-        int dir = kinematic->GetComponent<PhysicsComponent>()->currentVelocity.y < 0 ? 1 : -1;
-        kTransform->currentPosition.y += dir * overlaps.y;
+        int dir = (kp.currentVelocity.y < 0) ? 1 : -1;
+        kt.currentPosition.y += dir * overlap.y;
     }
 }
 
-
-void PhysicsSystem::CollisionDynamicDynamic(Entity* a, Entity* b, float& timeOfCollision, Vector2& normal, float deltaTime)
+void CollisionDynamicDynamic(World& world, uint32_t a, uint32_t b, float toi, Vector2 normal, float dt)
 {
-    auto aTransform = a->GetComponent<TransformComponent>();
-    auto bTransform = b->GetComponent<TransformComponent>();
-    auto aPhysics = a->GetComponent<PhysicsComponent>();
-    auto bPhysics = b->GetComponent<PhysicsComponent>();
-    auto aPM = a->GetComponent<PhysicsMaterialComponent>();
-    auto bPM = b->GetComponent<PhysicsMaterialComponent>();
+    auto& ta = world.transforms[a];
+    auto& tb = world.transforms[b];
 
-    float bounciness = 0.f;
-    if (aPM) bounciness += aPM->bounciness;
-    if (bPM) bounciness += bPM->bounciness;
-    bounciness /= 2.f;
+    auto& pa = world.physics[a];
+    auto& pb = world.physics[b];
 
-    float mA = 1; // mass for future use
-    float mB = 1;
+    float bounce = 0.5f * (
+        world.physicsMaterials[a].bounciness +
+        world.physicsMaterials[b].bounciness
+    );
 
-    // Move both to collision point
-    aTransform->currentPosition = aTransform->lastPosition + aPhysics->currentVelocity * timeOfCollision * deltaTime;
-    bTransform->currentPosition = bTransform->lastPosition + bPhysics->currentVelocity * timeOfCollision * deltaTime;
+    ta.currentPosition = ta.lastPosition + pa.currentVelocity * toi * dt;
+    tb.currentPosition = tb.lastPosition + pb.currentVelocity * toi * dt;
 
-    // Elastic collision formulas along normal
     if (normal.x != 0)
     {
-        float vA = aPhysics->currentVelocity.x;
-        float vB = bPhysics->currentVelocity.x;
+        float va = pa.currentVelocity.x;
+        float vb = pb.currentVelocity.x;
 
-        aPhysics->currentVelocity.x = ((mA - bounciness * mB) * vA + (1 + bounciness) * mB * vB) / (mA + mB);
-        bPhysics->currentVelocity.x = ((mB - bounciness * mA) * vB + (1 + bounciness) * mA * vA) / (mA + mB);
+        pa.currentVelocity.x = ((1 - bounce) * va + (1 + bounce) * vb) * 0.5f;
+        pb.currentVelocity.x = ((1 - bounce) * vb + (1 + bounce) * va) * 0.5f;
     }
 
     if (normal.y != 0)
     {
-        float vA = aPhysics->currentVelocity.y;
-        float vB = bPhysics->currentVelocity.y;
+        float va = pa.currentVelocity.y;
+        float vb = pb.currentVelocity.y;
 
-        aPhysics->currentVelocity.y = ((mA - bounciness * mB) * vA + (1 + bounciness) * mB * vB) / (mA + mB);
-        bPhysics->currentVelocity.y = ((mB - bounciness * mA) * vB + (1 + bounciness) * mA * vA) / (mA + mB);
+        pa.currentVelocity.y = ((1 - bounce) * va + (1 + bounce) * vb) * 0.5f;
+        pb.currentVelocity.y = ((1 - bounce) * vb + (1 + bounce) * va) * 0.5f;
     }
 
-    // Nudge to prevent sticking
-    aTransform->currentPosition += normal * 0.05f;
-    bTransform->currentPosition -= normal * 0.05f;
+    ta.currentPosition += normal * 0.05f;
+    tb.currentPosition -= normal * 0.05f;
 }
 
-
-Vector2 PhysicsSystem::GetOverlaps(TransformComponent* self, TransformComponent* other)
+void PhysicsSystem::Update(World& world, float dt)
 {
-    float selfLeft   = self->currentPosition.x;
-    float selfRight  = self->currentPosition.x + self->currentSize.x;
-    float selfTop    = self->currentPosition.y;
-    float selfBottom = self->currentPosition.y + self->currentSize.y;
+    for (uint32_t i = 0; i < MAX_ENTITIES; i++)
+    {
+        if (!(world.entities[i].mask & (TransformBit | PhysicsBit))) continue;
 
-    float otherLeft   = other->currentPosition.x;
-    float otherRight  = other->currentPosition.x + other->currentSize.x;
-    float otherTop    = other->currentPosition.y;
-    float otherBottom = other->currentPosition.y + other->currentSize.y;
+        auto& t = world.transforms[i];
+        auto& p = world.physics[i];
 
-    // Compute overlap
-    float overlapX = std::min(selfRight, otherRight) - std::max(selfLeft, otherLeft);
-    float overlapY = std::min(selfBottom, otherBottom) - std::max(selfTop, otherTop);
+        if (p.physicsType == PhysicsType::STATIC)
+        {
+            p.currentVelocity = {0, 0};
+            continue;
+        }
 
-    // Ensure non-negative overlap
-    if (overlapX < 0.f) overlapX = 0.f;
-    if (overlapY < 0.f) overlapY = 0.f;
+        if (p.useGravity)
+        {
+            p.currentVelocity.y += 300.0f * dt;
+        }
 
-    return Vector2{overlapX, overlapY};
+        t.currentPosition.x += p.currentVelocity.x * dt;
+        t.currentPosition.y += p.currentVelocity.y * dt;
+    }
+}
+
+void PhysicsSystem::ResolveCollisions(World& world, float dt)
+{
+    std::unordered_set<uint32_t> checked;
+
+    for (uint32_t a = 0; a < MAX_ENTITIES; a++)
+    {
+        if (!(world.entities[a].mask & ColliderBit)) continue;
+
+        checked.insert(a);
+
+        auto& ca = world.colliders[a];
+        auto& pa = world.physics[a];
+
+        for (auto& entry : ca.currentCollisions)
+        {
+            uint32_t b = entry.otherID;
+
+            if (checked.count(b)) continue;
+
+            auto& cb = world.colliders[b];
+            auto& pb = world.physics[b];
+
+            if (!ca.isTrigger && !cb.isTrigger)
+            {
+                if (pa.physicsType == PhysicsType::STATIC &&
+                    pb.physicsType == PhysicsType::STATIC)
+                    continue;
+
+                if (pa.physicsType == PhysicsType::KINEMATIC &&
+                    pb.physicsType == PhysicsType::STATIC)
+                {
+                    CollisionKinematicStatic(world, a, b);
+                }
+                else if (pa.physicsType == PhysicsType::STATIC &&
+                         pb.physicsType == PhysicsType::KINEMATIC)
+                {
+                    CollisionKinematicStatic(world, b, a);
+                }
+                else if (pa.physicsType == PhysicsType::DYNAMIC &&
+                         pb.physicsType == PhysicsType::DYNAMIC)
+                {
+                    CollisionDynamicDynamic(world, a, b,
+                        entry.info.timeOfCollision,
+                        entry.info.collisionNormal,
+                        dt);
+                }
+                else if (pa.physicsType == PhysicsType::DYNAMIC)
+                {
+                    CollisionOneDynamic(world, a, b,
+                        entry.info.timeOfCollision,
+                        entry.info.collisionNormal,
+                        dt);
+                }
+                else if (pb.physicsType == PhysicsType::DYNAMIC)
+                {
+                    CollisionOneDynamic(world, b, a,
+                        entry.info.timeOfCollision,
+                        entry.info.collisionNormal,
+                        dt);
+                }
+            }
+        }
+    }
 }

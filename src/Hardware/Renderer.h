@@ -27,5 +27,5 @@ class Renderer
     void DrawChar(int x, int y, char c, uint8_t color);
     void DrawText(int x, int y, const char* text, uint8_t color);
 
-    void DrawSprite(int x, int y, int width, int height, const std::vector<uint8_t>& pixels, float zoom, bool flipX); 
+    void DrawSprite(int x, int y, Sprite& sprite, float zoom, bool flipX); 
 };
