@@ -1,5 +1,4 @@
 #pragma once
-#include "Entities/Component.h"
 #include "Common.hpp"
 
 struct TransformComponent

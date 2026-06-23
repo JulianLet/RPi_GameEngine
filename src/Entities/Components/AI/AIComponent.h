@@ -2,13 +2,13 @@
 
 #include <functional>
 
-class Entity;
+struct World;
 
 struct AIComponent
 {
-    std::function<void(World& world, uint8_t id, float)> think;
-    std::function<void(World& world, uint8_t id, float)> decide;
-    std::function<void(World& world, uint8_t id, float)> act;
+    std::function<void(World&, uint8_t, float)> think;
+    std::function<void(World&, uint8_t, float)> decide;
+    std::function<void(World&, uint8_t, float)> act;
 
     float memory[5];
 };

@@ -2,21 +2,11 @@
 
 #include "Common.hpp"
 #include "Games/Game.h"
-#include "Entities/Entity.h"
 
 #include "Games/Menu/Systems/MenuActionSystem.h"
 
-#include "Systems/AI/AISystem.h"
-#include "Managers/Core/EntityManager.h"
-#include "Systems/Events/EventComponentSystem.h"
-#include "Systems/Input/InputSystem.h"
-#include "Systems/Physics/MovementSystem.h"
-#include "Systems/Physics/PhysicsSystem.h"
-#include "Systems/Physics/CollisionSystem.h"
-#include "Systems/Render/CameraSystem.h"
-#include "Systems/Render/RenderSystem.h"
-#include "Systems/UI/UIRenderSystem.h"
-#include "Systems/UI/UIUpdateSystem.h"
+#include "Systems/Systems.h"
+#include "Managers/Managers.h"
 
 #include <vector>
 #include <memory>
@@ -27,37 +17,28 @@ class Menu : public Game
     bool runGame = false;
 
     private:
+    World world;
     CameraComponent* camRef = nullptr;
 
     uint16_t backgroundColor = Color::BLUE;
     
-    AISystem aiSystem;
-    EntityManager entityManager;
+    AISystem myAISystem;
+    TimerSystem myTimerSystem;
+    EventComponentSystem myEventSystem;
+    InputSystem myInputSystem;
+    FollowMovementSystem myFollowSystem;
+    InputMovementSystem myInputMoveSystem;
+    MovementSystem myMovementSystem;
+    CollisionSystem myCollisionSystem;
+    PhysicsSystem myPhysicsSystem;
 
-    //Input
-    InputSystem inputSystem;
-    MenuActionSystem actionSystem;
-
-    //Physics
-    MovementSystem movementSystem;
-    PhysicsSystem physicsSystem;
-    CollisionSystem collisionSystem;
-
-    //Events
-    EventComponentSystem eventComponentSystem;
-    EventComponentSystem eventComponentSystemUI;
-
-    //Render
-    CameraSystem cameraSystem;
-    RenderSystem renderSystem;
-
-    //UI
-    UIUpdateSystem uiUpdateSystem;
-    UIRenderSystem uiRenderSystem;
-
-
-    std::vector<std::unique_ptr<Entity>> myEntities;
-    std::vector<std::unique_ptr<Entity>> myUIElements;
+    AnimationSystem myAnimationSystem;
+    CameraSystem myCameraSystem;
+    ShapeRenderSystem myShapeRenderSystem;
+    SpriteRenderSystem mySpriteRenderSystem;
+    TilemapSystem myTilemapSystem;
+    UIRenderSysetm myUIRenderSystem;
+    UIUpdateSystem myUIUpdateSystem;
 
     public:
     Menu(GameManager& manager);

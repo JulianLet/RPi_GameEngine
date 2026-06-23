@@ -1,12 +1,13 @@
 #pragma once
 
+#include <cstdint>
 #include <functional>
 
-class Entity;
+struct World;
 
 struct CollisionResponseComponent
 {
-    std::function<void(uint32_t self, uint32_t other)> OnEnter;
-    std::function<void(uint32_t self, uint32_t other)> OnStay;
-    std::function<void(uint32_t self, uint32_t other)> OnExit;
+    std::function<void(World& world, uint8_t self, uint8_t other)> OnEnter;
+    std::function<void(World& world, uint8_t self, uint8_t other)> OnStay;
+    std::function<void(World& world, uint8_t self, uint8_t other)> OnExit;
 };

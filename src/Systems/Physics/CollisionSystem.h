@@ -1,10 +1,6 @@
 #pragma once
 
-#include "Common.hpp"
-
 struct World;
-struct TransformComponent;
-struct ColliderComponent;
 
 class CollisionSystem
 {

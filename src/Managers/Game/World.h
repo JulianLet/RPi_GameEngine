@@ -2,7 +2,7 @@
 #include "Common.hpp"
 
 #include "Entities/Entity.h"
-#include "Entities/Component.h"
+#include "Entities/Components.h"
 
 #include "Assets/AnimationDatabase.h"
 #include "Assets/SpriteDatabase.h"
@@ -61,12 +61,20 @@ struct World
     UIButtonComponent uiButtons[MAX_ENTITIES];
     UITextComponent uiTexts[MAX_ENTITIES];
 
-    uint8_t World::CreateEntity()
+    uint8_t CreateEntity()
     {
         for (uint8_t i = 0; i < MAX_ENTITIES; i++)
         {
             if (!entities[i].isAlive)
+            {
+                entities[i].isAlive = true;
+                entities[i].shouldDelete = false;
+                entities[i].mask = 0;
+
                 return i;
+            }
         }
+
+        return INVALID_ENTITY;
     }
 };

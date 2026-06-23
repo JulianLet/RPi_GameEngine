@@ -24,7 +24,7 @@ void EventComponentSystem::HandleEvent(const Event &event)
 
         auto it = onEvent.events.find(event.GetEventType());
 
-        if (it != onEvent->events.end())
+        if (it != onEvent.events.end())
             it->second(event);
     }
 }

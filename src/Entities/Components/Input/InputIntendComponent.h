@@ -1,6 +1,5 @@
 #pragma once
 
-#include "InputMappingComponent.h"
 #include "Hardware/Input.h"
 
 #include <unordered_map>

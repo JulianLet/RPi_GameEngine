@@ -21,7 +21,7 @@
 #include "pico/stdlib.h"
 #include <algorithm>
 
-Menu::Menu(GameManager &manager) : Game("MENU", manager), entityManager(myEntities, this), eventComponentSystem(myEntities, this), eventComponentSystemUI(myUIElements, this)
+Menu::Menu(GameManager &manager) : Game("MENU", manager), myEventSystem(world, this)
 {
     auto& es = EventSystem::GetInstance();
 

@@ -7,5 +7,5 @@
 struct UITextComponent
 {
     std::string text;
-    uint16_t textColor;
+    uint8_t textColor;
 };

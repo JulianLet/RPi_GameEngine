@@ -1,9 +1,19 @@
 #pragma once
+#include <cstdint>
+
+enum class EntityTag : uint8_t
+{
+    Default = 0,
+    Player,
+    Ground,
+    Ball,
+
+};
 
 struct Entity
 {
-    uint8_t id;
     uint32_t mask;
+    EntityTag tag = EntityTag::Default;
 
     bool isAlive = true;
     bool shouldDelete = false;
