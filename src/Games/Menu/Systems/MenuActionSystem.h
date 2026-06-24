@@ -3,14 +3,13 @@
 #include <vector>
 #include <memory>
 
-class Entity;
+class World;
 
 class MenuActionSystem
 {
-
     public:
     MenuActionSystem();
     ~MenuActionSystem() = default;
 
-    void Update(const std::vector<std::unique_ptr<Entity>>& entities);
+    void Update(World& world);
 };

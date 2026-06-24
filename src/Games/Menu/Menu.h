@@ -11,6 +11,9 @@
 #include <vector>
 #include <memory>
 
+struct CommonFactory;
+struct MenuFactory;
+
 class Menu : public Game
 {
     public:
@@ -18,9 +21,10 @@ class Menu : public Game
 
     private:
     World world;
-    CameraComponent* camRef = nullptr;
-
     uint16_t backgroundColor = Color::BLUE;
+
+    CommonFactory myCommonFactory;
+    MenuFactory myFactory;
     
     AISystem myAISystem;
     TimerSystem myTimerSystem;
@@ -37,8 +41,9 @@ class Menu : public Game
     ShapeRenderSystem myShapeRenderSystem;
     SpriteRenderSystem mySpriteRenderSystem;
     TilemapSystem myTilemapSystem;
-    UIRenderSysetm myUIRenderSystem;
-    UIUpdateSystem myUIUpdateSystem;
+    UIButtonSystem myUIButtonSystem;
+    UITimerTextSystem myUITimerSystem;
+    UIRenderSystem myUIRenderSystem;
 
     public:
     Menu(GameManager& manager);

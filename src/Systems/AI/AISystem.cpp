@@ -1,7 +1,7 @@
 #include "AISystem.h"
 
 #include "Managers/Game/World.h"
-#include "Entities/Component.h"
+#include "Entities/Components.h"
 
 
 void AISystem::Update(World& world, float deltaTime)

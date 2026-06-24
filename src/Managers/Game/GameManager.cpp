@@ -28,7 +28,7 @@ void GameManager::Update(Input& input, float deltaTime)
     }
 
     std::string msg = "DT: " + std::to_string(deltaTime);
-    DebugManager::GetInstance().Log(msg);
+    DebugManager::GetInstance().Log(msg.c_str());
 
     //delta times when saving the sprite and drawing on framebuffer
     //menu: 0,05 (20 FPS)

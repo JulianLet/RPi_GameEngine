@@ -1,11 +1,13 @@
 #include "MenuActionSystem.h"
 
+#include "Managers/Managers.h"
+
 MenuActionSystem::MenuActionSystem()
 {
 
 }
 
-void MenuActionSystem::Update(const std::vector<std::unique_ptr<Entity>> &entities)
+void MenuActionSystem::Update(World& world)
 {
     
 }

@@ -4,10 +4,7 @@
 #include "Hardware/Renderer.h"
 
 // Components
-#include "Entities/Components/Tiles/TilemapComponent.h"
-#include "Entities/Components/Core/TransformComponent.h"
-#include "Entities/Components/Physics/ColliderComponent.h"
-#include "Entities/Components/Physics/PhysicsComponent.h"
+#include "Entities/Components.h"
 
 // Bitmask
 #include "Globals.h"
@@ -94,8 +91,6 @@ void TilemapSystem::Render(World& world, Renderer& renderer, float screenX, floa
                 renderer.DrawSprite(
                     drawX,
                     drawY,
-                    tileset.tileWidth,
-                    tileset.tileHeight,
                     sprite,
                     zoom,
                     false

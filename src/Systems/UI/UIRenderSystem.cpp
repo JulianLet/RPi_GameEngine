@@ -5,32 +5,31 @@
 
 void UIRenderSystem::Render(World& world, Renderer &renderer)
 {
-    for (auto& entity : entities)
+    for (uint8_t e = 0; e < MAX_ENTITIES; e++)
     {
-        auto* transform = entity->GetComponent<TransformComponent>();
-        if (!transform) continue;
+        if (!world.entities[e].mask & TransformBit) continue;
 
-
-        auto* text = entity->GetComponent<UITextComponent>();
-        if (text)
+        if (world.entities[e].mask & UITextBit)
         {
-            renderer.DrawText((int)transform->currentPosition.x, (int)transform->currentPosition.y, text->text.c_str(), text->textColor);
-            continue;
+            auto& transform = world.transforms[e];
+            auto& uiText = world.uiTexts[e];
+
+            renderer.DrawText((int)transform.currentPosition.x, (int)transform.currentPosition.y, uiText.text.c_str(), uiText.textColor);
         }
 
-
-        auto* rec = entity->GetComponent<RectangleComponent>();
-        if (rec)
+        if (world.entities[e].mask & RectangleBit)
         {
+            auto& transform = world.transforms[e];
+            auto& rec = world.rectangles[e];
+
             renderer.DrawRectangle(
-                (int)transform->currentPosition.x,
-                (int)transform->currentPosition.y,
-                (int)transform->currentSize.x,
-                (int)transform->currentSize.y,
-                rec->currentColor,
-                rec->filled
+                (int)transform.currentPosition.x,
+                (int)transform.currentPosition.y,
+                (int)transform.currentSize.x,
+                (int)transform.currentSize.y,
+                rec.currentColor,
+                rec.filled
             );
-            continue;
         }
     }
 }
