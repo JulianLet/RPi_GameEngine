@@ -1,38 +1,59 @@
 #include "PongActionSystem.h"
 
+#include "Hardware/Input.h"
 #include "Games/Pong/Pong.h"
-
-#include "Systems/Events/EventSystem.h"
-#include "Systems/Events/Event.h"
-
-#include "Entities/Entity.h"
-#include "Entities/Components/Input/InputIntendComponent.h"
+#include "Managers/Managers.h"
 
 PongActionSystem::PongActionSystem(Pong* pong)
-    : pongRef(pong)
+    : gameRef(pong)
 {
-    EventSystem::GetInstance().AddListener(this, pong);
+    scorePlayerOne = 0;
+    scorePlayerTwo = 0;
 }
 
-void PongActionSystem::Update(const std::vector<std::unique_ptr<Entity>>& entities, Pong& pongRef)
+void PongActionSystem::Init(World& world, uint8_t ballID, uint8_t scoreTextID)
 {
-    for (auto& entity : entities)
-    {
-        InputIntendComponent* intend = entity->GetComponent<InputIntendComponent>();
-        if (!intend) continue;
+    this->ballID = ballID;
+    this->scoreTextID = scoreTextID;
 
-        if (intend->actions[InputAction::START_GAME])
-        {
-            EventStartGame e;
-            EventSystem::GetInstance().DispatchEvent(e);
-        }
+    SetText(world);
+}
+
+void PongActionSystem::Update(World &world, Input& input)
+{
+    // check if ball is oob
+    auto& ballPos = world.transforms[ballID];
+
+    if (ballPos.currentPosition.x < -5) 
+    {
+        gameRef->ResetGame();
+        UpdateText(world, false);
+    }
+    else if (ballPos.currentPosition.x > gameRef->playingFieldSize.x + 5) 
+    {
+        gameRef->ResetGame();
+        UpdateText(world, true);
+    }
+
+    // if start is pressed, start game
+    if (!gameRef->runGame && input.GetKey(KEYCODE::A).pressed)
+    {
+        gameRef->runGame = true;
     }
 }
 
-void PongActionSystem::HandleEvent(const Event& event)
+void PongActionSystem::UpdateText(World& world, bool playerOneScored)
 {
-    if (event.GetEventType() == EventType::START_GAME)
-    {
-        pongRef->runGame = true;
-    }
+    if (playerOneScored) scorePlayerOne++;
+    else scorePlayerTwo++;
+    
+    SetText(world);
+}
+
+void PongActionSystem::SetText(World& world)
+{
+    char buffer[16];
+    snprintf(buffer, sizeof(buffer), "%d : %d", scorePlayerOne, scorePlayerTwo);
+
+    world.uiTexts[scoreTextID].text = buffer;
 }

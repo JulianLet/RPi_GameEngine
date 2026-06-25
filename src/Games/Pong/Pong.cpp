@@ -1,80 +1,34 @@
 #include "Pong.h"
 
-#include "pico/stdlib.h"
-#include "Systems/Events/EventSystem.h"
-#include "Systems/Events/Event.h"
 
-#include "Entities/Common/Prototyping/StaticWall.h"
-#include "Entities/Common/Prototyping/StaticCamera.h"
-
-#include "Games/Pong/Entities/PongManager.h"
-#include "Games/Pong/Entities/Ball.h"
-#include "Games/Pong/Entities/Paddle.h"
-#include "Games/Pong/Entities/ScoreText.h"
-
-#include "Entities/Common/UI/UITextObject.h"
-
-#include "Entities/Components/Core/TransformComponent.h"
-#include "Entities/Components/Render/RenderableComponent.h"
-#include "Entities/Components/Render/CameraComponent.h"
-
-#include <algorithm>
-
-Pong::Pong(GameManager &manager) : Game("PONG", manager), actionSystem(this), entityManager(myEntities, this), eventComponentSystem(myEntities, this), eventComponentSystemUI(myUIElements, this)
+Pong::Pong(GameManager &manager) 
+    : Game("PONG", manager), myEventSystem(world, this), myActionSystem(this)
 {
-    auto& es = EventSystem::GetInstance();
-
-    // --- World entities ---
-
-    // Pong manager
-    es.DispatchEvent(EventSpawnEntity(new PongManager()));
-
-    // Paddles
-    es.DispatchEvent(EventSpawnEntity(new Paddle(this, Vector2(5, 65), KEYCODE::UP, KEYCODE::DOWN, true)));
-    es.DispatchEvent(EventSpawnEntity(new Paddle(this, Vector2(120, 65), KEYCODE::LEFT, KEYCODE::RIGHT, false)));
-
-    // Walls
-    es.DispatchEvent(EventSpawnEntity(new StaticWall(Vector2(0, 0), Vector2(playingFieldSize.x, 30), Color::BLACK, "Wall")));
-    es.DispatchEvent(EventSpawnEntity(new StaticWall(Vector2(0, playingFieldSize.y + 30), Vector2(playingFieldSize.x, 35), Color::BLACK, "Wall")));
-
-    // Ball
-    auto* ball = new Ball();
-    ballTransform = ball->GetComponent<TransformComponent>();
-    es.DispatchEvent(EventSpawnEntity(ball));
-
-    // Camera
-    auto* camera = new StaticCamera(Vector2(65, 81), 1.f, 1.f);
-    camRef = camera->GetComponent<CameraComponent>();
-    es.DispatchEvent(EventSpawnEntity(camera));
-
-    // --- UI elements ---
-    myUIElements.push_back(std::make_unique<UITextObject>(Vector2(57, 8), "PONG", Color::WHITE, 0));
-    myUIElements.push_back(std::make_unique<ScoreText>(Vector2(65, 18), Color::WHITE));
-    myUIElements.push_back(std::make_unique<UITextObject>(Vector2(80, 150), "by Julez", Color::WHITE, 0));
+    ResetGame();
 }
 
 void Pong::Update(Input &input, float deltaTime)
 {
-    inputSystem.Update(myEntities, input);
-    actionSystem.Update(myEntities, *this);
-    entityManager.Update();
-    uiUpdateSystem.Update(myUIElements, input, myGameManager);
-
+    myInputSystem.Update(world, input);
+    myActionSystem.Update(world, input); 
+    myUIButtonSystem.Update(world, input, myGameManager);
+    
     if (runGame)
     {
-        aiSystem.Update(myEntities, deltaTime);
-        movementSystem.Update(myEntities, deltaTime);
-        physicsSystem.Update(myEntities, deltaTime);
-        collisionSystem.Update(myEntities);
-        physicsSystem.ResolveCollisions(myEntities, deltaTime);
-        cameraSystem.Update(myEntities, deltaTime);
-
-        if (ballTransform->currentPosition.x < -5 || ballTransform->currentPosition.x > playingFieldSize.x + 5)
-        {
-            EventBallOOB e(ballTransform->currentPosition.x);
-            EventSystem::GetInstance().DispatchEvent(e);
-            ResetGame();
-        }
+        myAISystem.Update(world, deltaTime);
+        myCameraSystem.Update(world, deltaTime);
+        
+        myInputMoveSystem.Update(world, deltaTime);
+        myMovementSystem.Update(world, deltaTime);
+        myFollowSystem.Update(world, deltaTime);
+        
+        myPhysicsSystem.Update(world, deltaTime);
+        myCollisionSystem.Update(world);
+        myPhysicsSystem.ResolveCollisions(world, deltaTime);
+        
+        myAnimationSystem.Update(world, deltaTime);
+        myTimerSystem.Update(world, deltaTime);
+        myUITimerSystem.Update(world);
     }
 }
 
@@ -82,28 +36,40 @@ void Pong::Render(Renderer &renderer)
 {
     renderer.Clear(playingFieldColor);
 
-    renderSystem.Render(myEntities, renderer, camRef);
-    uiRenderSystem.Render(myUIElements, renderer); //ui on top of world
+    myTilemapSystem.Render(world, renderer);
+    myShapeRenderSystem.Render(world, renderer);
+    mySpriteRenderSystem.Render(world, renderer);
+    myUIRenderSystem.Render(world, renderer);
 }
 
 void Pong::ResetGame()
 {
+    //reset
     runGame = false;
 
-    for (auto& e : myEntities)
+    for (uint8_t e = 0; e < MAX_ENTITIES; e++)
     {
-        e->Reset();
+        world.entities[e].isAlive = false;
+        world.entities[e].mask = 0;
     }
-}
- 
-Entity *Pong::GetBall()
-{
-    for (auto& e : myEntities)
-    {
-        if (e->tag == "Ball")
-        {
-            return e.get();
-        }
-    }
-    return nullptr;
+
+    //new entities
+    myCommonFactory.CreateStaticCamera(world, Vector2(65, 81), 1.f, 1.f);
+
+    // --- World entities ---
+    uint8_t ballID = myPongFactory.CreateBall(world);
+    myPongFactory.CreatePaddle(world, Vector2(5, 65), KEYCODE::UP, KEYCODE::DOWN, true, ballID);
+    myPongFactory.CreatePaddle(world, Vector2(120, 65), KEYCODE::LEFT, KEYCODE::RIGHT, false, ballID);
+    myCommonFactory.CreateStaticWall(world, Vector2(0, 0), Vector2(playingFieldSize.x, 30), Color::BLACK, "Wall");
+    myCommonFactory.CreateStaticWall(world, Vector2(0, playingFieldSize.y + 30), Vector2(playingFieldSize.x, 35), Color::BLACK, "Wall");
+
+    // --- UI entities ---
+    myCommonUIFactory.CreateUIText(world, Vector2(57, 8), "PONG", Color::WHITE, 0); 
+    uint8_t scoreID = myCommonUIFactory.CreateUIText(world, Vector2(65, 18), "SCORE TEXT", Color::WHITE, 0); 
+    myCommonUIFactory.CreateUIText(world, Vector2(80, 150), "by Julez", Color::WHITE, 0); 
+
+    // --- init systems ---
+    myUIButtonSystem.Initialize(world);
+    myTilemapSystem.InitColliders(world);
+    myActionSystem.Init(world, ballID, scoreID);
 }

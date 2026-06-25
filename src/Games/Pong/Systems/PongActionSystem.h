@@ -1,22 +1,26 @@
 #pragma once
 
-#include "Systems/Events/EventListener.h"
+#include <cstdint>
 
-#include <vector>
-#include <memory>
-
-class Event;
-class Entity;
 class Pong;
+class Input;
+struct World;
 
-class PongActionSystem : public EventListener
+class PongActionSystem
 {
-    Pong* pongRef;
+    Pong* gameRef;
+    uint8_t ballID;
+    uint8_t scoreTextID;
+
+    int scorePlayerOne = 0;
+    int scorePlayerTwo = 0;
 
     public: 
-    PongActionSystem(Pong* pongRef);
+    PongActionSystem(Pong* pong);
     ~PongActionSystem() = default;
 
-    void Update(const std::vector<std::unique_ptr<Entity>> &entities, Pong &pongRef);
-    void HandleEvent(const Event& event) override;
+    void Init(World& world, uint8_t ballID, uint8_t scoreTextID);
+    void Update(World& world, Input& input);
+    void UpdateText(World& world, bool playerOneScored);
+    void SetText(World& world);
 };

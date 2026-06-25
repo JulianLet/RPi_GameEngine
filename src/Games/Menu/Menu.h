@@ -3,16 +3,10 @@
 #include "Common.hpp"
 #include "Games/Game.h"
 
-#include "Games/Menu/Systems/MenuActionSystem.h"
-
 #include "Systems/Systems.h"
 #include "Managers/Managers.h"
-
-#include <vector>
-#include <memory>
-
-struct CommonFactory;
-struct MenuFactory;
+#include "Entities/Common/CommonFactory.h"
+#include "Games/Menu/Systems/MenuFactory.h"
 
 class Menu : public Game
 {
@@ -20,27 +14,37 @@ class Menu : public Game
     bool runGame = false;
 
     private:
-    World world;
+    // Variables
     uint16_t backgroundColor = Color::BLUE;
-
+    
+    // Factories
+    World world;
     CommonFactory myCommonFactory;
     MenuFactory myFactory;
     
+    // General
     AISystem myAISystem;
     TimerSystem myTimerSystem;
     EventComponentSystem myEventSystem;
     InputSystem myInputSystem;
+    
+    // Movement
     FollowMovementSystem myFollowSystem;
     InputMovementSystem myInputMoveSystem;
     MovementSystem myMovementSystem;
+    
+    // Physics
     CollisionSystem myCollisionSystem;
     PhysicsSystem myPhysicsSystem;
-
+    
+    // Rendering
     AnimationSystem myAnimationSystem;
     CameraSystem myCameraSystem;
     ShapeRenderSystem myShapeRenderSystem;
     SpriteRenderSystem mySpriteRenderSystem;
     TilemapSystem myTilemapSystem;
+
+    // UI
     UIButtonSystem myUIButtonSystem;
     UITimerTextSystem myUITimerSystem;
     UIRenderSystem myUIRenderSystem;

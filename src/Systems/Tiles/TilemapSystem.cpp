@@ -91,6 +91,8 @@ void TilemapSystem::Render(World& world, Renderer& renderer, float screenX, floa
                 renderer.DrawSprite(
                     drawX,
                     drawY,
+                    tileset.tileWidth,
+                    tileset.tileHeight,
                     sprite,
                     zoom,
                     false

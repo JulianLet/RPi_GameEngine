@@ -2,65 +2,58 @@
 
 #include "Common.hpp"
 #include "Games/Game.h"
-#include "Entities/Entity.h"
 
+#include "Entities/Common/CommonFactory.h"
+#include "Entities/Common/CommonUIFactory.h"
+#include "Games/Pong/Systems/PongFactory.h"#
 #include "Games/Pong/Systems/PongActionSystem.h"
 
-#include "Systems/AI/AISystem.h"
-#include "Systems/Core/EntityManager.h"
-#include "Systems/Events/EventComponentSystem.h"
-#include "Systems/Input/InputSystem.h"
-#include "Systems/Physics/MovementSystem.h"
-#include "Systems/Physics/PhysicsSystem.h"
-#include "Systems/Physics/CollisionSystem.h"
-#include "Systems/Render/CameraSystem.h"
-#include "Systems/Render/RenderSystem.h"
-#include "Systems/UI/UIRenderSystem.h"
-#include "Systems/UI/UIUpdateSystem.h"
-
-#include <vector>
-#include <memory>
+#include "Systems/Systems.h"
+#include "Managers/Managers.h"
 
 class Pong : public Game
 {
     public:
     bool runGame = false;
-
-    private:
-    TransformComponent* ballTransform = nullptr;
-    CameraComponent* camRef = nullptr;
-
     Vector2 playingFieldSize = {130, 100};
+
+    private:    
+    // Variables
     uint16_t playingFieldColor = Color::GREEN;
+
+    // Factories
+    World world;
+    CommonFactory myCommonFactory;
+    CommonUIFactory myCommonUIFactory;
+    PongFactory myPongFactory;
+    PongActionSystem myActionSystem;
     
+    // General
+    AISystem myAISystem;
+    TimerSystem myTimerSystem;
+    EventComponentSystem myEventSystem;
+    InputSystem myInputSystem;
     
-    AISystem aiSystem;
-    EntityManager entityManager;
+    // Movement
+    FollowMovementSystem myFollowSystem;
+    InputMovementSystem myInputMoveSystem;
+    MovementSystem myMovementSystem;
+    
+    // Physics
+    CollisionSystem myCollisionSystem;
+    PhysicsSystem myPhysicsSystem;
+    
+    // Rendering
+    AnimationSystem myAnimationSystem;
+    CameraSystem myCameraSystem;
+    ShapeRenderSystem myShapeRenderSystem;
+    SpriteRenderSystem mySpriteRenderSystem;
+    TilemapSystem myTilemapSystem;
 
-    //Input
-    InputSystem inputSystem;
-    PongActionSystem actionSystem;
-
-    //Physics
-    MovementSystem movementSystem;
-    PhysicsSystem physicsSystem;
-    CollisionSystem collisionSystem;
-
-    //Events
-    EventComponentSystem eventComponentSystem;
-    EventComponentSystem eventComponentSystemUI;
-
-    //Render
-    CameraSystem cameraSystem;
-    RenderSystem renderSystem;
-
-    //UI
-    UIUpdateSystem uiUpdateSystem;
-    UIRenderSystem uiRenderSystem;
-
-
-    std::vector<std::unique_ptr<Entity>> myEntities;
-    std::vector<std::unique_ptr<Entity>> myUIElements;
+    // UI
+    UIButtonSystem myUIButtonSystem;
+    UITimerTextSystem myUITimerSystem;
+    UIRenderSystem myUIRenderSystem;
 
     public:
     Pong(GameManager& manager);
@@ -68,9 +61,5 @@ class Pong : public Game
 
     void Update(Input& input, float deltaTime) override;
     void Render(Renderer& renderer) override;
-
-    Entity* GetBall();
-    
-    private:
     void ResetGame();
 };

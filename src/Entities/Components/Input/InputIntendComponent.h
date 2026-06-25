@@ -1,9 +1,9 @@
 #pragma once
 
 #include "Hardware/Input.h"
+#include "InputMappingComponent.h"
 
 #include <unordered_map>
-
 
 struct InputIntendComponent
 {
