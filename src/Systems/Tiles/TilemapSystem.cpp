@@ -59,8 +59,22 @@ void TilemapSystem::InitColliders(World& world)
     }
 }
 
-void TilemapSystem::Render(World& world, Renderer& renderer, float screenX, float screenY, float zoom)
+void TilemapSystem::Render(World& world, Renderer& renderer)
 {
+    Vector2 cameraPos = Vector2(0,0);
+    float currentZoom = 1;
+
+    //adjust to current camera position and zoom
+    if (world.activeCamera != INVALID_ENTITY)
+    {
+        auto& camTransform = world.transforms[world.activeCamera];
+        cameraPos = camTransform.currentPosition;
+
+        currentZoom = world.cameras[world.activeCamera].currentZoom;
+        cameraPos.x -= ST7735::WIDTH / (2 * currentZoom);
+        cameraPos.y -= ST7735::HEIGHT / (2 * currentZoom); //cameraPos in middle of screen
+    }
+
     for (uint8_t e = 0; e < MAX_ENTITIES; e++)
     {
         if (!(world.entities[e].mask & TilemapBit)) continue;
@@ -68,11 +82,11 @@ void TilemapSystem::Render(World& world, Renderer& renderer, float screenX, floa
         auto& tilemap = world.tilemaps[e];
         auto& tileset = world.tilesets[tilemap.tilesetId];
 
-        int tilesX = (int)((ST7735::WIDTH  / (tileset.tileWidth  * zoom)) + 2);
-        int tilesY = (int)((ST7735::HEIGHT / (tileset.tileHeight * zoom)) + 2);
+        int tilesX = (int)((ST7735::WIDTH  / (tileset.tileWidth  * currentZoom)) + 2);
+        int tilesY = (int)((ST7735::HEIGHT / (tileset.tileHeight * currentZoom)) + 2);
 
-        int startX = std::max(0, (int)(-screenX / (tileset.tileWidth * zoom)));
-        int startY = std::max(0, (int)(-screenY / (tileset.tileHeight * zoom)));
+        int startX = std::max(0, (int)(-cameraPos.x / (tileset.tileWidth * currentZoom)));
+        int startY = std::max(0, (int)(-cameraPos.y / (tileset.tileHeight * currentZoom)));
 
         int endX = std::min(tilemap.width, startX + tilesX);
         int endY = std::min(tilemap.height, startY + tilesY);
@@ -85,16 +99,14 @@ void TilemapSystem::Render(World& world, Renderer& renderer, float screenX, floa
 
                 const auto& sprite = tileset.tiles[tileIndex];
 
-                int drawX = (int)(screenX + x * tileset.tileWidth * zoom);
-                int drawY = (int)(screenY + y * tileset.tileHeight * zoom);
+                int drawX = (int)(cameraPos.x + x * tileset.tileWidth * currentZoom);
+                int drawY = (int)(cameraPos.y + y * tileset.tileHeight * currentZoom);
 
                 renderer.DrawSprite(
                     drawX,
                     drawY,
-                    tileset.tileWidth,
-                    tileset.tileHeight,
                     sprite,
-                    zoom,
+                    currentZoom,
                     false
                 );
             }

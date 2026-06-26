@@ -1,51 +1,33 @@
 #include "JRActionSystem.h"
 
 #include "Games/JumpNRun/JumpNRun.h"
-#include "Games/JumpNRun/Entities/JRManager.h"
-#include "Systems/Events/EventSystem.h"
-#include "Systems/Events/Event.h"
-
-#include "Entities/Entity.h"
-#include "Entities/Components/Input/InputIntendComponent.h"
+#include "Hardware/Input.h"
 
 #include <string>
 
-JRActionSystem::JRActionSystem(JumpNRun* jrRef, JRManager* manager) 
-    : jrRef(jrRef), manager(manager)
+JRActionSystem::JRActionSystem(JumpNRun* gameRef) 
+    : gameRef(gameRef)
 {
-    EventSystem::GetInstance().AddListener(this, jrRef);
+    currentBestTime = 99999.f;
+    EventManager::GetInstance().AddListener(this, gameRef);
 };
 
-void JRActionSystem::Update(const std::vector<std::unique_ptr<Entity>>& entities, float deltaTime)
+void JRActionSystem::Update(World& world, Input& input)
 {
-    for (auto& entity : entities)
+    // if start is pressed, start game
+    if (!gameRef->runGame && input.GetKey(KEYCODE::A).pressed)
     {
-        InputIntendComponent* intend = entity->GetComponent<InputIntendComponent>();
-        if (!intend) continue;
-
-        if (intend->actions[InputAction::JUMP])
-        {
-            EventJump e;
-            EventSystem::GetInstance().DispatchEvent(e);
-        }
-
-        if (intend->actions[InputAction::START_GAME])
-        {
-            EventStartGame e;
-            EventSystem::GetInstance().DispatchEvent(e);
-        }
+        gameRef->runGame = true;
     }
+
+    // jump????
 }
 
 void JRActionSystem::HandleEvent(const Event &event)
 {
-    if (event.GetEventType() == EventType::START_GAME)
-    {
-        jrRef->StartGame();
-    }
-
     if (event.GetEventType() == EventType::UPDATE_SCORE)
     {
-        jrRef->ResetGame();
+        // check best time
+        gameRef->ResetGame();
     }
 }

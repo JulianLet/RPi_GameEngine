@@ -8,10 +8,7 @@
 #include "Hardware/DisplayST7735.h"
 #include "Hardware/Renderer.h"
 
-#include "Systems/Core/GameManager.h"
-#include "Systems/Events/EventSystem.h"
-#include "Systems/Resource/ResourceManager.h"
-#include "Systems/Debug/DebugManager.h"
+#include "Managers/Managers.h"
 
 #include "pico/stdlib.h"
 

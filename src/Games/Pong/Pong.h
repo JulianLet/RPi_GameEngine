@@ -5,7 +5,7 @@
 
 #include "Entities/Common/CommonFactory.h"
 #include "Entities/Common/CommonUIFactory.h"
-#include "Games/Pong/Systems/PongFactory.h"#
+#include "Games/Pong/Systems/PongFactory.h"
 #include "Games/Pong/Systems/PongActionSystem.h"
 
 #include "Systems/Systems.h"

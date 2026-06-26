@@ -3,26 +3,13 @@
 #include "Common.hpp"
 #include "Games/Game.h"
 
+#include "Entities/Common/CommonFactory.h"
+#include "Entities/Common/CommonUIFactory.h"
+#include "Games/JumpNRun/Systems/JRFactory.h"
 #include "Games/JumpNRun/Systems/JRActionSystem.h"
-#include "Games/JumpNRun/Entities/JRManager.h"
 
-#include "Systems/AI/AISystem.h"
-#include "Systems/Core/EntityManager.h"
-#include "Systems/Core/TimerSystem.h"
-#include "Systems/Events/EventComponentSystem.h"
-#include "Systems/Input/InputSystem.h"
-#include "Systems/Physics/MovementSystem.h"
-#include "Systems/Physics/PhysicsSystem.h"
-#include "Systems/Physics/CollisionSystem.h"
-#include "Systems/Render/CameraSystem.h"
-#include "Systems/Render/RenderSystem.h"
-#include "Systems/UI/UIRenderSystem.h"
-#include "Systems/UI/UIUpdateSystem.h"
-
-#include "Entities/Entity.h"
-
-#include <vector>
-#include <memory>
+#include "Systems/Systems.h"
+#include "Managers/Managers.h"
 
 class JumpNRun : public Game
 {
@@ -30,39 +17,42 @@ class JumpNRun : public Game
     bool runGame = false;
 
     private:
-    JRManager jrManager;
-    CameraComponent* camRef = nullptr;
-    TransformComponent* playerTransform = nullptr;
+    // Variables
+    uint16_t playingFieldColor = Color::GREEN;
 
-    uint16_t backgroundColor = Color::CYAN;
+    // Factories
+    World world;
+    CommonFactory myCommonFactory;
+    CommonUIFactory myCommonUIFactory;
+    JRFactory myJRFactory;
+    JRActionSystem myActionSystem;
     
-    AISystem aiSystem;
-    EntityManager entityManager;
-    TimerSystem timerSystem;
+    // General
+    AISystem myAISystem;
+    TimerSystem myTimerSystem;
+    EventComponentSystem myEventSystem;
+    InputSystem myInputSystem;
+    
+    // Movement
+    FollowMovementSystem myFollowSystem;
+    InputMovementSystem myInputMoveSystem;
+    MovementSystem myMovementSystem;
+    
+    // Physics
+    CollisionSystem myCollisionSystem;
+    PhysicsSystem myPhysicsSystem;
+    
+    // Rendering
+    AnimationSystem myAnimationSystem;
+    CameraSystem myCameraSystem;
+    ShapeRenderSystem myShapeRenderSystem;
+    SpriteRenderSystem mySpriteRenderSystem;
+    TilemapSystem myTilemapSystem;
 
-    //Input
-    InputSystem inputSystem;
-    JRActionSystem actionSystem;
-
-    //Physics
-    MovementSystem movementSystem;
-    PhysicsSystem physicsSystem;
-    CollisionSystem collisionSystem;
-
-    //Events
-    EventComponentSystem eventComponentSystem;
-    EventComponentSystem eventComponentSystemUI;
-
-    //Render
-    CameraSystem cameraSystem;
-    RenderSystem renderSystem;
-
-    //UI
-    UIUpdateSystem uiUpdateSystem;
-    UIRenderSystem uiRenderSystem;
-
-    std::vector<std::unique_ptr<Entity>> myEntities;
-    std::vector<std::unique_ptr<Entity>> myUIElements;
+    // UI
+    UIButtonSystem myUIButtonSystem;
+    UITimerTextSystem myUITimerSystem;
+    UIRenderSystem myUIRenderSystem;
 
     public:
     JumpNRun(GameManager& manager);
@@ -70,6 +60,5 @@ class JumpNRun : public Game
 
     void Update(Input& input, float deltaTime) override;
     void Render(Renderer& renderer) override;
-    void StartGame();
     void ResetGame();
 };

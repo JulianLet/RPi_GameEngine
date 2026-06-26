@@ -1,26 +1,20 @@
 #pragma once
 
-#include "Systems/Events/EventListener.h"
+#include "Managers/Managers.h"
 
-#include <vector>
-#include <memory>
-
-class Event;
-class Entity;
-class Player;
+class World;
 class JumpNRun;
-class JRManager;
 
 class JRActionSystem : public EventListener
 {
-    JumpNRun* jrRef = nullptr;
-    JRManager* manager = nullptr;
+    JumpNRun* gameRef = nullptr;
+    float currentBestTime = 99999.f;
 
     public: 
     JRActionSystem() = default;
-    JRActionSystem(JumpNRun* jrRef, JRManager* manager);
+    JRActionSystem(JumpNRun* jrRef);
     ~JRActionSystem() = default;
 
-    void Update(const std::vector<std::unique_ptr<Entity>> &entities, float deltaTime);
+    void Update(World& world, Input& input);
     void HandleEvent(const Event& event) override;
 };
