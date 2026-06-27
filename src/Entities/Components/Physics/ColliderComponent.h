@@ -2,7 +2,6 @@
 
 #include "Common.hpp"
 #include <unordered_set>
-#include <unordered_map>
 
 constexpr bool TRIGGER = true;
 constexpr bool SOLID = false;

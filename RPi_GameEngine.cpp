@@ -1,7 +1,3 @@
-#define USE_DBG_PRINTF 1
-#define USE_PRINTF 1
-
-
 #include "Globals.h"
 
 #include "Hardware/Input.h"

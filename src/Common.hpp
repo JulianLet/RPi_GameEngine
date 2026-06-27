@@ -102,8 +102,6 @@ inline ComponentID GetComponentID() noexcept
     return typeID;
 }
 
-#include <iostream>
-
 namespace Color
 {
     inline uint8_t Color(uint8_t r, uint8_t g, uint8_t b)
