@@ -73,7 +73,7 @@ void Menu::Update(Input &input, float deltaTime)
         myPhysicsSystem.Update(world, deltaTime);
         myCollisionSystem.Update(world);
         myPhysicsSystem.ResolveCollisions(world, deltaTime);
-        
+    
         myAnimationSystem.Update(world, deltaTime);
         myTimerSystem.Update(world, deltaTime);
         myUITimerSystem.Update(world);

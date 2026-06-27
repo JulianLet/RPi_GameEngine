@@ -13,7 +13,7 @@ void UITimerTextSystem::Update(World &world)
 
     for (uint8_t e = 0; e < MAX_ENTITIES; e++)
     {
-        if (world.entities[e].mask & requiredMask != requiredMask) continue;
+        if ((world.entities[e].mask & requiredMask) != requiredMask) continue;
 
         auto& timer = world.timers[e];
         auto& text = world.uiTexts[e];

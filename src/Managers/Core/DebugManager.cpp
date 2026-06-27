@@ -1,6 +1,7 @@
 #include "DebugManager.h"
 
 #include "Hardware/Renderer.h"
+#include <stdio.h>
 
 DebugManager& DebugManager::GetInstance()
 {
@@ -16,6 +17,7 @@ void DebugManager::ClearLogs()
 
 void DebugManager::Log(const char* msg, uint8_t color)
 {
+    printf("%s\n", msg);    
     logs[logIndex] = { msg, color };
 
     logIndex = (logIndex + 1) % MAX_LOGS;

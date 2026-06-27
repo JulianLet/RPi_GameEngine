@@ -116,9 +116,10 @@ void CollisionDynamicDynamic(World& world, uint32_t a, uint32_t b, float toi, Ve
 
 void PhysicsSystem::Update(World& world, float dt)
 {
+    uint32_t requiredBits = TransformBit | PhysicsBit;
     for (uint32_t i = 0; i < MAX_ENTITIES; i++)
     {
-        if (!(world.entities[i].mask & (TransformBit | PhysicsBit))) continue;
+        if ((world.entities[i].mask & requiredBits) != requiredBits) continue;
 
         auto& t = world.transforms[i];
         auto& p = world.physics[i];

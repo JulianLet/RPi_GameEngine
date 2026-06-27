@@ -20,7 +20,7 @@ void InputSystem::Update(World& world, Input &input)
 
         for (const auto& [key, action] : mapping.actionMapping)
         {
-                intend.actions[action] = false;
+            intend.actions[action] = false;
         }      
 
         //update movement based on hardware input

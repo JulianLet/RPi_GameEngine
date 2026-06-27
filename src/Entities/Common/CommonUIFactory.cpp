@@ -72,7 +72,7 @@ uint8_t CommonUIFactory::CreateUIText(World &world, Vector2 pos, const char* tex
 
 uint8_t CommonUIFactory::CreateTimerText(World &world, Vector2 pos, uint8_t color, int layer)
 {
-        uint8_t id = world.CreateEntity();
+    uint8_t id = world.CreateEntity();
 
     if (id == INVALID_ENTITY) return INVALID_ENTITY;
 

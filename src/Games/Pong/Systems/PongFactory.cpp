@@ -7,6 +7,7 @@ uint8_t PongFactory::CreatePaddle(World &world, Vector2 startPos, KEYCODE up, KE
     if (id == INVALID_ENTITY) return INVALID_ENTITY;
 
     world.entities[id].mask = TransformBit | MovementBit | RenderableBit | RectangleBit | PhysicsBit | ColliderBit | InputIntentBit;
+    world.entities[id].tag = EntityTag::Player;
 
     Vector2 size = Vector2(5, 30);
     float speed = 40.f;
@@ -62,8 +63,8 @@ uint8_t PongFactory::CreatePaddle(World &world, Vector2 startPos, KEYCODE up, KE
         world.entities[id].mask |= InputMappingBit;
 
         auto& mapping = world.inputMappings[id];
-        mapping.directionMapping[KEYCODE::UP] = {InputAction::VERTICAL, -speed};
-        mapping.directionMapping[KEYCODE::DOWN] = {InputAction::VERTICAL, speed};
+        mapping.directionMapping[KEYCODE::UP] = {InputAction::VERTICAL, -1};
+        mapping.directionMapping[KEYCODE::DOWN] = {InputAction::VERTICAL, 1};
     }
     else
     {
@@ -99,7 +100,8 @@ uint8_t PongFactory::CreateBall(World &world)
 
     if (id == INVALID_ENTITY) return INVALID_ENTITY;
 
-    world.entities[id].mask = TransformBit | MovementBit | RenderableBit | RectangleBit | PhysicsBit | PhysicsMaterialBit | ColliderBit;// | CollisionResponseBit;
+    world.entities[id].mask = TransformBit | MovementBit | RenderableBit | RectangleBit | PhysicsBit | PhysicsMaterialBit | ColliderBit | CollisionResponseBit;
+    world.entities[id].tag = EntityTag::Ball;
 
     Vector2 startPos = {64,80};
     Vector2 size = {3,3};
@@ -150,20 +152,27 @@ uint8_t PongFactory::CreateBall(World &world)
         .isTrigger = SOLID,
     };
 
-    // the directional reflection
-    // void Ball::OnCollisionEnter(Entity *self, Entity *other)
-    // {
-    //     if (other->tag == "Paddle") //add a bit of direction as well before it was 
-    //     {
-    //         TransformComponent* myTransform = GetComponent<TransformComponent>();
-    //         TransformComponent* otherTransform = other->GetComponent<TransformComponent>();
+    // directional reflection on paddle hit
+    auto& response = world.collisionResponses[id];
+    response.OnEnter = [](World& world, uint8_t self, uint8_t other)
+    {
+        if (world.entities[other].tag == EntityTag::Player)
+        {
+            auto& mT = world.transforms[self];
+            auto& mP = world.physics[self];
+            auto& oT = world.transforms[other];
 
-    //         float deltaY = myTransform->GetCenterPos().y - otherTransform->GetCenterPos().y;
+            float myCenter = mT.currentPosition.y + mT.currentSize.y * 0.5f;
+            float otherCenter = oT.currentPosition.y + oT.currentSize.y * 0.5f;
 
-    //         //give vertical direction based on where on paddle it hit
-    //         GetComponent<PhysicsComponent>()->currentVelocity.y = 2 * speed * deltaY / otherTransform->currentSize.y;
-    //     }
-    // }
+            float deltaY = (myCenter - otherCenter) / (oT.currentSize.y * 0.5f);
+
+            // preserve speed
+            float speed = mP.currentVelocity.Magnitude();
+
+            mP.currentVelocity.y = deltaY * speed;
+        }
+    };
 
     return id;
 }
@@ -175,10 +184,15 @@ void PongFactory::PaddleThink(World &world, uint8_t self, float deltaTime)
     auto& bT = world.transforms[(int)myAI.memory[PongAI::BALL_ID]];
     auto& bP = world.physics[(int)myAI.memory[PongAI::BALL_ID]];
 
-    float deltaX = (mT.currentPosition.x + mT.currentSize.x / 2) - (bT.currentPosition.x + bT.currentSize.x / 2); //rest way to travel for ball
-    float estematedY = (bT.currentPosition.x + bT.currentSize.x / 2) + deltaX * bP.currentVelocity.Normalize().y; //calculated height of ball at paddel position
+    float ballX = bT.currentPosition.x + (bT.currentSize.x / 2);
+    float paddleX = mT.currentPosition.x + (mT.currentSize.x / 2);
 
-    myAI.memory[PongAI::ESTEMATED_Y] = estematedY;
+    float ballY = bT.currentPosition.y + (bT.currentSize.y / 2);
+
+    float deltaX = paddleX - ballX; //rest way to travel for ball
+    float estimatedY = ballY + deltaX * bP.currentVelocity.Normalize().y; //calculated height of ball at paddel position
+
+    myAI.memory[PongAI::ESTEMATED_Y] = estimatedY;
     myAI.memory[PongAI::BALL_TO_RIGHT] = bP.currentVelocity.x > 0 ? 1 : -1;
 }
 
@@ -193,16 +207,18 @@ void PongFactory::PaddleDecide(World &world, uint8_t self, float deltaTime)
         targetY = myAI.memory[PongAI::ESTEMATED_Y];
     }
 
-    if (targetY < (mT.currentPosition.x + mT.currentSize.x / 2) - 10)
-    {
-        myAI.memory[PongAI::TARGET_DIR_Y] = -1; //move down
-    }
-    else if (targetY > (mT.currentPosition.x + mT.currentSize.x / 2) + 10)
-    {
+    float paddleCenterY = mT.currentPosition.y + mT.currentSize.y / 2;
+
+    if (targetY < paddleCenterY - 10)
+    {        
+        myAI.memory[PongAI::TARGET_DIR_Y] = -1;
+    }    
+    else if (targetY > paddleCenterY + 10)
+    {        
         myAI.memory[PongAI::TARGET_DIR_Y] = 1;
-    }
+    }    
     else
-    {
+    {        
         myAI.memory[PongAI::TARGET_DIR_Y] = 0;
     }
 }
@@ -210,8 +226,7 @@ void PongFactory::PaddleDecide(World &world, uint8_t self, float deltaTime)
 void PongFactory::PaddleAct(World &world, uint8_t self, float deltaTime)
 {
     auto& myIntend = world.inputIntends[self];
-    auto& myMovement = world.movements[self];
     auto& myAI = world.ai[self];
 
-    myIntend.y = myAI.memory[PongAI::TARGET_DIR_Y] * myMovement.speed;
+    myIntend.y = myAI.memory[PongAI::TARGET_DIR_Y];
 }

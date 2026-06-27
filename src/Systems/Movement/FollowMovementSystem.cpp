@@ -14,13 +14,13 @@ void FollowMovementSystem::Update(World& world, float deltaTime)
         auto& movement = world.movements[e];
         auto& follow = world.followTargets[e];
 
-            Vector2 diff = follow.target->currentPosition - transform.currentPosition;
+        Vector2 diff = follow.target->currentPosition - transform.currentPosition;
 
-            float lerpFactor = movement.speed * deltaTime;
+        float lerpFactor = movement.speed * deltaTime;
 
-            // Clamp lerpFactor to [0,1] to avoid overshooting
-            if (lerpFactor > 1.0f) lerpFactor = 1.0f;
+        // Clamp lerpFactor to [0,1] to avoid overshooting
+        if (lerpFactor > 1.0f) lerpFactor = 1.0f;
 
-            transform.currentPosition += diff * lerpFactor;
+        transform.currentPosition += diff * lerpFactor;
     }
 }
