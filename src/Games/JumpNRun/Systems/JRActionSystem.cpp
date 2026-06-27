@@ -12,7 +12,12 @@ JRActionSystem::JRActionSystem(JumpNRun* gameRef)
     EventManager::GetInstance().AddListener(this, gameRef);
 };
 
-void JRActionSystem::Update(World& world, Input& input)
+void JRActionSystem::Initialize(uint8_t playerID)
+{
+    this->playerID = playerID;
+}
+
+void JRActionSystem::Update(World &world, Input &input)
 {
     // if start is pressed, start game
     if (!gameRef->runGame && input.GetKey(KEYCODE::A).pressed)
@@ -20,7 +25,8 @@ void JRActionSystem::Update(World& world, Input& input)
         gameRef->runGame = true;
     }
 
-    // jump????
+    auto& playerTransform = world.transforms[playerID];
+    if (playerTransform.currentPosition.y >250) gameRef->ResetGame();
 }
 
 void JRActionSystem::HandleEvent(const Event &event)

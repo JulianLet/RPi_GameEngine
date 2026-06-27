@@ -19,6 +19,8 @@ void TilemapSystem::InitColliders(World& world)
         auto& tilemap = world.tilemaps[e];
         auto& tileset = world.tilesets[tilemap.tilesetId];
 
+        Vector2 size = Vector2(tileset.tileWidth, tileset.tileHeight);
+
         for (size_t idx = 0; idx < tilemap.tileIndices.size(); ++idx)
         {
             int tileID = tilemap.tileIndices[idx];
@@ -31,30 +33,28 @@ void TilemapSystem::InitColliders(World& world)
 
             uint8_t id = world.CreateEntity();
 
+            world.entities[id].mask = TransformBit | ColliderBit | PhysicsBit;
+
             world.transforms[id] =
             {
-                { x * tileset.tileWidth, y * tileset.tileHeight },
-                { tileset.tileWidth, tileset.tileHeight }
+                .currentPosition = Vector2(x * size.x, y * size.y),
+                .lastPosition = Vector2(x * size.x, y * size.y),
+                .currentSize = size
             };
 
             world.colliders[id] =
             {
-                {0, 0},
-                {tileset.tileWidth, tileset.tileHeight},
-                SOLID
+                .offset = Vector2(0,0),
+                .size = size,
+                .isTrigger = SOLID
             };
 
             world.physics[id] =
             {
-                NO_GRAVITY,
-                PhysicsType::STATIC,
-                {0, 0}
+                . useGravity = NO_GRAVITY,
+                .physicsType = PhysicsType::STATIC,
+                .currentVelocity = Vector2(0,0)
             };
-
-            world.entities[id].mask =
-                TransformBit |
-                ColliderBit |
-                PhysicsBit;
         }
     }
 }
@@ -97,7 +97,7 @@ void TilemapSystem::Render(World& world, Renderer& renderer)
             {
                 int tileIndex = tilemap.tileIndices[x + y * tilemap.width];
 
-                const auto& sprite = tileset.tiles[tileIndex];
+                auto& sprite = world.spriteCache.sprites[tileset.sprites[tileIndex]];
 
                 int drawX = (int)(cameraPos.x + x * tileset.tileWidth * currentZoom);
                 int drawY = (int)(cameraPos.y + y * tileset.tileHeight * currentZoom);

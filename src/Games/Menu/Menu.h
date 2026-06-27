@@ -31,6 +31,7 @@ class Menu : public Game
     // Movement
     FollowMovementSystem myFollowSystem;
     InputMovementSystem myInputMoveSystem;
+    JumpSystem myJumpSystem;
     MovementSystem myMovementSystem;
     
     // Physics

@@ -3,11 +3,13 @@
 #include <cstdint>
 #include <vector>
 
+constexpr int MAX_TILES = 15;
+
 struct Tileset
 {
     int tileWidth;
     int tileHeight;
 
-    std::vector<std::vector<uint8_t>> tiles;
-    std::vector<bool> solidTiles;
+    int sprites[MAX_TILES];
+    bool solidTiles[MAX_TILES];
 };

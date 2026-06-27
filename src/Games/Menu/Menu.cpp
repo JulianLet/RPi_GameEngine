@@ -10,8 +10,17 @@
 
 Menu::Menu(GameManager &manager) : Game("MENU", manager), myEventSystem(world, this)
 {
+    //reset
+    runGame = false;
+
+    for (uint8_t e = 0; e < MAX_ENTITIES; e++)
+    {
+        world.entities[e].isAlive = false;
+        world.entities[e].mask = 0;
+    }
+
     // --- World entites ---
-    myCommonFactory.CreateStaticCamera(world, Vector2(65, 81), 1.f, 1.f)
+    myCommonFactory.CreateStaticCamera(world, Vector2(65, 81), 1.f, 1.f);
 
     // --- UI entities ---
     myFactory.CreateMenuButton(
@@ -49,7 +58,6 @@ Menu::Menu(GameManager &manager) : Game("MENU", manager), myEventSystem(world, t
 void Menu::Update(Input &input, float deltaTime)
 {
     myInputSystem.Update(world, input);
-    myActionSystem.Update(world, *this); 
     myUIButtonSystem.Update(world, input, myGameManager);
     
     if (runGame)
@@ -59,6 +67,7 @@ void Menu::Update(Input &input, float deltaTime)
         
         myInputMoveSystem.Update(world, deltaTime);
         myMovementSystem.Update(world, deltaTime);
+        myJumpSystem.Update(world, deltaTime);
         myFollowSystem.Update(world, deltaTime);
         
         myPhysicsSystem.Update(world, deltaTime);
@@ -75,7 +84,7 @@ void Menu::Render(Renderer &renderer)
 {
     renderer.Clear(backgroundColor);
 
-    myTilemapSystem.Render(world, deltaTime);
+    myTilemapSystem.Render(world, renderer);
     myShapeRenderSystem.Render(world, renderer);
     mySpriteRenderSystem.Render(world, renderer);
     myUIRenderSystem.Render(world, renderer);

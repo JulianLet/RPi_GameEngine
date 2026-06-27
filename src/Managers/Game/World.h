@@ -21,6 +21,7 @@ struct World
     SpriteCache spriteCache;
     
     // ===== Core =====
+    JumpComponent jumps[MAX_ENTITIES];
     TransformComponent transforms[MAX_ENTITIES];
     MovementComponent movements[MAX_ENTITIES];
     TimerComponent timers[MAX_ENTITIES];

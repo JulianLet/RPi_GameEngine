@@ -19,7 +19,7 @@ class PongActionSystem
     PongActionSystem(Pong* pong);
     ~PongActionSystem() = default;
 
-    void Init(World& world, uint8_t ballID, uint8_t scoreTextID);
+    void Initialize(World& world, uint8_t ballID, uint8_t scoreTextID);
     void Update(World& world, Input& input);
     void UpdateText(World& world, bool playerOneScored);
     void SetText(World& world);

@@ -1,42 +1,17 @@
 #include "SDTest.h"
 
-#include "Entities/Entity.h"
-#include "Systems/Core/GameManager.h"
-
-#include "Systems/Events/EventSystem.h"
-#include "Systems/Events/Event.h"
-
-#include "Systems/Debug/DebugManager.h"
-#include "Systems/Resource/ResourceManager.h"
-
-#include "Entities/Common/Prototyping/FollowCamera.h"
-#include "Entities/Common/Prototyping/TopDownPlayer.h"
-
-#include "Entities/Components/Core/TransformComponent.h"
-#include "Entities/Components/Render/RenderableComponent.h"
-#include "Entities/Components/Render/SpriteComponent.h"
-#include "Entities/Components/Render/AnimationComponent.h"
-#include "Entities/Components/Render/RectangleComponent.h"
-
-#include "Entities/Components/Tiles/TilemapComponent.h"
-
-#include "Entities/Components/Render/CameraComponent.h"
-#include "pico/stdlib.h"
-#include <algorithm>
-#include <cstring>
-
-SDTest::SDTest(GameManager &manager) : Game("SDTest", manager), entityManager(myEntities, this), eventComponentSystem(myEntities, this), eventComponentSystemUI(myUIElements, this)
+SDTest::SDTest(GameManager &manager) : Game("SDTest", manager), myEventSystem(world, this)
 {
-    auto& es = EventSystem::GetInstance();
+    // auto& es = EventSystem::GetInstance();
 
-    // --- World entities ---
-    Entity* player = new TopDownPlayer(Vector2(40, 40), Vector2(5,10), 20.f, Color::RED);
-    auto* playerTransform = player->GetComponent<TransformComponent>();
-    es.DispatchEvent(EventSpawnEntity(player));
+    // // --- World entities ---
+    // Entity* player = new TopDownPlayer(Vector2(40, 40), Vector2(5,10), 20.f, Color::RED);
+    // auto* playerTransform = player->GetComponent<TransformComponent>();
+    // es.DispatchEvent(EventSpawnEntity(player));
 
-    auto* camera = new FollowCamera(playerTransform, 1.f, 1.f, 30.f);
-    camRef = camera->GetComponent<CameraComponent>();
-    es.DispatchEvent(EventSpawnEntity(camera));
+    // auto* camera = new FollowCamera(playerTransform, 1.f, 1.f, 30.f);
+    // camRef = camera->GetComponent<CameraComponent>();
+    // es.DispatchEvent(EventSpawnEntity(camera));
 
     //colored rec
     // auto* r = new Entity();
@@ -76,14 +51,14 @@ SDTest::SDTest(GameManager &manager) : Game("SDTest", manager), entityManager(my
     // b->AddComponent<SpriteComponent>(32, 32, "PngTest.bin", 2);
     // es.DispatchEvent(EventSpawnEntity(b));
 
-    Tileset tileset(32,32,5,"TilesetTest.bin");
-    tileset.solidTiles[3] = true;
+    // Tileset tileset(32,32,5,"TilesetTest.bin");
+    // tileset.solidTiles[3] = true;
 
-    Entity* tiles = new Entity();
-    tiles->AddComponent<TransformComponent>(Vector2(0,0), Vector2(320, 320)); //size of whole map
-    tiles->AddComponent<RenderableComponent>(0);
-    tiles->AddComponent<TilemapComponent>(10, 10, "Tilemap.txt", tileset);
-    es.DispatchEvent(EventSpawnEntity(tiles));
+    // Entity* tiles = new Entity();
+    // tiles->AddComponent<TransformComponent>(Vector2(0,0), Vector2(320, 320)); //size of whole map
+    // tiles->AddComponent<RenderableComponent>(0);
+    // tiles->AddComponent<TilemapComponent>(10, 10, "Tilemap.txt", tileset);
+    // es.DispatchEvent(EventSpawnEntity(tiles));
     
     // auto* bit = new Entity();
     // bit->AddComponent<TransformComponent>(Vector2(0,0), Vector2(225,225));
@@ -97,27 +72,36 @@ SDTest::SDTest(GameManager &manager) : Game("SDTest", manager), entityManager(my
 
 void SDTest::Update(Input &input, float deltaTime)
 {
-    inputSystem.Update(myEntities, input);
-    actionSystem.Update(myEntities);
-    entityManager.Update();
-    uiUpdateSystem.Update(myUIElements, input, myGameManager);
+    myInputSystem.Update(world, input);
+    //myActionSystem.Update(world, input); 
+    myUIButtonSystem.Update(world, input, myGameManager);
     
     if (runGame)
-    { 
-        aiSystem.Update(myEntities, deltaTime);
-        movementSystem.Update(myEntities, deltaTime);
-        physicsSystem.Update(myEntities, deltaTime);
-        collisionSystem.Update(myEntities);
-        physicsSystem.ResolveCollisions(myEntities, deltaTime);
-        animationSystem.Update(myEntities, deltaTime);
-        cameraSystem.Update(myEntities, deltaTime);
+    {
+        myAISystem.Update(world, deltaTime);
+        myCameraSystem.Update(world, deltaTime);
+        
+        myInputMoveSystem.Update(world, deltaTime);
+        myMovementSystem.Update(world, deltaTime);
+        myJumpSystem.Update(world, deltaTime);
+        myFollowSystem.Update(world, deltaTime);
+        
+        myPhysicsSystem.Update(world, deltaTime);
+        myCollisionSystem.Update(world);
+        myPhysicsSystem.ResolveCollisions(world, deltaTime);
+        
+        myAnimationSystem.Update(world, deltaTime);
+        myTimerSystem.Update(world, deltaTime);
+        myUITimerSystem.Update(world);
     }
 }
 
 void SDTest::Render(Renderer &renderer)
 {
-    renderer.Clear(backgroundColor);
+    renderer.Clear(playingFieldColor);
 
-    renderSystem.Render(myEntities, renderer, camRef);
-    uiRenderSystem.Render(myUIElements, renderer); //ui on top of world
+    myTilemapSystem.Render(world, renderer);
+    myShapeRenderSystem.Render(world, renderer);
+    mySpriteRenderSystem.Render(world, renderer);
+    myUIRenderSystem.Render(world, renderer);
 }

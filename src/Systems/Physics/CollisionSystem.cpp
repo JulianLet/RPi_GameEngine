@@ -269,6 +269,11 @@ void CollisionSystem::Update(World& world)
                 toi, normal
             );
 
+            if ((world.entities[i].mask & JumpBit) && world.entities[j].tag == EntityTag::Ground)
+            {
+                world.jumps[i].isGrounded = hit;
+            }
+
             if (hit)
             {
                 HandleEnterStay(world, i, j, toi, normal);

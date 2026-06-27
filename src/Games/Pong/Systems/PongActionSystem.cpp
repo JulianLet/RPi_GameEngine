@@ -11,7 +11,7 @@ PongActionSystem::PongActionSystem(Pong* pong)
     scorePlayerTwo = 0;
 }
 
-void PongActionSystem::Init(World& world, uint8_t ballID, uint8_t scoreTextID)
+void PongActionSystem::Initialize(World& world, uint8_t ballID, uint8_t scoreTextID)
 {
     this->ballID = ballID;
     this->scoreTextID = scoreTextID;

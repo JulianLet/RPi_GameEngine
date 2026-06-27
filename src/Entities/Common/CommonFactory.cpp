@@ -99,7 +99,7 @@ uint8_t CommonFactory::CreateSideScrollerPlayer(World& world, Vector2 startPos, 
 
     if (id == INVALID_ENTITY) return INVALID_ENTITY;
 
-    world.entities[id].mask = TransformBit | MovementBit | RectangleBit | RenderableBit | ColliderBit | PhysicsBit | InputIntentBit | InputMappingBit; // | CollisionResponseBit | OnEventBit;
+    world.entities[id].mask = TransformBit | MovementBit | JumpBit | RectangleBit | RenderableBit | ColliderBit | PhysicsBit | InputIntentBit | InputMappingBit; // | CollisionResponseBit | OnEventBit;
 
     world.transforms[id] =
     {
@@ -111,6 +111,11 @@ uint8_t CommonFactory::CreateSideScrollerPlayer(World& world, Vector2 startPos, 
     world.movements[id] =
     {
         .speed = moveSpeed
+    };
+
+    world.jumps[id] =
+    {
+        .jumpPower = jumpPower
     };
 
     world.rectangles[id] =
@@ -150,46 +155,6 @@ uint8_t CommonFactory::CreateSideScrollerPlayer(World& world, Vector2 startPos, 
     mapping.directionMapping[KEYCODE::LEFT] = {InputAction::HORIZONTAL, -moveSpeed};
     mapping.directionMapping[KEYCODE::RIGHT] = {InputAction::HORIZONTAL, moveSpeed};
     mapping.actionMapping[KEYCODE::A] = {InputAction::JUMP};
-
-    // auto& response = world.collisionResponses[id];
-    // response.OnStay = [this](World& world, uint8_t self, uint8_t other)
-    // {
-    //     if (world.entities[other].tag == EntityTag::Ground)
-    //     {
-    //         isGrounded = true;
-
-    //         auto& physics = world.physics[self];
-    //         physics.currentVelocity.y = 0;
-    //     }
-    // };
-
-    // response.OnExit = [this](World& world, uint8_t self, uint8_t other)
-    // {
-    //     if (world.entities[other].tag == EntityTag::Ground)
-    //     {
-    //         isGrounded = false;
-
-    //         auto& physics = world.physics[self];
-    //         physics.useGravity = true;
-    //     }
-    // };
-
-
-    // //add events
-    // AddComponent<OnEventComponent>();
-
-    // auto& onEvent = world.events[id];
-    // onEvent.events[EventType::JUMP_EVENT] = [this](const Event& event)
-    // {
-    //     if (!isGrounded)
-    //         return;
-
-    //     isGrounded = false;
-
-    //     auto& physics = world.physics[self];
-    //     physics.currentVelocity.y = -jumpPower;
-    // };
-
 
     return id;
 }

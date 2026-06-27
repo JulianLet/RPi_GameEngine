@@ -5,10 +5,10 @@
 
 void MovementSystem::Update(World& world, float deltaTime)
 {
+    uint32_t requiredMask = TransformBit | MovementBit;
+
     for (uint8_t e = 0; e < MAX_ENTITIES; e++)
     {
-        uint32_t requiredMask = TransformBit | MovementBit;
-
         if ((world.entities[e].mask & requiredMask) != requiredMask) continue;
 
         auto& transform = world.transforms[e];

@@ -1,6 +1,7 @@
 #pragma once
 
 // Core
+#include "Components/Core/JumpComponent.h"
 #include "Components/Core/TransformComponent.h"
 #include "Components/Core/MovementComponent.h"
 #include "Components/Core/TimerComponent.h"

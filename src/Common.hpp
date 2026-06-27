@@ -152,35 +152,36 @@ enum ComponentBit : uint32_t
     AIBit                  = 1u << 0,
 
     // Core
-    MovementBit            = 1u << 1,
-    TimerBit               = 1u << 2,
-    TransformBit           = 1u << 3,
+    JumpBit                = 1u << 1,
+    MovementBit            = 1u << 2,
+    TimerBit               = 1u << 3,
+    TransformBit           = 1u << 4,
 
     // Events
-    OnEventBit             = 1u << 4,
+    OnEventBit             = 1u << 5,
 
     // Input
-    InputIntentBit         = 1u << 5,
-    InputMappingBit        = 1u << 6,
+    InputIntentBit         = 1u << 6,
+    InputMappingBit        = 1u << 7,
 
     // Physics
-    ColliderBit            = 1u << 7,
-    CollisionResponseBit   = 1u << 8,
-    PhysicsBit             = 1u << 9,
-    PhysicsMaterialBit     = 1u << 10,
-    AnimationBit           = 1u << 11,
+    ColliderBit            = 1u << 8,
+    CollisionResponseBit   = 1u << 9,
+    PhysicsBit             = 1u << 10,
+    PhysicsMaterialBit     = 1u << 11,
+    AnimationBit           = 1u << 12,
 
     // Rendering
-    CameraBit              = 1u << 12,
-    FollowTargetBit        = 1u << 13,
-    RectangleBit           = 1u << 14,
-    RenderableBit          = 1u << 15,
-    SpriteBit              = 1u << 16,
+    CameraBit              = 1u << 13,
+    FollowTargetBit        = 1u << 14,
+    RectangleBit           = 1u << 15,
+    RenderableBit          = 1u << 16,
+    SpriteBit              = 1u << 17,
 
     // Tilemap
-    TilemapBit             = 1u << 17,
+    TilemapBit             = 1u << 18,
 
     // UI
-    UIButtonBit            = 1u << 18,
-    UITextBit              = 1u << 19
+    UIButtonBit            = 1u << 19,
+    UITextBit              = 1u << 20
 };

@@ -20,6 +20,7 @@ void Pong::Update(Input &input, float deltaTime)
         
         myInputMoveSystem.Update(world, deltaTime);
         myMovementSystem.Update(world, deltaTime);
+        myJumpSystem.Update(world, deltaTime);
         myFollowSystem.Update(world, deltaTime);
         
         myPhysicsSystem.Update(world, deltaTime);
@@ -71,5 +72,5 @@ void Pong::ResetGame()
     // --- init systems ---
     myUIButtonSystem.Initialize(world);
     myTilemapSystem.InitColliders(world);
-    myActionSystem.Init(world, ballID, scoreID);
+    myActionSystem.Initialize(world, ballID, scoreID);
 }

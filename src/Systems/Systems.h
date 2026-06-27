@@ -10,6 +10,7 @@
 
 #include "Movement/FollowMovementSystem.h"
 #include "Movement/InputMovementSystem.h"
+#include "Movement/JumpSystem.h"
 #include "Movement/MovementSystem.h"
 
 #include "Physics/CollisionSystem.h"
