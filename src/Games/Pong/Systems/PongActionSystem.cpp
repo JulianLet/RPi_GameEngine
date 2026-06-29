@@ -56,4 +56,6 @@ void PongActionSystem::SetText(World& world)
     snprintf(buffer, sizeof(buffer), "%d : %d", scorePlayerOne, scorePlayerTwo);
 
     world.uiTexts[scoreTextID].text = buffer;
+
+    // center text
 }

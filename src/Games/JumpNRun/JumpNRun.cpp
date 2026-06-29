@@ -48,6 +48,7 @@ void JumpNRun::ResetGame()
 
     for (uint8_t e = 0; e < MAX_ENTITIES; e++)
     {
+        world.entities[e].tag = EntityTag::Default;
         world.entities[e].isAlive = false;
         world.entities[e].mask = 0;
     }
@@ -64,7 +65,7 @@ void JumpNRun::ResetGame()
     myCommonFactory.CreateStaticWall(world, Vector2( 20, -40), Vector2( 70, 10), Color::BLACK, "Ground"); //top
     myJRFactory.CreateGoal(world, Vector2( 75, -55), Vector2(10, 10));
     
-    auto playerID = myCommonFactory.CreateSideScrollerPlayer(world, Vector2(0, 110), Vector2(8, 10), 45, Color::BLUE, 85);
+    auto playerID = myCommonFactory.CreateSideScrollerPlayer(world, Vector2(0, 110), Vector2(8, 10), 5, Color::BLUE, 85);
     auto* playerTransform = &world.transforms[playerID];
     
     myCommonFactory.CrateFollowCammera(world, playerTransform, 1, 1, 30);

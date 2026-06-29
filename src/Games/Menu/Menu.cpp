@@ -15,6 +15,7 @@ Menu::Menu(GameManager &manager) : Game("MENU", manager), myEventSystem(world, t
 
     for (uint8_t e = 0; e < MAX_ENTITIES; e++)
     {
+        world.entities[e].tag = EntityTag::Default;
         world.entities[e].isAlive = false;
         world.entities[e].mask = 0;
     }

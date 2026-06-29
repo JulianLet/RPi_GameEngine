@@ -10,7 +10,8 @@ void MenuFactory::CreateMenuButton(World& world, Vector2 pos, const char* text, 
         Vector2(110, 20),
         Color::BLACK,
         Color::YELLOW,
-        0);
+        0
+    );
 
     world.uiButtons[button].OnClicked = std::move(onClick);
 

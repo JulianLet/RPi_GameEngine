@@ -50,6 +50,7 @@ void Pong::ResetGame()
 
     for (uint8_t e = 0; e < MAX_ENTITIES; e++)
     {
+        world.entities[e].tag = EntityTag::Default;
         world.entities[e].isAlive = false;
         world.entities[e].mask = 0;
     }

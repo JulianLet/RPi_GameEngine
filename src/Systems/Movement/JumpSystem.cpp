@@ -18,6 +18,7 @@ void JumpSystem::Update(World &world, float deltaTime)
         if (intend.actions[InputAction::JUMP] && jump.isGrounded)
         {
             physics.currentVelocity.y = -jump.jumpPower;
+            jump.isGrounded = false;
         }
     }
 }

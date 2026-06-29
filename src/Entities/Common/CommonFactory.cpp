@@ -228,6 +228,7 @@ uint8_t CommonFactory::CreateStaticWall(World& world, Vector2 pos, Vector2 size,
     if (id == INVALID_ENTITY) return INVALID_ENTITY;
 
     world.entities[id].mask = TransformBit | RectangleBit | RenderableBit | ColliderBit | PhysicsBit;
+    world.entities[id].tag == EntityTag::Ground;
 
     world.transforms[id] =
     {
