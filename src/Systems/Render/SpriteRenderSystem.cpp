@@ -30,7 +30,7 @@ void SpriteRenderSystem::Render(World& world, Renderer &renderer, int layer)
         auto& renderable = world.renderables[e];
 
         if (renderable.layer != layer) continue;
-        
+
         auto& transform = world.transforms[e];
         auto& sprite = world.sprites[e];
         
@@ -56,7 +56,9 @@ void SpriteRenderSystem::Render(World& world, Renderer &renderer, int layer)
 
         bool flipX = false;
 
-        renderer.DrawSprite((int)screenX, (int)screenY, world.spriteCache.sprites[sprite.frame], currentZoom, flipX);
+        // if sprite is not already loaded in cache then load it
+
+        renderer.DrawSprite((int)screenX, (int)screenY, world.assets.GetOrLoadSprite(sprite.spriteID), currentZoom, flipX);
 
         // //render collision normal
         // auto* collider = entity->GetComponent<ColliderComponent>();

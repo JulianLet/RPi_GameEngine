@@ -1,4 +1,6 @@
 #pragma once
+
+#include "Globals.h"
 #include <cstdint>
 
 enum AnimationMode : uint8_t
@@ -16,7 +18,6 @@ struct AnimationClip
     AnimationMode mode;
 };
 
-constexpr int MAX_ANIMATIONS = 32;
 
 struct AnimationDatabase
 {

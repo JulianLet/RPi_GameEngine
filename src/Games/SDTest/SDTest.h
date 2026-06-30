@@ -5,7 +5,7 @@
 
 #include "Entities/Common/CommonFactory.h"
 #include "Entities/Common/CommonUIFactory.h"
-// #include "Games/SDTest/Systems/SDFactory.h"
+#include "Games/SDTest/Systems/SDFactory.h"
 // #include "Games/SDTest/Systems/SDActionSystem.h"
 
 #include "Systems/Systems.h"
@@ -18,13 +18,13 @@ class SDTest : public Game
 
     private:
     // Variables
-    uint16_t playingFieldColor = Color::GREEN;
+    uint16_t backgroundColor = Color::DARKGRAY;
 
     // Factories
     World world;
     CommonFactory myCommonFactory;
     CommonUIFactory myCommonUIFactory;
-    // JRFactory myJRFactory;
+    SDFactory mySDFactory;
     // JRActionSystem myActionSystem;
     
     // General

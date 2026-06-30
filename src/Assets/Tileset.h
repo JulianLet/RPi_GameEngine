@@ -1,9 +1,9 @@
 #pragma once
 
+#include "Globals.h"
 #include <cstdint>
 #include <vector>
 
-constexpr int MAX_TILES = 15;
 
 struct Tileset
 {

@@ -1,5 +1,7 @@
 #include "ResourceManager.h"
+
 #include "Globals.h"
+#include "Managers/Game/World.h"
 
 ResourceManager::ResourceManager()
 {

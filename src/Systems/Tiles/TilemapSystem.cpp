@@ -17,7 +17,7 @@ void TilemapSystem::InitColliders(World& world)
         if (!(world.entities[e].mask & TilemapBit)) continue;
 
         auto& tilemap = world.tilemaps[e];
-        auto& tileset = world.tilesets[tilemap.tilesetId];
+        auto& tileset = world.assets.myTileset;
 
         Vector2 size = Vector2(tileset.tileWidth, tileset.tileHeight);
 
@@ -64,15 +64,15 @@ void TilemapSystem::Render(World& world, Renderer& renderer)
     Vector2 cameraPos = Vector2(0,0);
     float currentZoom = 1;
 
-    //adjust to current camera position and zoom
     if (world.activeCamera != INVALID_ENTITY)
     {
         auto& camTransform = world.transforms[world.activeCamera];
         cameraPos = camTransform.currentPosition;
 
         currentZoom = world.cameras[world.activeCamera].currentZoom;
-        cameraPos.x -= ST7735::WIDTH / (2 * currentZoom);
-        cameraPos.y -= ST7735::HEIGHT / (2 * currentZoom); //cameraPos in middle of screen
+
+        cameraPos.x -= ST7735::WIDTH  / (2 * currentZoom);
+        cameraPos.y -= ST7735::HEIGHT / (2 * currentZoom);
     }
 
     for (uint8_t e = 0; e < MAX_ENTITIES; e++)
@@ -81,13 +81,16 @@ void TilemapSystem::Render(World& world, Renderer& renderer)
         if (!(world.entities[e].mask & TilemapBit)) continue;
 
         auto& tilemap = world.tilemaps[e];
-        auto& tileset = world.tilesets[tilemap.tilesetId];
+        auto& tileset = world.assets.myTileset;//[tilemap.tilesetId];
 
-        int tilesX = (int)((ST7735::WIDTH  / (tileset.tileWidth  * currentZoom)) + 2);
-        int tilesY = (int)((ST7735::HEIGHT / (tileset.tileHeight * currentZoom)) + 2);
+        int tileW = tileset.tileWidth;
+        int tileH = tileset.tileHeight;
 
-        int startX = std::max(0, (int)(-cameraPos.x / (tileset.tileWidth * currentZoom)));
-        int startY = std::max(0, (int)(-cameraPos.y / (tileset.tileHeight * currentZoom)));
+        int tilesX = (int)((ST7735::WIDTH  / (tileW * currentZoom)) + 2);
+        int tilesY = (int)((ST7735::HEIGHT / (tileH * currentZoom)) + 2);
+
+        int startX = std::max(0, (int)(cameraPos.x / tileW));
+        int startY = std::max(0, (int)(cameraPos.y / tileH));
 
         int endX = std::min(tilemap.width, startX + tilesX);
         int endY = std::min(tilemap.height, startY + tilesY);
@@ -98,14 +101,23 @@ void TilemapSystem::Render(World& world, Renderer& renderer)
             {
                 int tileIndex = tilemap.tileIndices[x + y * tilemap.width];
 
-                auto& sprite = world.spriteCache.sprites[tileset.sprites[tileIndex]];
+                auto& sprite = world.assets.GetOrLoadSprite(tileset.sprites[tileIndex]);
 
-                int drawX = (int)(cameraPos.x + x * tileset.tileWidth * currentZoom);
-                int drawY = (int)(cameraPos.y + y * tileset.tileHeight * currentZoom);
+                float worldX = x * tileW;
+                float worldY = y * tileH;
+
+                float screenX = (worldX - cameraPos.x) * currentZoom;
+                float screenY = (worldY - cameraPos.y) * currentZoom;
+
+                if (screenX + tileW * currentZoom < 0 || screenX > ST7735::WIDTH ||
+                    screenY + tileH * currentZoom < 0 || screenY > ST7735::HEIGHT)
+                {
+                    continue;
+                }
 
                 renderer.DrawSprite(
-                    drawX,
-                    drawY,
+                    (int)screenX,
+                    (int)screenY,
                     sprite,
                     currentZoom,
                     false

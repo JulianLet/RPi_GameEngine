@@ -17,7 +17,7 @@ void AnimationSystem::Update(World& world, float dt)
 
         if (!anim.active) continue;
 
-        AnimationClip& clip = world.animationDB.clips[anim.currentAnimation];
+        AnimationClip& clip = world.assets.myAnimations.clips[anim.currentAnimation];
 
         // advance time
         anim.currentTime += dt;
@@ -63,6 +63,6 @@ void AnimationSystem::Update(World& world, float dt)
 
         // compute final sprite frame index
         anim.currentFrame = frameIndex;
-        sprite.frame = clip.frameStart + anim.currentFrame;
+        sprite.spriteID = clip.frameStart + anim.currentFrame;
     }
 }

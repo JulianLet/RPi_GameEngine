@@ -2,6 +2,22 @@
 
 SDTest::SDTest(GameManager &manager) : Game("SDTest", manager), myEventSystem(world, this)
 {
+    runGame = false;
+
+    for (uint8_t e = 0; e < MAX_ENTITIES; e++)
+    {
+        world.entities[e].tag = EntityTag::Default;
+        world.entities[e].isAlive = false;
+        world.entities[e].mask = 0;
+    }
+
+    //new entities
+    myCommonFactory.CreateStaticCamera(world, Vector2(0,0), 1, 1);
+    mySDFactory.CreateSpriteEntity(world, Vector2(40,40), Vector2(16,16), "idle.bin", 0);
+
+    // --- init systems ---
+    myUIButtonSystem.Initialize(world);
+    myTilemapSystem.InitColliders(world);
     // auto& es = EventSystem::GetInstance();
 
     // // --- World entities ---
@@ -98,7 +114,7 @@ void SDTest::Update(Input &input, float deltaTime)
 
 void SDTest::Render(Renderer &renderer)
 {
-    renderer.Clear(playingFieldColor);
+    renderer.Clear(backgroundColor);
 
     myTilemapSystem.Render(world, renderer);
 

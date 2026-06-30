@@ -4,9 +4,7 @@
 #include "Entities/Entity.h"
 #include "Entities/Components.h"
 
-#include "Assets/AnimationDatabase.h"
-#include "Assets/SpriteDatabase.h"
-#include "Assets/Tileset.h"
+#include "Managers/Core/AssetManager.h"
 
 #include <cstdint>
 
@@ -16,9 +14,11 @@ struct World
     uint8_t entityCount = 0;
     uint8_t activeCamera = INVALID_ENTITY;
 
-    AnimationDatabase animationDB;
-    SpriteDatabase spriteDB;
-    SpriteCache spriteCache;
+    AssetManager assets;
+
+    // AnimationDatabase animationDB;
+    // SpriteDatabase spriteDB;
+    // SpriteCache spriteCache;
     
     // ===== Core =====
     JumpComponent jumps[MAX_ENTITIES];
@@ -55,7 +55,6 @@ struct World
     FollowTargetComponent followTargets[MAX_ENTITIES];
     
     // ===== Tilemap (likely sparse) =====
-    Tileset tilesets[MAX_ENTITIES];
     TilemapComponent tilemaps[MAX_ENTITIES];
     
     // ===== UI =====
