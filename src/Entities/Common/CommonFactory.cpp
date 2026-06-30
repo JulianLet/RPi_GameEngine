@@ -9,6 +9,7 @@ uint8_t CommonFactory::CreateTopDownPlayer(World &world, Vector2 startPos, Vecto
     if (id == INVALID_ENTITY) return INVALID_ENTITY;
 
     world.entities[id].mask = TransformBit | RectangleBit | MovementBit | ColliderBit | PhysicsBit | RenderableBit | InputIntentBit | InputMappingBit;
+    world.entities[id].tag = EntityTag::Player;
 
     world.transforms[id] =
     {
@@ -56,10 +57,10 @@ uint8_t CommonFactory::CreateTopDownPlayer(World &world, Vector2 startPos, Vecto
     };
 
     auto& mapping = world.inputMappings[id];
-    mapping.directionMapping[KEYCODE::UP] = {InputAction::VERTICAL, -moveSpeed};
-    mapping.directionMapping[KEYCODE::DOWN] = {InputAction::VERTICAL, moveSpeed};
-    mapping.directionMapping[KEYCODE::LEFT] = {InputAction::HORIZONTAL, -moveSpeed};
-    mapping.directionMapping[KEYCODE::RIGHT] = {InputAction::HORIZONTAL, moveSpeed};
+    mapping.directionMapping[KEYCODE::UP] = {InputAction::VERTICAL, -1};
+    mapping.directionMapping[KEYCODE::DOWN] = {InputAction::VERTICAL, 1};
+    mapping.directionMapping[KEYCODE::LEFT] = {InputAction::HORIZONTAL, -1};
+    mapping.directionMapping[KEYCODE::RIGHT] = {InputAction::HORIZONTAL, 1};
 
     /* ANIMATION:
     AddComponent<AnimationComponent>(16, 16);
@@ -100,6 +101,7 @@ uint8_t CommonFactory::CreateSideScrollerPlayer(World& world, Vector2 startPos, 
     if (id == INVALID_ENTITY) return INVALID_ENTITY;
 
     world.entities[id].mask = TransformBit | MovementBit | JumpBit | RectangleBit | RenderableBit | ColliderBit | PhysicsBit | InputIntentBit | InputMappingBit; // | CollisionResponseBit | OnEventBit;
+    world.entities[id].tag = EntityTag::Player;
 
     world.transforms[id] =
     {
@@ -152,8 +154,8 @@ uint8_t CommonFactory::CreateSideScrollerPlayer(World& world, Vector2 startPos, 
     };
 
     auto& mapping = world.inputMappings[id];
-    mapping.directionMapping[KEYCODE::LEFT] = {InputAction::HORIZONTAL, -moveSpeed};
-    mapping.directionMapping[KEYCODE::RIGHT] = {InputAction::HORIZONTAL, moveSpeed};
+    mapping.directionMapping[KEYCODE::LEFT] = {InputAction::HORIZONTAL, -1};
+    mapping.directionMapping[KEYCODE::RIGHT] = {InputAction::HORIZONTAL, 1};
     mapping.actionMapping[KEYCODE::A] = {InputAction::JUMP};
 
     return id;
@@ -221,14 +223,14 @@ uint8_t CommonFactory::CrateFollowCammera(World& world, TransformComponent* targ
     return id;
 }
 
-uint8_t CommonFactory::CreateStaticWall(World& world, Vector2 pos, Vector2 size, uint8_t color, const char* tag)
+uint8_t CommonFactory::CreateStaticWall(World& world, Vector2 pos, Vector2 size, uint8_t color)
 {
     uint8_t id = world.CreateEntity();
 
     if (id == INVALID_ENTITY) return INVALID_ENTITY;
 
     world.entities[id].mask = TransformBit | RectangleBit | RenderableBit | ColliderBit | PhysicsBit;
-    world.entities[id].tag == EntityTag::Ground;
+    world.entities[id].tag = EntityTag::Ground;
 
     world.transforms[id] =
     {

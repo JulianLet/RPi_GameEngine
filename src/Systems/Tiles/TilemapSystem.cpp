@@ -77,6 +77,7 @@ void TilemapSystem::Render(World& world, Renderer& renderer)
 
     for (uint8_t e = 0; e < MAX_ENTITIES; e++)
     {
+        if (!world.entities[e].isAlive) continue;
         if (!(world.entities[e].mask & TilemapBit)) continue;
 
         auto& tilemap = world.tilemaps[e];

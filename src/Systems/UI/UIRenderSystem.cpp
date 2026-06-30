@@ -7,7 +7,9 @@ void UIRenderSystem::Render(World& world, Renderer &renderer)
 {
     for (uint8_t e = 0; e < MAX_ENTITIES; e++)
     {
+        if (!world.entities[e].isAlive) continue;
         if (!world.entities[e].mask & TransformBit) continue;
+        if (world.entities[e].tag != EntityTag::UI) continue;
 
         if (world.entities[e].mask & UITextBit)
         {
@@ -24,7 +26,7 @@ void UIRenderSystem::Render(World& world, Renderer &renderer)
 
             renderer.DrawRectangle(
                 (int)transform.currentPosition.x,
-                (int)transform.currentPosition.y,
+                (int)transform.currentPosition.y, 
                 (int)transform.currentSize.x,
                 (int)transform.currentSize.y,
                 rec.currentColor,

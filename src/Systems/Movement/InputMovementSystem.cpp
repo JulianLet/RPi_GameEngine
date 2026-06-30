@@ -7,10 +7,11 @@
 
 void InputMovementSystem::Update(World& world, float deltaTime)
 {
+    uint32_t requiredMask = PhysicsBit | MovementBit | InputIntentBit;
+
     for (uint8_t e = 0; e < MAX_ENTITIES; e++)
     {
-        uint32_t requiredMask = PhysicsBit | MovementBit | InputIntentBit;
-
+        if (!world.entities[e].isAlive) continue;
         if ((world.entities[e].mask & requiredMask) != requiredMask) continue;
 
         auto& movement = world.movements[e];

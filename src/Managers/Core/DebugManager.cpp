@@ -1,6 +1,8 @@
 #include "DebugManager.h"
 
 #include "Hardware/Renderer.h"
+
+#include <cstring>
 #include <stdio.h>
 
 DebugManager& DebugManager::GetInstance()
@@ -17,13 +19,16 @@ void DebugManager::ClearLogs()
 
 void DebugManager::Log(const char* msg, uint8_t color)
 {
-    printf("%s\n", msg);    
-    logs[logIndex] = { msg, color };
+    printf("%s\n", msg);
+
+    strncpy(logs[logIndex].msg, msg, sizeof(logs[logIndex].msg) - 1);
+    logs[logIndex].msg[sizeof(logs[logIndex].msg) - 1] = '\0';
+
+    logs[logIndex].color = color;
 
     logIndex = (logIndex + 1) % MAX_LOGS;
 
-    if (logCount < MAX_LOGS)
-        logCount++;
+    if (logCount < MAX_LOGS) logCount++;
 }
 
 void DebugManager::Render(Renderer& renderer)

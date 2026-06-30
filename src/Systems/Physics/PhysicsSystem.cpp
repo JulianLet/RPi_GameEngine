@@ -119,6 +119,7 @@ void PhysicsSystem::Update(World& world, float dt)
     uint32_t requiredBits = TransformBit | PhysicsBit;
     for (uint32_t i = 0; i < MAX_ENTITIES; i++)
     {
+        if (!world.entities[i].isAlive) continue;
         if ((world.entities[i].mask & requiredBits) != requiredBits) continue;
 
         auto& t = world.transforms[i];
@@ -146,6 +147,7 @@ void PhysicsSystem::ResolveCollisions(World& world, float dt)
 
     for (uint32_t a = 0; a < MAX_ENTITIES; a++)
     {
+        if (!world.entities[a].isAlive) continue;
         if (!(world.entities[a].mask & ColliderBit)) continue;
 
         checked.insert(a);

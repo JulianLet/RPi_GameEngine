@@ -9,6 +9,7 @@ uint8_t CommonUIFactory::CreateUIButton(World &world, Vector2 pos, Vector2 size,
     if (id == INVALID_ENTITY) return INVALID_ENTITY;
 
     world.entities[id].mask = TransformBit | RectangleBit | RenderableBit | UIButtonBit;
+    world.entities[id].tag = EntityTag::UI;
 
     world.transforms[id] =
     {
@@ -46,6 +47,7 @@ uint8_t CommonUIFactory::CreateUIText(World &world, Vector2 pos, const char* tex
     if (id == INVALID_ENTITY) return INVALID_ENTITY;
 
     world.entities[id].mask = TransformBit | RenderableBit | UITextBit;
+    world.entities[id].tag = EntityTag::UI;
 
     world.transforms[id] = 
     {
@@ -77,6 +79,7 @@ uint8_t CommonUIFactory::CreateTimerText(World &world, Vector2 pos, uint8_t colo
     if (id == INVALID_ENTITY) return INVALID_ENTITY;
 
     world.entities[id].mask = TransformBit | RenderableBit | TimerBit | UITextBit;
+    world.entities[id].tag = EntityTag::UI;
 
     world.transforms[id] = 
     {

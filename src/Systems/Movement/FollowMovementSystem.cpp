@@ -6,6 +6,7 @@ void FollowMovementSystem::Update(World& world, float deltaTime)
 {
     for (uint8_t e = 0; e < MAX_ENTITIES; e++)
     {
+        if (!world.entities[e].isAlive) continue;
         uint32_t requiredMask = TransformBit | MovementBit | FollowTargetBit;
 
         if ((world.entities[e].mask & requiredMask) != requiredMask) continue;

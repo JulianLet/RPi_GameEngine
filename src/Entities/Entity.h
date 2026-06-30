@@ -4,6 +4,7 @@
 enum class EntityTag : uint8_t
 {
     Default = 0,
+    UI,
     Player,
     Ground,
     Ball,

@@ -242,12 +242,21 @@ void HandleExit(World& world, uint8_t a, uint8_t b)
 
 void CollisionSystem::Update(World& world)
 {
+    for (uint8_t e = 0; e < MAX_ENTITIES; e++)
+    {
+        if (world.entities[e].mask & JumpBit)
+        {
+            world.jumps[e].isGrounded = false;
+        }
+    }
+
     uint32_t requiredMask = TransformBit | ColliderBit;
 
     CleanupCollisions(world);
 
     for (uint8_t i = 0; i < MAX_ENTITIES; i++)
     {
+        if (!world.entities[i].isAlive) continue;
         if ((world.entities[i].mask & requiredMask) != requiredMask) continue;
 
         auto& transformA = world.transforms[i];
@@ -255,6 +264,7 @@ void CollisionSystem::Update(World& world)
 
         for (uint8_t j = i + 1; j < MAX_ENTITIES; j++)
         {
+            if (!world.entities[j].isAlive) continue;
             if ((world.entities[j].mask & requiredMask) != requiredMask) continue;
 
             auto& transformB = world.transforms[j];
@@ -274,9 +284,14 @@ void CollisionSystem::Update(World& world)
                 HandleEnterStay(world, i, j, toi, normal);
                 HandleEnterStay(world, j, i, toi, {-normal.x, -normal.y});
 
-                if ((world.entities[i].mask & JumpBit) && world.entities[j].tag == EntityTag::Ground)
+                if ((world.entities[i].mask & JumpBit) && world.entities[j].tag == EntityTag::Ground)// && normal.y == 1)
                 {
                     world.jumps[i].isGrounded = true;
+                }
+
+                if ((world.entities[j].mask & JumpBit) && world.entities[i].tag == EntityTag::Ground)// && normal.y == 1)
+                {
+                    world.jumps[j].isGrounded = true;
                 }
             }
             else

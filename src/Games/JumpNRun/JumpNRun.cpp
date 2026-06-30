@@ -55,17 +55,17 @@ void JumpNRun::ResetGame()
 
     //new entities
     // --- World entities ---
-    myCommonFactory.CreateStaticWall(world, Vector2(-50, 180), Vector2(210, 50), Color::BLACK, "Ground"); //ground
-    myCommonFactory.CreateStaticWall(world, Vector2( 80, 150), Vector2(120, 30), Color::BLACK, "Ground"); //first step
-    myCommonFactory.CreateStaticWall(world, Vector2(100, 110), Vector2(100, 40), Color::BLACK, "Ground"); //second step
-    myCommonFactory.CreateStaticWall(world, Vector2(190,  30), Vector2( 10, 80), Color::BLACK, "Ground"); //wall right
-    myCommonFactory.CreateStaticWall(world, Vector2(110,  30), Vector2( 50, 10), Color::BLACK, "Ground"); //air right
-    myCommonFactory.CreateStaticWall(world, Vector2( 32,  45), Vector2( 30, 10), Color::BLACK, "Ground"); //air left
-    myCommonFactory.CreateStaticWall(world, Vector2(-20, -30), Vector2( 10, 85), Color::BLACK, "Ground"); //wall left
-    myCommonFactory.CreateStaticWall(world, Vector2( 20, -40), Vector2( 70, 10), Color::BLACK, "Ground"); //top
+    myCommonFactory.CreateStaticWall(world, Vector2(-50, 180), Vector2(210, 50), Color::BLACK); //ground
+    myCommonFactory.CreateStaticWall(world, Vector2( 80, 150), Vector2(120, 30), Color::BLACK); //first step
+    myCommonFactory.CreateStaticWall(world, Vector2(100, 110), Vector2(100, 40), Color::BLACK); //second step
+    myCommonFactory.CreateStaticWall(world, Vector2(190,  30), Vector2( 10, 80), Color::BLACK); //wall right
+    myCommonFactory.CreateStaticWall(world, Vector2(110,  30), Vector2( 50, 10), Color::BLACK); //air right
+    myCommonFactory.CreateStaticWall(world, Vector2( 32,  45), Vector2( 30, 10), Color::BLACK); //air left
+    myCommonFactory.CreateStaticWall(world, Vector2(-20, -30), Vector2( 10, 85), Color::BLACK); //wall left
+    myCommonFactory.CreateStaticWall(world, Vector2( 20, -40), Vector2( 70, 10), Color::BLACK); //top
     myJRFactory.CreateGoal(world, Vector2( 75, -55), Vector2(10, 10));
     
-    auto playerID = myCommonFactory.CreateSideScrollerPlayer(world, Vector2(0, 110), Vector2(8, 10), 5, Color::BLUE, 85);
+    auto playerID = myCommonFactory.CreateSideScrollerPlayer(world, Vector2(0, 110), Vector2(8, 10), 50, Color::BLUE, 85);
     auto* playerTransform = &world.transforms[playerID];
     
     myCommonFactory.CrateFollowCammera(world, playerTransform, 1, 1, 30);

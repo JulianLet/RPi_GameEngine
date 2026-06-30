@@ -108,8 +108,8 @@ void UIButtonSystem::UpdateVisuals(World& world)
 
     for (uint8_t e = 0; e < MAX_ENTITIES; e++)
     {
-        if ((world.entities[e].mask & requiredMask) != requiredMask)
-            continue;
+        if (!world.entities[e].isAlive) continue;
+        if ((world.entities[e].mask & requiredMask) != requiredMask) continue;
 
         auto& rec = world.rectangles[e];
         auto& btn = world.uiButtons[e];

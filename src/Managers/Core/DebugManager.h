@@ -18,7 +18,7 @@ private:
 
     struct LogData
     {
-        const char* msg;
+        char msg[64];
         uint8_t color;
     };
 

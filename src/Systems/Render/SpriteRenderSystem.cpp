@@ -24,6 +24,7 @@ void SpriteRenderSystem::Render(World& world, Renderer &renderer)
     uint32_t requiredMask = RenderableBit | TransformBit | SpriteBit; 
     for (uint8_t e = 0; e < MAX_ENTITIES; e++)
     {
+        if (!world.entities[e].isAlive) continue;
         if ((world.entities[e].mask & requiredMask) != requiredMask) continue;
 
         auto& renderable = world.renderables[e];

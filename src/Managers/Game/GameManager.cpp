@@ -28,7 +28,14 @@ void GameManager::Update(Input& input, float deltaTime)
     }
 
     std::string msg = "DT: " + std::to_string(deltaTime);
-    //DebugManager::GetInstance().Log(msg.c_str(), Color::RANDOM());
+    DebugManager::GetInstance().Log(msg.c_str(), Color::RANDOM());
+
+    //delat times after bitmasks    
+    //menu: 0.05 (20 FPS)
+    //pong: 0.05 (20 FPS)
+    //jnr:  0.05 (20 FPS)
+    //sd:   TBD
+
 
     //delta times when saving the sprite and drawing on framebuffer
     //menu: 0,05 (20 FPS)

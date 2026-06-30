@@ -62,8 +62,8 @@ void Pong::ResetGame()
     uint8_t ballID = myPongFactory.CreateBall(world);
     myPongFactory.CreatePaddle(world, Vector2(5, 65), KEYCODE::UP, KEYCODE::DOWN, true, ballID);
     myPongFactory.CreatePaddle(world, Vector2(120, 65), KEYCODE::LEFT, KEYCODE::RIGHT, false, ballID);
-    myCommonFactory.CreateStaticWall(world, Vector2(0, 0), Vector2(playingFieldSize.x, 30), Color::BLACK, "Wall");
-    myCommonFactory.CreateStaticWall(world, Vector2(0, playingFieldSize.y + 30), Vector2(playingFieldSize.x, 35), Color::BLACK, "Wall");
+    myCommonFactory.CreateStaticWall(world, Vector2(0, 0), Vector2(playingFieldSize.x, 30), Color::BLACK);
+    myCommonFactory.CreateStaticWall(world, Vector2(0, playingFieldSize.y + 30), Vector2(playingFieldSize.x, 35), Color::BLACK);
 
     // --- UI entities ---
     myCommonUIFactory.CreateUIText(world, Vector2(57, 8), "PONG", Color::WHITE, 0); 

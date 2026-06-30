@@ -9,6 +9,7 @@ void AnimationSystem::Update(World& world, float dt)
 
     for (uint8_t e = 0; e < MAX_ENTITIES; e++)
     {
+        if (!world.entities[e].isAlive) continue;
         if ((world.entities[e].mask & requiredMask) != requiredMask) continue;
 
         auto& anim = world.animations[e];

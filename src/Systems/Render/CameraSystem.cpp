@@ -6,6 +6,7 @@ void CameraSystem::Update(World& world, float deltaTime)
 {
     for (uint8_t e = 0; e < MAX_ENTITIES; e++)
     {
+        if (!world.entities[e].isAlive) continue;
         if (!world.entities[e].mask & CameraBit) continue;
 
         auto& camera = world.cameras[e];

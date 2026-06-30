@@ -8,6 +8,7 @@ void AISystem::Update(World& world, float deltaTime)
 {
     for (uint8_t e = 0; e < MAX_ENTITIES; e++)
     {
+        if (!world.entities[e].isAlive) continue;
         if (!(world.entities[e].mask & AIBit)) continue;
 
         auto& myAI = world.ai[e];
