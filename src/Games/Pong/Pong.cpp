@@ -35,11 +35,16 @@ void Pong::Update(Input &input, float deltaTime)
 
 void Pong::Render(Renderer &renderer)
 {
-    renderer.Clear(playingFieldColor);
+    renderer.Clear(backgroundColor);
 
     myTilemapSystem.Render(world, renderer);
-    myShapeRenderSystem.Render(world, renderer);
-    mySpriteRenderSystem.Render(world, renderer);
+
+    for (int layer = 0; layer < MAX_LAYERS; ++layer)
+    {
+        myShapeRenderSystem.Render(world, renderer, layer);
+        mySpriteRenderSystem.Render(world, renderer, layer);
+    }
+
     myUIRenderSystem.Render(world, renderer);
 }
 

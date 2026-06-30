@@ -1,6 +1,6 @@
 #include "JRFactory.h"
 
-uint8_t JRFactory::CreateCloud(World &world, Vector2 pos, Vector2 size)
+uint8_t JRFactory::CreateCloud(World &world, Vector2 pos, Vector2 size, float parallax)
 {
     uint8_t id = world.CreateEntity();
 
@@ -18,8 +18,8 @@ uint8_t JRFactory::CreateCloud(World &world, Vector2 pos, Vector2 size)
     world.renderables[id] =
     {
         .doRender = true,
-        .layer = 0,
-        .parallaxFactor = 3.f,
+        .layer = 1,
+        .parallaxFactor = parallax,
     };
 
     world.rectangles[id] =
@@ -49,7 +49,7 @@ uint8_t JRFactory::CreateGoal(World &world, Vector2 pos, Vector2 size)
     world.renderables[id] =
     {
         .doRender = true,
-        .layer = 0,
+        .layer = 9,
         .parallaxFactor = 1.f,
     };
 
@@ -72,7 +72,8 @@ uint8_t JRFactory::CreateGoal(World &world, Vector2 pos, Vector2 size)
         {
             if (world.entities[other].tag == EntityTag::Player)
             {
-                EventUpdateScore e (1, 0);
+                float time = 0.3; // get the current time
+                EventUpdateScore e (time);
                 EventManager::GetInstance().DispatchEvent(e);
             }
         }

@@ -27,8 +27,13 @@ void GameManager::Update(Input& input, float deltaTime)
         SwitchGame(std::make_unique<Menu>(*this));
     }
 
+    if (input.GetKey(KEYCODE::B).pressed)
+    {
+        DebugManager::GetInstance().printLogs = !DebugManager::GetInstance().printLogs;
+    }
+
     std::string msg = "DT: " + std::to_string(deltaTime);
-    DebugManager::GetInstance().Log(msg.c_str(), Color::RANDOM());
+    DebugManager::GetInstance().Log(msg.c_str());
 
     //delat times after bitmasks    
     //menu: 0.05 (20 FPS)

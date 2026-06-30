@@ -15,7 +15,7 @@ class Menu : public Game
 
     private:
     // Variables
-    uint16_t backgroundColor = Color::BLUE;
+    uint16_t backgroundColor = Color::BLACK;
     
     // Factories
     World world;

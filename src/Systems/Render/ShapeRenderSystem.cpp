@@ -6,7 +6,7 @@
 #include "Managers/Game/World.h"
 
 
-void ShapeRenderSystem::Render(World& world, Renderer &renderer)
+void ShapeRenderSystem::Render(World& world, Renderer &renderer, int layer)
 {
     Vector2 cameraPos = Vector2(0,0);
     float currentZoom = 1;
@@ -23,13 +23,16 @@ void ShapeRenderSystem::Render(World& world, Renderer &renderer)
     }
 
     uint32_t requiredMask = RenderableBit | TransformBit | RectangleBit; 
-    
+
     for (uint8_t e = 0; e < MAX_ENTITIES; e++)
     {
         if (!world.entities[e].isAlive) continue;
         if ((world.entities[e].mask & requiredMask) != requiredMask) continue;
 
         auto& renderable = world.renderables[e];
+
+        if (renderable.layer != layer) continue;
+
         auto& transform = world.transforms[e];
         auto& rectangle = world.rectangles[e];
 

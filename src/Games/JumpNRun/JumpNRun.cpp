@@ -33,11 +33,16 @@ void JumpNRun::Update(Input &input, float deltaTime)
 
 void JumpNRun::Render(Renderer &renderer)
 {
-    renderer.Clear(playingFieldColor);
+    renderer.Clear(backgroundColor);
 
     myTilemapSystem.Render(world, renderer);
-    myShapeRenderSystem.Render(world, renderer);
-    mySpriteRenderSystem.Render(world, renderer);
+
+    for (int layer = 0; layer < MAX_LAYERS; ++layer)
+    {
+        myShapeRenderSystem.Render(world, renderer, layer);
+        mySpriteRenderSystem.Render(world, renderer, layer);
+    }
+
     myUIRenderSystem.Render(world, renderer);
 }
 
@@ -65,20 +70,22 @@ void JumpNRun::ResetGame()
     myCommonFactory.CreateStaticWall(world, Vector2( 20, -40), Vector2( 70, 10), Color::BLACK); //top
     myJRFactory.CreateGoal(world, Vector2( 75, -55), Vector2(10, 10));
     
-    auto playerID = myCommonFactory.CreateSideScrollerPlayer(world, Vector2(0, 110), Vector2(8, 10), 50, Color::BLUE, 85);
+    auto playerID = myCommonFactory.CreateSideScrollerPlayer(world, Vector2(0, 110), Vector2(8, 10), 50, Color::BLUE, 150);
     auto* playerTransform = &world.transforms[playerID];
     
     myCommonFactory.CrateFollowCammera(world, playerTransform, 1, 1, 30);
 
     for (int i = 0; i < 10; i++)
     {
-        float randX = 5 + 20*i;
-        float randY = 10;
+        float randX = Random::Range(0, 200);
+        float randY = Random::Range(5, 80);
 
-        float randW = 20;
-        float randH = 5;
+        float randW = Random::Range(5, 25);
+        float randH = Random::Range(3, 10);
 
-        myJRFactory.CreateCloud(world, Vector2(randX, randY), Vector2(randW, randH));
+        float parallax = Random::Range(0.2, 0.8);
+
+        myJRFactory.CreateCloud(world, Vector2(randX, randY), Vector2(randW, randH), parallax);
     }
 
     // --- UI entities ---

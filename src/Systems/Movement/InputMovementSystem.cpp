@@ -26,9 +26,6 @@ void InputMovementSystem::Update(World& world, float deltaTime)
         if (intend.hasY)
         {
             physics.currentVelocity.y = intend.y * movement.speed;
-
-            std::string msg = "has Y: " + intend.y;
-            DebugManager::GetInstance().Log(msg.c_str(), Color::ORANGE);
         }
     }
 }

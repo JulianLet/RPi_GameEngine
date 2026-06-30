@@ -8,12 +8,12 @@ void MenuFactory::CreateMenuButton(World& world, Vector2 pos, const char* text, 
         world,
         pos,
         Vector2(110, 20),
-        Color::BLACK,
-        Color::YELLOW,
+        Color::ORANGE,
+        Color::LIGHTGRAY,
         0
     );
 
     world.uiButtons[button].OnClicked = std::move(onClick);
 
-    myUIFactory.CreateUIText(world, Vector2(pos.x + 20, pos.y + 7), text, Color::WHITE, -1);
+    myUIFactory.CreateUIText(world, Vector2(pos.x + 20, pos.y + 7), text, Color::BLACK, -1);
 }

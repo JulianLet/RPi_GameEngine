@@ -9,5 +9,5 @@ class SpriteRenderSystem
     SpriteRenderSystem() = default;
     ~SpriteRenderSystem() = default;
 
-    void Render(World& world, Renderer& renderer);
+    void Render(World& world, Renderer& renderer, int layer);
 };

@@ -46,7 +46,7 @@ uint8_t CommonFactory::CreateTopDownPlayer(World &world, Vector2 startPos, Vecto
     world.renderables[id] =
     {
         .doRender = true,
-        .layer = 1,
+        .layer = 5,
         .parallaxFactor = 1.0f
     };
 
@@ -129,7 +129,7 @@ uint8_t CommonFactory::CreateSideScrollerPlayer(World& world, Vector2 startPos, 
     world.renderables[id] =
     {
         .doRender = true,
-        .layer = 1,
+        .layer = 5,
         .parallaxFactor = 1.0f
     };
 
@@ -248,7 +248,7 @@ uint8_t CommonFactory::CreateStaticWall(World& world, Vector2 pos, Vector2 size,
     world.renderables[id] =
     {
         .doRender = true,
-        .layer = 0,
+        .layer = 6,
         .parallaxFactor = 1.f
     };
 

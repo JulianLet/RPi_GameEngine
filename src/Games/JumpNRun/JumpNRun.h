@@ -18,7 +18,7 @@ class JumpNRun : public Game
 
     private:
     // Variables
-    uint16_t playingFieldColor = Color::GREEN;
+    uint16_t backgroundColor = Color::CYAN;
 
     // Factories
     World world;

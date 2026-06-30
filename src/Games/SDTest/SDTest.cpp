@@ -101,7 +101,12 @@ void SDTest::Render(Renderer &renderer)
     renderer.Clear(playingFieldColor);
 
     myTilemapSystem.Render(world, renderer);
-    myShapeRenderSystem.Render(world, renderer);
-    mySpriteRenderSystem.Render(world, renderer);
+
+    for (int layer = 0; layer < MAX_LAYERS; ++layer)
+    {
+        myShapeRenderSystem.Render(world, renderer, layer);
+        mySpriteRenderSystem.Render(world, renderer, layer);
+    }
+
     myUIRenderSystem.Render(world, renderer);
 }

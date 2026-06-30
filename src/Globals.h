@@ -3,7 +3,8 @@
 enum 
 {
     INVALID_ENTITY = 255,
-    MAX_ENTITIES   = 30,
+    MAX_ENTITIES   = 60,
+    MAX_LAYERS     = 10,
 
     PIN_START      = 1,
     PIN_SELECT     = 2,

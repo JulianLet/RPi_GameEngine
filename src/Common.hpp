@@ -112,23 +112,24 @@ namespace Color
 
         return (R << 5) | (G << 2) | B;
     }
-
+ 
     const uint8_t WHITE     = Color(255, 255, 255);
-    const uint8_t LIGHTGRAY = Color( 50,  50,  50);
+    const uint8_t LIGHTGRAY = Color(170, 170, 170);
     const uint8_t GRAY      = Color(128, 128, 128);
-    const uint8_t BLACK     = Color(  0,   0,   0);
-
-    const uint8_t RED       = Color(255,   0,   0);
-    const uint8_t GREEN     = Color(  0, 255,   0);
-    const uint8_t BLUE      = Color(  0,   0, 255);
-
-    const uint8_t YELLOW    = Color(255, 255,   0);
-    const uint8_t CYAN      = Color(  0, 255, 255);
-    const uint8_t MAGENTA   = Color(255,   0, 255);
-
-    const uint8_t ORANGE    = Color(255, 165,   0);
-    const uint8_t PURPLE    = Color(128,   0, 128);
-
+    const uint8_t DARKGRAY  = Color(85,  85,  85);
+    const uint8_t BLACK     = Color(0,    0,    0);
+ 
+    const uint8_t RED       = Color(255, 0, 0);
+    const uint8_t GREEN     = Color(0, 255, 0);
+    const uint8_t BLUE      = Color(0, 0, 255);
+ 
+    const uint8_t YELLOW    = Color(255, 255, 0);
+    const uint8_t CYAN      = Color(0, 255, 255);
+    const uint8_t MAGENTA   = Color(255, 0, 255);
+ 
+    const uint8_t ORANGE    = Color(255, 160, 0);
+    const uint8_t PURPLE    = Color(160, 0, 160);
+ 
     inline uint8_t RANDOM()
     {
         uint8_t r = rand() & 0x07;
@@ -136,6 +137,19 @@ namespace Color
         uint8_t b = rand() & 0x03;
 
         return (r << 5) | (g << 2) | b;
+    }
+}
+
+namespace Random
+{
+    inline float Rand01()
+    {
+        return static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
+    }
+
+    inline float Range(float min, float max)
+    {
+        return min + (max - min) * Rand01();
     }
 }
 

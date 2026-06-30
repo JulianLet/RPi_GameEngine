@@ -14,6 +14,7 @@ JRActionSystem::JRActionSystem(JumpNRun* gameRef)
 
 void JRActionSystem::Initialize(uint8_t playerID)
 {
+    // display the current best time
     this->playerID = playerID;
 }
 
@@ -26,14 +27,14 @@ void JRActionSystem::Update(World &world, Input &input)
     }
 
     auto& playerTransform = world.transforms[playerID];
-    if (playerTransform.currentPosition.y >250) gameRef->ResetGame();
+    if (playerTransform.currentPosition.y > 250) gameRef->ResetGame();
 }
 
 void JRActionSystem::HandleEvent(const Event &event)
 {
     if (event.GetEventType() == EventType::UPDATE_SCORE)
     {
-        // check best time
+        // check best time in event
         gameRef->ResetGame();
     }
 }

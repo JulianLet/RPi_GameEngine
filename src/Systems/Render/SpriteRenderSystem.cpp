@@ -5,7 +5,7 @@
 
 #include "Managers/Game/World.h"
 
-void SpriteRenderSystem::Render(World& world, Renderer &renderer)
+void SpriteRenderSystem::Render(World& world, Renderer &renderer, int layer)
 {
     Vector2 cameraPos = Vector2(0,0);
     float currentZoom = 1;
@@ -28,6 +28,9 @@ void SpriteRenderSystem::Render(World& world, Renderer &renderer)
         if ((world.entities[e].mask & requiredMask) != requiredMask) continue;
 
         auto& renderable = world.renderables[e];
+
+        if (renderable.layer != layer) continue;
+        
         auto& transform = world.transforms[e];
         auto& sprite = world.sprites[e];
         

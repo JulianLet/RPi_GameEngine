@@ -27,7 +27,7 @@ uint8_t PongFactory::CreatePaddle(World &world, Vector2 startPos, KEYCODE up, KE
     world.renderables[id] =
     {
         .doRender = true,
-        .layer = 0,
+        .layer = 5,
         .parallaxFactor = 1.f,
     };
 
@@ -122,7 +122,7 @@ uint8_t PongFactory::CreateBall(World &world)
     world.renderables[id] =
     {
         .doRender = true,
-        .layer = 0,
+        .layer = 5,
         .parallaxFactor = 1.f,
     };
 
