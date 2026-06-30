@@ -81,7 +81,7 @@ void TilemapSystem::Render(World& world, Renderer& renderer)
         if (!(world.entities[e].mask & TilemapBit)) continue;
 
         auto& tilemap = world.tilemaps[e];
-        auto& tileset = world.assets.myTileset;//[tilemap.tilesetId];
+        auto& tileset = world.assets.myTileset;
 
         int tileW = tileset.tileWidth;
         int tileH = tileset.tileHeight;

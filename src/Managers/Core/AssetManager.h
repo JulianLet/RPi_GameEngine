@@ -21,4 +21,6 @@ public:
 
     uint8_t AddSprite(const char* path, uint16_t w, uint16_t h, uint8_t sheetIndex);
     Sprite& GetOrLoadSprite(int spriteID);
+
+    void CreateTileset(const char* path, uint16_t w, uint16_t h, uint8_t tileCount);
 };

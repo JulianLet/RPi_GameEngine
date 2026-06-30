@@ -12,8 +12,12 @@ SDTest::SDTest(GameManager &manager) : Game("SDTest", manager), myEventSystem(wo
     }
 
     //new entities
-    myCommonFactory.CreateStaticCamera(world, Vector2(0,0), 1, 1);
-    mySDFactory.CreateSpriteEntity(world, Vector2(40,40), Vector2(16,16), "idle.bin", 0);
+    // myCommonFactory.CreateStaticCamera(world, Vector2(0,0), 1, 1);
+    mySDFactory.CreateTilemap(world);
+    auto playerID = mySDFactory.CreatePlayer(world, Vector2(40,40), Vector2(16,16), 30, "idle.bin", 0);
+    auto* pT = &world.transforms[playerID];
+    myCommonFactory.CrateFollowCammera(world, pT, 1, 1, 40);
+    // mySDFactory.CreateSpriteEntity(world, Vector2(40,40), Vector2(16,16), "idle.bin", 0);
 
     // --- init systems ---
     myUIButtonSystem.Initialize(world);

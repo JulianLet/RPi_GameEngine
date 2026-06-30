@@ -53,3 +53,15 @@ Sprite &AssetManager::GetOrLoadSprite(int spriteID)
 
     return cached;
 }
+
+void AssetManager::CreateTileset(const char *path, uint16_t w, uint16_t h, uint8_t tileCount)
+{
+    myTileset.tileWidth = w;
+    myTileset.tileHeight = h;
+
+    for (int i = 0; i < tileCount; i++)
+    {
+        myTileset.sprites[i] = AddSprite(path, w, h, i);
+        myTileset.solidTiles[i] = false;
+    }
+}

@@ -39,7 +39,7 @@ void GameManager::Update(Input& input, float deltaTime)
     //menu: 0.05 (20 FPS)
     //pong: 0.05 (20 FPS)
     //jnr:  0.05 (20 FPS)
-    //sd:   TBD
+    //sd:   0.10 (10 FPS) (no animations)
 
 
     //delta times when saving the sprite and drawing on framebuffer
