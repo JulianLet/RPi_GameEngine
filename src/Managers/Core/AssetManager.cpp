@@ -44,8 +44,8 @@ Sprite &AssetManager::GetOrLoadSprite(int spriteID)
     cached.height = def.height;
 
     // allocate / assign pixels (depends on your memory model)
-    size_t copySize = std::min(pixels.size(), (size_t)MAX_SPRITE_PIXELS);
-    memcpy(cached.pixels, pixels.data(), copySize);
+    size_t copyCount = std::min(pixels.size(), (size_t)MAX_SPRITE_PIXELS);
+    memcpy(cached.pixels, pixels.data(), copyCount * sizeof(uint16_t));
 
     loaded = true;
 

@@ -19,5 +19,5 @@ class ResourceManager
 
     static ResourceManager& GetInstance();
     bool Initialize();
-    std::vector<uint8_t> GetSprite(File* file, int width, int height, int index);
+    std::vector<uint16_t> GetSprite(File* file, int width, int height, int index);
 };

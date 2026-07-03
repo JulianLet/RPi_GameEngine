@@ -19,17 +19,23 @@ bool ResourceManager::Initialize()
     return sdManager.Initialize();
 }
 
-std::vector<uint8_t> ResourceManager::GetSprite(File* file, int width, int height, int index)
+std::vector<uint16_t> ResourceManager::GetSprite(File* file, int width, int height, int index)
 {
     if (!file) return {};
 
-    size_t frameSizeBytes = width * height;      // 1 byte per pixel
+    size_t pixelCount = width * height;
+    size_t frameSizeBytes = pixelCount * sizeof(uint16_t);
+
     size_t offset = index * frameSizeBytes;
 
     file->Seek(offset);
 
-    std::vector<uint8_t> frame(frameSizeBytes);
-    file->Read(frame.data(), frameSizeBytes);
+    std::vector<uint16_t> frame(pixelCount);
+
+    file->Read(
+        reinterpret_cast<uint8_t*>(frame.data()),
+        frameSizeBytes
+    );
 
     return frame;
 }

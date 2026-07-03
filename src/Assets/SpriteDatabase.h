@@ -22,7 +22,7 @@ struct Sprite
 {
     uint16_t width;
     uint16_t height;
-    uint8_t pixels[MAX_SPRITE_PIXELS];
+    uint16_t pixels[MAX_SPRITE_PIXELS];
 };
 
 struct SpriteCache
