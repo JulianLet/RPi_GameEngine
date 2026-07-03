@@ -2,7 +2,7 @@
 #include "Assets/SpriteDatabase.h"
 #include "Font.h"
 
-void Renderer::SetPixel(int x, int y, uint8_t color)
+inline void Renderer::SetPixel(int x, int y, uint16_t color)
 {
     if (x < 0 || x >= ST7735::WIDTH || y < 0 || y >= ST7735::HEIGHT) return;
     myFramebuffer[ y * ST7735::WIDTH + x] = color;
@@ -14,7 +14,7 @@ Renderer::Renderer(ST7735 &display)
     Clear();
 }
 
-void Renderer::Clear(uint8_t color)
+void Renderer::Clear(uint16_t color)
 {
     for (int i = 0; i < ST7735::WIDTH * ST7735::HEIGHT; i++)
     {
@@ -27,7 +27,7 @@ void Renderer::Display()
     myDisplay.Present(myFramebuffer);
 }
 
-void Renderer::DrawRectangle(int x, int y, int w, int h, uint8_t color, bool filled)
+void Renderer::DrawRectangle(int x, int y, int w, int h, uint16_t color, bool filled)
 {
     if (filled)
     {
@@ -55,7 +55,7 @@ void Renderer::DrawRectangle(int x, int y, int w, int h, uint8_t color, bool fil
     }
 }
 
-void Renderer::DrawCircle(int x, int y, int radius, uint8_t color, bool filled)
+void Renderer::DrawCircle(int x, int y, int radius, uint16_t color, bool filled)
 {
     float radiusSqr = radius * radius;
 
@@ -76,7 +76,7 @@ void Renderer::DrawCircle(int x, int y, int radius, uint8_t color, bool filled)
     }
 }
 
-void Renderer::DrawChar(int x, int y, char c, uint8_t color)
+void Renderer::DrawChar(int x, int y, char c, uint16_t color)
 {
     const uint8_t* bitmap;
     
@@ -96,7 +96,7 @@ void Renderer::DrawChar(int x, int y, char c, uint8_t color)
 }
 
 
-void Renderer::DrawText(int x, int y, const char *text, uint8_t color)
+void Renderer::DrawText(int x, int y, const char *text, uint16_t color)
 {
     int cursorX = x;
     int charWidth = 5;
@@ -112,17 +112,18 @@ void Renderer::DrawSprite(int x, int y, Sprite& sprite, float zoom, bool flipX)
 {
     int scaledWidth  = (int)(sprite.width  * zoom);
     int scaledHeight = (int)(sprite.height * zoom);
+    float invZoom = 1.0f / zoom;
 
     for (int dy = 0; dy < scaledHeight; ++dy)
     {
         // Map destination Y back to source sprite Y
-        int srcY = (int)(dy / zoom);
+        int srcY = (int)(dy * invZoom);
         if (srcY >= sprite.height) srcY = sprite.height - 1;
 
         for (int dx = 0; dx < scaledWidth; ++dx)
         {
             // Map destination X back to source sprite X
-            int srcX = (int)(dx / zoom);
+            int srcX = (int)(dx * invZoom);
             if (srcX >= sprite.width) srcX = sprite.width - 1;
 
             if (flipX)

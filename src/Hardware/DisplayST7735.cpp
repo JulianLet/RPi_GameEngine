@@ -29,10 +29,10 @@ void ST7735::WriteData16(uint16_t data)
 void ST7735::Initialize()
 {
     // --- SPI init ---
-    spi_init(spiPort, 16*1000*1000);
+    spi_init(spiPort, 40*1000*1000);
     spi_set_format(spiPort, 8, SPI_CPOL_0, SPI_CPHA_0, SPI_MSB_FIRST);
-    gpio_set_function(PIN_SCK, GPIO_FUNC_SPI);
-    gpio_set_function(PIN_MOSI, GPIO_FUNC_SPI);
+    gpio_set_function(PIN_SCK0, GPIO_FUNC_SPI);
+    gpio_set_function(PIN_MOSI0, GPIO_FUNC_SPI);
 
     // --- GPIO setup ---
     gpio_init(myCsPin); gpio_set_dir(myCsPin, GPIO_OUT); gpio_put(myCsPin, 1);
@@ -94,7 +94,7 @@ void ST7735::Initialize()
 
     WriteCommand(0x36); // MADCTL
     WriteData(0xC0); // RGB order, upside down orientation
-    //WriteData(0xC8); // BGR order, upside down orientation
+    // WriteData(0xC8); // BGR order, upside down orientation
     //0x08 would be for normal orientation
     //0xC8 upside down?
 
@@ -120,7 +120,7 @@ void ST7735::Initialize()
     sleep_ms(100);
 
     // --- Clear display to black ---
-    uint8_t black[WIDTH * HEIGHT] = {0};
+    uint16_t black[WIDTH * HEIGHT] = {0};
     Present(black);
 }
 
@@ -138,41 +138,21 @@ void ST7735::SetAddressWindow(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1
     WriteCommand(0x2C); //sets that next bytes will be pixel data
 }
 
-static inline uint16_t RGB332_to_RGB565(uint8_t c)
-{
-    uint8_t r3 = (c >> 5) & 0x07;
-    uint8_t g3 = (c >> 2) & 0x07;
-    uint8_t b2 =  c       & 0x03;
-
-    uint16_t r5 = (r3 * 31) / 7;
-    uint16_t g6 = (g3 * 63) / 7;
-    uint16_t b5 = (b2 * 31) / 3;
-
-    return (r5 << 11) | (g6 << 5) | b5;
-}
-
-void ST7735::Present(uint8_t *buffer)
+void ST7735::Present(uint16_t *buffer)
 {
     SetAddressWindow(0, 0, WIDTH - 1, HEIGHT - 1);
+
     gpio_put(myDcPin, 1);
     gpio_put(myCsPin, 0);
 
-    for (int i = 0; i < WIDTH * HEIGHT; i++)
-    {
-        uint16_t pix = RGB332_to_RGB565(buffer[i]);
-        uint8_t out[2] = { uint8_t(pix >> 8), uint8_t(pix & 0xFF) };
-        spi_write_blocking(spiPort, out, 2);
-    }
+    spi_write_blocking(
+        spiPort,
+        (uint8_t*)buffer,
+        WIDTH * HEIGHT * 2
+    );
 
     gpio_put(myCsPin, 1);
 }
-
-
-
-
-
-
-
 
 // ST7735 Command Cheat Sheet
 // Command	Hex	    Name	                    Description / Typical Use

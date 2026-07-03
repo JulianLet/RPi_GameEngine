@@ -92,7 +92,7 @@ SDCardManager::~SDCardManager()
 
 bool SDCardManager::Initialize()
 {    
-    spi_init(spi0, 400000); // 400 kHz for init
+    //spi_init(spi1, 400000); // 400 kHz for init
 
     // Initialize all cards defined in hw_config.c
     if (!sd_init_driver()) 
@@ -100,7 +100,7 @@ bool SDCardManager::Initialize()
         fr = FR_NOT_READY;
         return false;
     }
-    
+
     // Get handle to first card
     pSD = sd_get_by_num(0);
 
@@ -115,7 +115,6 @@ bool SDCardManager::Initialize()
         fr = FR_NOT_READY;
         return false;
     }
-
     
     // Mount filesystem (FatFS automatically calls disk_initialize)
     fr = f_mount(&fs, "", 1);

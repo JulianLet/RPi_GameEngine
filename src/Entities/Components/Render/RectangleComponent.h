@@ -6,6 +6,6 @@ constexpr bool OUTLINE = false;
 
 struct RectangleComponent
 {
-    uint8_t currentColor = 0;
+    uint16_t currentColor = 0;
     bool filled = false;
 }; 

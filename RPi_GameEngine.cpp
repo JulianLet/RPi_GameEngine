@@ -49,11 +49,24 @@ int main()
         //Update
         myInput.Update();
         myGameManager.Update(myInput, deltaTime);
+        uint64_t afterUpdate = time_us_64();
 
         //Render
         myRenderer.Clear();
         myGameManager.Render(myRenderer);
+        uint64_t afterRender = time_us_64();
+
         myRenderer.Display();
+        uint64_t afterPresent = time_us_64();
+
+        std::string msg = std::to_string(afterUpdate - frameStart);
+        DebugManager::GetInstance().Log(msg.c_str());
+
+        msg = std::to_string(afterRender - afterUpdate);
+        DebugManager::GetInstance().Log(msg.c_str());
+
+        msg = std::to_string(afterPresent - afterRender);
+        DebugManager::GetInstance().Log(msg.c_str());
 
         //wait for FPS
         uint64_t frameEnd = time_us_64();
@@ -69,15 +82,6 @@ int main()
 
 void HardwareSetUp()
 {
-    // --- SPI0 Initialization ---
-    // Start SPI0 at a conservative 400 kHz for SD card startup
-    spi_init(spi0, 400 * 1000);
-
-    // Set SPI functions on common pins
-    gpio_set_function(PIN_MISO, GPIO_FUNC_SPI);
-    gpio_set_function(PIN_MOSI, GPIO_FUNC_SPI);
-    gpio_set_function(PIN_SCK,  GPIO_FUNC_SPI);
-
     // --- Display CS + control pins ---
     gpio_init(PIN_CS_DISPLAY);
     gpio_set_dir(PIN_CS_DISPLAY, GPIO_OUT);
@@ -97,7 +101,7 @@ void HardwareSetUp()
     gpio_put(PIN_CS_SD_MODULE, 1); // deselect SD card
 
     // Optional: ensure MISO line has pull-up for stability
-    gpio_pull_up(PIN_MISO);
+    gpio_pull_up(PIN_MISO0);
 
     // Allow the SD card to power up and settle
     sleep_ms(50);

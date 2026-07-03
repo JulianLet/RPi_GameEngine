@@ -104,39 +104,35 @@ inline ComponentID GetComponentID() noexcept
 
 namespace Color
 {
-    inline uint8_t Color(uint8_t r, uint8_t g, uint8_t b)
+    inline uint16_t Color(uint8_t r, uint8_t g, uint8_t b)
     {
-        uint8_t R = r >> 5; // 3 bits
-        uint8_t G = g >> 5; // 3 bits
-        uint8_t B = b >> 6; // 2 bits
-
-        return (R << 5) | (G << 2) | B;
+        return ((b & 0xF8) << 8) | ((r & 0xFC) << 3) | (g >> 3);
     }
  
-    const uint8_t WHITE     = Color(255, 255, 255);
-    const uint8_t LIGHTGRAY = Color(170, 170, 170);
-    const uint8_t GRAY      = Color(128, 128, 128);
-    const uint8_t DARKGRAY  = Color(85,  85,  85);
-    const uint8_t BLACK     = Color(0,    0,    0);
+    const uint16_t WHITE     = Color(255, 255, 255);
+    const uint16_t LIGHTGRAY = Color(170, 170, 170);
+    const uint16_t GRAY      = Color(128, 128, 128);
+    const uint16_t DARKGRAY  = Color(85,  85,  85);
+    const uint16_t BLACK     = Color(0,    0,    0);
  
-    const uint8_t RED       = Color(255, 0, 0);
-    const uint8_t GREEN     = Color(0, 255, 0);
-    const uint8_t BLUE      = Color(0, 0, 255);
- 
-    const uint8_t YELLOW    = Color(255, 255, 0);
-    const uint8_t CYAN      = Color(0, 255, 255);
-    const uint8_t MAGENTA   = Color(255, 0, 255);
- 
-    const uint8_t ORANGE    = Color(255, 160, 0);
-    const uint8_t PURPLE    = Color(160, 0, 160);
- 
-    inline uint8_t RANDOM()
-    {
-        uint8_t r = rand() & 0x07;
-        uint8_t g = rand() & 0x07;
-        uint8_t b = rand() & 0x03;
+    const uint16_t RED       = Color(255, 0, 0);
+    const uint16_t GREEN     = Color(0, 255, 0);
+    const uint16_t BLUE      = Color(0, 0, 255);
 
-        return (r << 5) | (g << 2) | b;
+    const uint16_t YELLOW    = Color(255, 255, 0);
+    const uint16_t CYAN      = Color(0, 255, 255);
+    const uint16_t MAGENTA   = Color(255, 0, 255);
+ 
+    const uint16_t ORANGE    = Color(255, 160, 0);
+    const uint16_t PURPLE    = Color(160, 0, 160);
+ 
+    inline uint16_t RANDOM()
+    {
+        uint8_t r = rand() & 0x1F; // 5 bits
+        uint8_t g = rand() & 0x3F; // 6 bits
+        uint8_t b = rand() & 0x1F; // 5 bits
+
+        return Color(r, g, b);
     }
 }
 

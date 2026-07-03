@@ -21,13 +21,18 @@ enum
     PIN_A            = 7,
     PIN_B            = 8,
  
-    PIN_SCK          = 18,
-    PIN_MOSI         = 19,
-    PIN_MISO         = 16,
+    PIN_SCK0          = 18,
+    PIN_MOSI0         = 19,
+    PIN_MISO0         = 16,
  
     PIN_CS_DISPLAY   = 17,
     PIN_DC_DISPLAY   = 21,
     PIN_RST_DISPLAY  = 20,
+
+ 
+    PIN_SCK1       = 10,
+    PIN_MOSI1      = 11,
+    PIN_MISO1      = 12,
 
     PIN_CS_SD_MODULE = 22
 };

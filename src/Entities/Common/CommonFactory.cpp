@@ -2,7 +2,7 @@
 
 #include "Managers/Game/World.h"
 
-uint8_t CommonFactory::CreateTopDownPlayer(World &world, Vector2 startPos, Vector2 size, float moveSpeed, uint8_t color)
+uint8_t CommonFactory::CreateTopDownPlayer(World &world, Vector2 startPos, Vector2 size, float moveSpeed, uint16_t color)
 {
     uint8_t id = world.CreateEntity();
 
@@ -94,7 +94,7 @@ uint8_t CommonFactory::CreateTopDownPlayer(World &world, Vector2 startPos, Vecto
     return id;
 }
 
-uint8_t CommonFactory::CreateSideScrollerPlayer(World& world, Vector2 startPos, Vector2 size, float moveSpeed, uint8_t color, float jumpPower)
+uint8_t CommonFactory::CreateSideScrollerPlayer(World& world, Vector2 startPos, Vector2 size, float moveSpeed, uint16_t color, float jumpPower)
 {
     uint8_t id = world.CreateEntity();
 
@@ -223,7 +223,7 @@ uint8_t CommonFactory::CrateFollowCammera(World& world, TransformComponent* targ
     return id;
 }
 
-uint8_t CommonFactory::CreateStaticWall(World& world, Vector2 pos, Vector2 size, uint8_t color)
+uint8_t CommonFactory::CreateStaticWall(World& world, Vector2 pos, Vector2 size, uint16_t color)
 {
     uint8_t id = world.CreateEntity();
 
