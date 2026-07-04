@@ -29,6 +29,7 @@
 
 // Animation
 #include "Components/Render/AnimationComponent.h"
+#include "Components/Render/AnimationSetComponent.h"
 
 // Camera / Game logic
 #include "Components/Render/CameraComponent.h"

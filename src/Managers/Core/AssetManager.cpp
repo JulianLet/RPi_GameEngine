@@ -54,6 +54,41 @@ Sprite &AssetManager::GetOrLoadSprite(int spriteID)
     return cached;
 }
 
+uint8_t AssetManager::AddAnimation(const char *path, uint16_t w, uint16_t h, uint8_t frames, uint8_t fps, AnimationMode mode)
+{
+    uint8_t firstSpriteID = INVALID_SPRITE;
+
+    for (int i = 0; i < frames; i++)
+    {
+        uint8_t id = AddSprite(path, w, h, i);
+
+        if (id == INVALID_SPRITE)
+            return INVALID_SPRITE;
+
+        if (i == 0)
+            firstSpriteID = id;
+    }
+
+    for (int i = 0; i < MAX_ANIMATIONS; i++)
+    {
+        if (!myAnimations.filled[i])
+        {
+            myAnimations.clips[i] = 
+            {
+                .frameStart = firstSpriteID,
+                .frameCount = frames,
+                .fps = fps,
+                .mode = mode,
+            };
+
+            myAnimations.filled[i] = true;
+            return i;
+        }
+    }
+
+    return INVALID_SPRITE; // database is full
+}
+
 void AssetManager::CreateTileset(const char *path, uint16_t w, uint16_t h, uint8_t tileCount)
 {
     myTileset.tileWidth = w;

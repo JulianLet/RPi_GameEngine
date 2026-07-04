@@ -6,7 +6,7 @@
 #include "Entities/Common/CommonFactory.h"
 #include "Entities/Common/CommonUIFactory.h"
 #include "Games/SDTest/Systems/SDFactory.h"
-// #include "Games/SDTest/Systems/SDActionSystem.h"
+#include "Games/SDTest/Systems//PlayerAnimationSystem.h"
 
 #include "Systems/Systems.h"
 #include "Managers/Managers.h"
@@ -25,7 +25,6 @@ class SDTest : public Game
     CommonFactory myCommonFactory;
     CommonUIFactory myCommonUIFactory;
     SDFactory mySDFactory;
-    // JRActionSystem myActionSystem;
     
     // General
     AISystem myAISystem;
@@ -44,6 +43,7 @@ class SDTest : public Game
     PhysicsSystem myPhysicsSystem;
     
     // Rendering
+    PlayerAnimationSystem myPlayerAnimSystem;
     AnimationSystem myAnimationSystem;
     CameraSystem myCameraSystem;
     ShapeRenderSystem myShapeRenderSystem;

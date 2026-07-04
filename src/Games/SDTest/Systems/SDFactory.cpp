@@ -1,14 +1,16 @@
 #include "SDFactory.h"
 
-uint8_t SDFactory::CreatePlayer(World &world, Vector2 startPos, Vector2 size, float moveSpeed, const char *path, int index)
+uint8_t SDFactory::CreatePlayer(World &world, Vector2 startPos, Vector2 size, float moveSpeed)
 {
-    uint8_t spriteID = world.assets.AddSprite(path, size.x, size.y, index);
+    //load sprites
+    uint8_t idle = world.assets.AddAnimation("idle.bin", 16, 16, 2, 4, AnimationMode::LOOP);
+    uint8_t walk = world.assets.AddAnimation("walking.bin", 16, 16, 4, 4, AnimationMode::LOOP);
 
     uint8_t id = world.CreateEntity();
 
     if (id == INVALID_ENTITY) return INVALID_ENTITY;
 
-    world.entities[id].mask = TransformBit | SpriteBit | MovementBit | ColliderBit | PhysicsBit | RenderableBit | InputIntentBit | InputMappingBit;
+    world.entities[id].mask = TransformBit | SpriteBit | AnimationBit | MovementBit | ColliderBit | PhysicsBit | RenderableBit | InputIntentBit | InputMappingBit;
     world.entities[id].tag = EntityTag::Player;
 
     world.transforms[id] =
@@ -20,8 +22,20 @@ uint8_t SDFactory::CreatePlayer(World &world, Vector2 startPos, Vector2 size, fl
 
     world.sprites[id] =
     {
-        .spriteID = spriteID
+
     };
+
+    world.animations[id] =
+    {
+        .currentAnimation = idle,
+        .currentFrame = 0,
+        .currentTime = 0,
+        .direction = 1,
+        .active = true,
+    };
+
+    world.animSets[id].states[AnimState::Idle] = idle;
+    world.animSets[id].states[AnimState::Walk] = walk;
 
     world.movements[id] =
     {

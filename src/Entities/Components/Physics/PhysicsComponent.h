@@ -12,4 +12,5 @@ struct PhysicsComponent
     bool useGravity;
     PhysicsType physicsType;
     Vector2 currentVelocity;
+    bool facingLeft;
 }; 

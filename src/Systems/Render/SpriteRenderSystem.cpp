@@ -56,7 +56,7 @@ void SpriteRenderSystem::Render(World& world, Renderer &renderer, int layer)
 
         bool flipX = false;
 
-        // if sprite is not already loaded in cache then load it
+        if (world.entities[e].mask & PhysicsBit) flipX = world.physics[e].facingLeft;
 
         renderer.DrawSprite((int)screenX, (int)screenY, world.assets.GetOrLoadSprite(sprite.spriteID), currentZoom, flipX);
 

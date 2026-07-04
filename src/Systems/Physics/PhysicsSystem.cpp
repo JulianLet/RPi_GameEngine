@@ -138,6 +138,9 @@ void PhysicsSystem::Update(World& world, float dt)
 
         t.currentPosition.x += p.currentVelocity.x * dt;
         t.currentPosition.y += p.currentVelocity.y * dt;
+
+        if (p.currentVelocity.x != 0)
+            p.facingLeft = p.currentVelocity.x < 0;    
     }
 }
 

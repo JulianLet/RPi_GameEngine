@@ -22,4 +22,5 @@ struct AnimationClip
 struct AnimationDatabase
 {
     AnimationClip clips[MAX_ANIMATIONS];
+    bool filled[MAX_ANIMATIONS] = {false};
 };

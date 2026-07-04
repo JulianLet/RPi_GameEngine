@@ -49,6 +49,7 @@ struct World
     
     // ===== Animation =====
     AnimationComponent animations[MAX_ENTITIES];
+    AnimationSetComponent animSets[MAX_ENTITIES];
     
     // ===== Camera / Game logic =====
     CameraComponent cameras[MAX_ENTITIES];

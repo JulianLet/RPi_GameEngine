@@ -15,7 +15,7 @@ SDTest::SDTest(GameManager &manager) : Game("SDTest", manager), myEventSystem(wo
     // --- World entities ---
     mySDFactory.CreateTilemap(world);
     
-    auto playerID = mySDFactory.CreatePlayer(world, Vector2(40,40), Vector2(16,16), 30, "idle.bin", 0);
+    auto playerID = mySDFactory.CreatePlayer(world, Vector2(40,40), Vector2(16,16), 30);
     auto* pT = &world.transforms[playerID];
     
     myCommonFactory.CrateFollowCammera(world, pT, 1, 1, 40);
@@ -69,6 +69,7 @@ void SDTest::Update(Input &input, float deltaTime)
         myCollisionSystem.Update(world);
         myPhysicsSystem.ResolveCollisions(world, deltaTime);
         
+        myPlayerAnimSystem.Update(world);
         myAnimationSystem.Update(world, deltaTime);
         myTimerSystem.Update(world, deltaTime);
         myUITimerSystem.Update(world);
