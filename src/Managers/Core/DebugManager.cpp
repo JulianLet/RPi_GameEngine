@@ -17,7 +17,7 @@ void DebugManager::ClearLogs()
     logCount = 0;
 }
 
-void DebugManager::Log(const char* msg, uint8_t color)
+void DebugManager::Log(const char* msg, uint16_t color)
 {
     printf("%s\n", msg);
 

@@ -13,27 +13,28 @@ SDTest::SDTest(GameManager &manager) : Game("SDTest", manager), myEventSystem(wo
 
     // new entities
     // --- World entities ---
-    //mySDFactory.CreateTilemap(world);
+    mySDFactory.CreateTilemap(world);
     
-    // auto playerID = mySDFactory.CreatePlayer(world, Vector2(40,40), Vector2(16,16), 30, "idle.bin", 0);
-    // auto* pT = &world.transforms[playerID];
+    auto playerID = mySDFactory.CreatePlayer(world, Vector2(40,40), Vector2(16,16), 30, "idle.bin", 0);
+    auto* pT = &world.transforms[playerID];
     
-    // myCommonFactory.CrateFollowCammera(world, pT, 1, 1, 40);
+    myCommonFactory.CrateFollowCammera(world, pT, 1, 1, 40);
     
 
     // --- sprite test
-    mySDFactory.CreateSpriteEntity(world, Vector2(10,40), Vector2(16,16), "colors.bin", 0);   
-    mySDFactory.CreateSpriteEntity(world, Vector2(30,40), Vector2(16,16), "colors.bin", 1);   
-    mySDFactory.CreateSpriteEntity(world, Vector2(50,40), Vector2(16,16), "colors.bin", 2);   
+    // myCommonFactory.CreateStaticCamera(world, Vector2(50,70), 1, 1);
+    // mySDFactory.CreateSpriteEntity(world, Vector2(10,40), Vector2(16,16), "colors.bin", 0);   
+    // mySDFactory.CreateSpriteEntity(world, Vector2(30,40), Vector2(16,16), "colors.bin", 1);   
+    // mySDFactory.CreateSpriteEntity(world, Vector2(50,40), Vector2(16,16), "colors.bin", 2);   
 
-    mySDFactory.CreateSpriteEntity(world, Vector2(00,60), Vector2(32, 32), "TilesetTest.bin", 0);   
-    mySDFactory.CreateSpriteEntity(world, Vector2(35,60), Vector2(32, 32), "TilesetTest.bin", 1);   
-    mySDFactory.CreateSpriteEntity(world, Vector2(70,60), Vector2(32, 32), "TilesetTest.bin", 2);   
-    mySDFactory.CreateSpriteEntity(world, Vector2(0,95), Vector2(32, 32), "TilesetTest.bin", 3);   
-    mySDFactory.CreateSpriteEntity(world, Vector2(35,95), Vector2(32, 32), "TilesetTest.bin", 4);   
-
+    // mySDFactory.CreateSpriteEntity(world, Vector2(00,60), Vector2(32, 32), "TilesetTest.bin", 0);   
+    // mySDFactory.CreateSpriteEntity(world, Vector2(35,60), Vector2(32, 32), "TilesetTest.bin", 1);   
+    // mySDFactory.CreateSpriteEntity(world, Vector2(70,60), Vector2(32, 32), "TilesetTest.bin", 2);   
+    // mySDFactory.CreateSpriteEntity(world, Vector2(0,95), Vector2(32, 32), "TilesetTest.bin", 3);   
+    // mySDFactory.CreateSpriteEntity(world, Vector2(35,95), Vector2(32, 32), "TilesetTest.bin", 4);  
+     
     // --- color test
-    myCommonFactory.CreateStaticCamera(world, Vector2(50,70), 1, 1);
+    // myCommonFactory.CreateStaticCamera(world, Vector2(50,70), 1, 1);
     // myCommonFactory.CreateStaticWall(world, Vector2(30,30), Vector2(30,80), Color::RED);
     // myCommonFactory.CreateStaticWall(world, Vector2(60,30), Vector2(30,80), Color::GREEN);
     // myCommonFactory.CreateStaticWall(world, Vector2(90,30), Vector2(30,80), Color::BLUE);

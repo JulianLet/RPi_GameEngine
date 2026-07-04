@@ -106,7 +106,7 @@ namespace Color
 {
     inline uint16_t Color(uint8_t r, uint8_t g, uint8_t b)
     {
-        return ((b & 0xF8) << 8) | ((r & 0xFC) << 3) | (g >> 3);
+        return ((r & 0xF8) << 8) | ((g & 0xFC) << 3) | ( b >> 3);
     }
  
     const uint16_t WHITE     = Color(255, 255, 255);

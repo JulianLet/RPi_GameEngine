@@ -19,7 +19,7 @@ private:
     struct LogData
     {
         char msg[64];
-        uint8_t color;
+        uint16_t color;
     };
 
     LogData logs[MAX_LOGS];
@@ -32,6 +32,6 @@ public:
     static DebugManager& GetInstance();
 
     void ClearLogs();
-    void Log(const char* msg, uint8_t color = Color::RED);
+    void Log(const char* msg, uint16_t color = Color::RED);
     void Render(Renderer& renderer);
 };

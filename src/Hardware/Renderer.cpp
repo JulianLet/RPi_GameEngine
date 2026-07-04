@@ -2,10 +2,16 @@
 #include "Assets/SpriteDatabase.h"
 #include "Font.h"
 
+constexpr uint16_t Swap16(uint16_t v)
+{
+    return (v << 8) | (v >> 8);
+}
+
 inline void Renderer::SetPixel(int x, int y, uint16_t color)
 {
     if (x < 0 || x >= ST7735::WIDTH || y < 0 || y >= ST7735::HEIGHT) return;
-    myFramebuffer[ y * ST7735::WIDTH + x] = color;
+
+    myFramebuffer[y * ST7735::WIDTH + x] = Swap16(color);
 }
 
 Renderer::Renderer(ST7735 &display)
@@ -18,7 +24,7 @@ void Renderer::Clear(uint16_t color)
 {
     for (int i = 0; i < ST7735::WIDTH * ST7735::HEIGHT; i++)
     {
-        myFramebuffer[i] = color;
+        myFramebuffer[i] = Swap16(color);
     }
 }
 
