@@ -36,10 +36,10 @@ void GameManager::Update(Input& input, float deltaTime)
     DebugManager::GetInstance().Log(msg.c_str());
 
     //delat times after spi split    
-    //menu: 0.016 (60 FPS)
-    //pong: 0.017 (59 FPS)
-    //jnr:  0.018 (55 FPS)
-    //sd:   0.046 (22 FPS) (no animations)
+    //menu: 0.0166 (60 FPS)
+    //pong: 0.0166 (60 FPS)
+    //jnr:  0.0166 (60 FPS)
+    //sd:   0.0292 (34 FPS)
 
 
     //delta times when saving the sprite and drawing on framebuffer

@@ -116,20 +116,30 @@ void Renderer::DrawText(int x, int y, const char *text, uint16_t color)
 
 void Renderer::DrawSprite(int x, int y, Sprite& sprite, float zoom, bool flipX)
 {
+    if (zoom <= 0.0f) return;
+
     int scaledWidth  = (int)(sprite.width  * zoom);
     int scaledHeight = (int)(sprite.height * zoom);
-    float invZoom = 1.0f / zoom;
+
+    // fixed-point step (16.16 format)
+    const uint32_t FP_SHIFT = 16;
+    const uint32_t FP_ONE = 1 << FP_SHIFT;
+
+    uint32_t stepX = (uint32_t)((FP_ONE / zoom));
+    uint32_t stepY = (uint32_t)((FP_ONE / zoom));
+
+    uint32_t srcStartY = 0;
 
     for (int dy = 0; dy < scaledHeight; ++dy)
     {
-        // Map destination Y back to source sprite Y
-        int srcY = (int)(dy * invZoom);
+        int srcY = (srcStartY >> FP_SHIFT);
         if (srcY >= sprite.height) srcY = sprite.height - 1;
+
+        uint32_t srcStartX = 0;
 
         for (int dx = 0; dx < scaledWidth; ++dx)
         {
-            // Map destination X back to source sprite X
-            int srcX = (int)(dx * invZoom);
+            int srcX = (srcStartX >> FP_SHIFT);
             if (srcX >= sprite.width) srcX = sprite.width - 1;
 
             if (flipX)
@@ -137,10 +147,14 @@ void Renderer::DrawSprite(int x, int y, Sprite& sprite, float zoom, bool flipX)
 
             uint16_t color = sprite.pixels[srcY * sprite.width + srcX];
 
-            if (color == transparentColor) continue;
+            if (color != transparentColor)
+            {
+                SetPixel(x + dx, y + dy, color);
+            }
 
-            // Draw at screen position
-            SetPixel(x + dx, y + dy, color);
+            srcStartX += stepX;
         }
+
+        srcStartY += stepY;
     }
 }

@@ -31,7 +31,7 @@ SDTest::SDTest(GameManager &manager) : Game("SDTest", manager), myEventSystem(wo
     // mySDFactory.CreateSpriteEntity(world, Vector2(35,60), Vector2(32, 32), "TilesetTest.bin", 1);   
     // mySDFactory.CreateSpriteEntity(world, Vector2(70,60), Vector2(32, 32), "TilesetTest.bin", 2);   
     // mySDFactory.CreateSpriteEntity(world, Vector2(0,95), Vector2(32, 32), "TilesetTest.bin", 3);   
-    // mySDFactory.CreateSpriteEntity(world, Vector2(35,95), Vector2(32, 32), "TilesetTest.bin", 4);  
+    // mySDFactory.CreateSpriteEntity(world, Vector2(35,95), Vector2(32, 32), "TilesetTest.bin", 4);
      
     // --- color test
     // myCommonFactory.CreateStaticCamera(world, Vector2(50,70), 1, 1);
