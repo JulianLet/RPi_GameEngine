@@ -69,7 +69,6 @@ struct World
             if (!entities[i].isAlive)
             {
                 entities[i].isAlive = true;
-                entities[i].shouldDelete = false;
                 entities[i].mask = 0;
 
                 return i;

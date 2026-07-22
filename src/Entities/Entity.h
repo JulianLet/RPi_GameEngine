@@ -17,5 +17,5 @@ struct Entity
     EntityTag tag = EntityTag::Default;
 
     bool isAlive = true;
-    bool shouldDelete = false;
+    //bool shouldDelete = false;
 };

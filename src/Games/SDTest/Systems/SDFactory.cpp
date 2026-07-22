@@ -144,7 +144,7 @@ uint8_t SDFactory::CreateTilemap(World &world)
 
         int index = c - '0'; //get index with ASCII
 
-        tm.tileIndices.emplace_back(index); //fill with indeces
+        tm.tileIndices.emplace_back(index); //fill with indices
     }
 
     return id;
