@@ -44,8 +44,7 @@ int AddCollision(ColliderComponent& col, uint8_t other, CollisionInfo info)
 {
     for (int i = 0; i < MAX_COLLISIONS; i++)
     {
-        if (col.currentCollisions[i].otherID == UINT8_MAX ||
-            col.currentCollisions[i].otherID == 0)
+        if (col.currentCollisions[i].otherID == UINT8_MAX)// || col.currentCollisions[i].otherID == 0)
         {
             col.currentCollisions[i] = { other, info };
             return i;
@@ -217,10 +216,11 @@ void HandleEnterStay(World& world, uint8_t a, uint8_t b, float toi, Vector2 norm
     }
     else
     {
-        AddCollision(col, b, info);
-
-        if (response.OnEnter)
-            response.OnEnter(world, a, b);
+        if (AddCollision(col, b, info) >= 0)
+        {
+            if (response.OnEnter)
+                response.OnEnter(world, a, b);
+        }
     }
 }
 
