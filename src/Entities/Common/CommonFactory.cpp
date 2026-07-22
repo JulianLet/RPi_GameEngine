@@ -62,35 +62,6 @@ uint8_t CommonFactory::CreateTopDownPlayer(World &world, Vector2 startPos, Vecto
     mapping.directionMapping[KEYCODE::LEFT] = {InputAction::HORIZONTAL, -1};
     mapping.directionMapping[KEYCODE::RIGHT] = {InputAction::HORIZONTAL, 1};
 
-    /* ANIMATION:
-    AddComponent<AnimationComponent>(16, 16);
-    auto* animation = GetComponent<AnimationComponent>();
-    animation->AddAnimation(0, AnimationMode::LOOP, 2, 1, "idle.bin");
-    animation->AddAnimation(1, AnimationMode::LOOP, 4, 4, "walking.bin");
-
-    animation->transitions[0].push_back([this](bool& swapped) 
-    {
-        auto* physics = GetComponent<PhysicsComponent>();
-
-        if (physics->currentVelocity.Magnitude() > 0.2f)
-        {
-            GetComponent<AnimationComponent>()->SwapAnimation(1);
-            swapped = true;
-        }
-    });
-
-    animation->transitions[1].push_back([this](bool& swapped) 
-    {
-        auto* physics = GetComponent<PhysicsComponent>();
-
-        if (physics->currentVelocity.Magnitude() < 0.2f)
-        {
-            GetComponent<AnimationComponent>()->SwapAnimation(0);
-            swapped = true;
-        }
-    });
-    */
-
     return id;
 }
 

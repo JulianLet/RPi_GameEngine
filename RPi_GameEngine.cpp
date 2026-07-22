@@ -77,6 +77,7 @@ int main()
             sleep_us((FRAME_TIME - elapsed) * 1'000'000.0f);
         }
     }
+    
     return 0;
 }
 

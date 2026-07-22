@@ -9,7 +9,7 @@ class Renderer
 {
     private:
     ST7735& myDisplay;
-    uint16_t myFramebuffer[ST7735::WIDTH * ST7735::HEIGHT]; //set RBG565 framebuffer
+    uint16_t myFramebuffer[ST7735::WIDTH * ST7735::HEIGHT]; //set RGB565 framebuffer
     uint16_t transparentColor = 63519; 
 
     public:
