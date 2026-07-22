@@ -9,11 +9,12 @@ Entity-Component-System (ECS): Modular design to separate data, behavior, and lo
 Event system: Easily handle game events, collisions, and input.
 Physics & Collision Detection: Dynamic collisions, basic physics simulation.
 Sprite Rendering, Animations, Tileset Rendering from SD Card Module.
+Sprites and Asset Systesm: Sprites and tilesheets are stored on the SD card as a binary file to reduce RAM usage
 
 
 ## Sample games included:
 
-Pong: Classic game to play against the computer.
+Pong: Classic game to play against an AI.
 Jump & Run (WIP): Early prototype for a platformer demo.
 Exploration: Demo for Tileset, Sprites and Animation Rendering.
 
@@ -45,9 +46,9 @@ cmake -G "Ninja" .. && ninja
     - DC: pin 21
 - SD Card Module
     - CS: pin 22
-    - SCK: pin 18
-    - MOSI: pin 19
-    - MISO: pin 16
+    - SCK: pin 10
+    - MOSI: pin 11
+    - MISO: pin 12
 - 6x6x5 mm Miniature Push Button
     - UP: pin 3
     - DOWN: pin 4

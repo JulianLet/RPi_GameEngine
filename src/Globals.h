@@ -29,7 +29,6 @@ enum
     PIN_DC_DISPLAY   = 21,
     PIN_RST_DISPLAY  = 20,
 
- 
     PIN_SCK1       = 10,
     PIN_MOSI1      = 11,
     PIN_MISO1      = 12,
