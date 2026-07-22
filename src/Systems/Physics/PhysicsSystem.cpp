@@ -51,10 +51,10 @@ void CollisionOneDynamic(World& world, uint32_t a, uint32_t b, float toi, Vector
     pa.currentVelocity = tComp - nComp * bounce;
 
     ta.currentPosition += pa.currentVelocity * (1.0f - toi) * dt;
-    ta.currentPosition -= normal * 0.1f;
+    ta.currentPosition += normal * 0.1f;
 }
 
-void CollisionKinematicStatic(World& world, uint32_t k, uint32_t s)
+void CollisionKinematicStatic(World& world, uint32_t k, uint32_t s, Vector2 normal)
 {
     auto& kt = world.transforms[k];
     auto& kp = world.physics[k];
@@ -64,15 +64,14 @@ void CollisionKinematicStatic(World& world, uint32_t k, uint32_t s)
 
     if (overlap.x <= 0 && overlap.y <= 0) return;
 
-    if (overlap.x < overlap.y)
+    if (normal.x != 0)
     {
-        int dir = (kp.currentVelocity.x < 0) ? 1 : -1;
-        kt.currentPosition.x += dir * overlap.x;
+        kt.currentPosition.x += normal.x * overlap.x;
     }
-    else
+
+    if (normal.y != 0)
     {
-        int dir = (kp.currentVelocity.y < 0) ? 1 : -1;
-        kt.currentPosition.y += dir * overlap.y;
+        kt.currentPosition.y += normal.y * overlap.y;
     }
 }
 
@@ -110,8 +109,8 @@ void CollisionDynamicDynamic(World& world, uint32_t a, uint32_t b, float toi, Ve
         pb.currentVelocity.y = ((1 - bounce) * vb + (1 + bounce) * va) * 0.5f;
     }
 
-    ta.currentPosition += normal * 0.05f;
-    tb.currentPosition -= normal * 0.05f;
+    ta.currentPosition -= normal * 0.05f;
+    tb.currentPosition += normal * 0.05f;
 }
 
 void PhysicsSystem::Update(World& world, float dt)
@@ -147,11 +146,12 @@ void PhysicsSystem::Update(World& world, float dt)
 void PhysicsSystem::ResolveCollisions(World& world, float dt)
 {
     std::unordered_set<uint32_t> checked;
+    uint32_t requiredMask = ColliderBit | PhysicsBit;
 
     for (uint32_t a = 0; a < MAX_ENTITIES; a++)
     {
         if (!world.entities[a].isAlive) continue;
-        if (!(world.entities[a].mask & ColliderBit)) continue;
+        if ((world.entities[a].mask & requiredMask) != requiredMask) continue;
 
         checked.insert(a);
 
@@ -160,6 +160,8 @@ void PhysicsSystem::ResolveCollisions(World& world, float dt)
 
         for (auto& entry : ca.currentCollisions)
         {
+            if (entry.otherID == UINT8_MAX) continue;
+
             uint32_t b = entry.otherID;
 
             if (checked.count(b)) continue;
@@ -167,44 +169,46 @@ void PhysicsSystem::ResolveCollisions(World& world, float dt)
             auto& cb = world.colliders[b];
             auto& pb = world.physics[b];
 
-            if (!ca.isTrigger && !cb.isTrigger)
-            {
-                if (pa.physicsType == PhysicsType::STATIC &&
-                    pb.physicsType == PhysicsType::STATIC)
-                    continue;
+            if (ca.isTrigger || cb.isTrigger) continue;
 
-                if (pa.physicsType == PhysicsType::KINEMATIC &&
-                    pb.physicsType == PhysicsType::STATIC)
-                {
-                    CollisionKinematicStatic(world, a, b);
-                }
-                else if (pa.physicsType == PhysicsType::STATIC &&
-                         pb.physicsType == PhysicsType::KINEMATIC)
-                {
-                    CollisionKinematicStatic(world, b, a);
-                }
-                else if (pa.physicsType == PhysicsType::DYNAMIC &&
-                         pb.physicsType == PhysicsType::DYNAMIC)
-                {
-                    CollisionDynamicDynamic(world, a, b,
-                        entry.info.timeOfCollision,
-                        entry.info.collisionNormal,
-                        dt);
-                }
-                else if (pa.physicsType == PhysicsType::DYNAMIC)
-                {
-                    CollisionOneDynamic(world, a, b,
-                        entry.info.timeOfCollision,
-                        entry.info.collisionNormal,
-                        dt);
-                }
-                else if (pb.physicsType == PhysicsType::DYNAMIC)
-                {
-                    CollisionOneDynamic(world, b, a,
-                        entry.info.timeOfCollision,
-                        entry.info.collisionNormal,
-                        dt);
-                }
+            if (pa.physicsType == PhysicsType::STATIC &&
+                pb.physicsType == PhysicsType::STATIC)
+                continue;
+
+            if (pa.physicsType == PhysicsType::KINEMATIC && pb.physicsType == PhysicsType::STATIC)
+            {
+                CollisionKinematicStatic(world, a, b, entry.info.collisionNormal);
+            }
+            else if (pa.physicsType == PhysicsType::STATIC && pb.physicsType == PhysicsType::KINEMATIC)
+            {
+                Vector2 n = {
+                    -entry.info.collisionNormal.x,
+                    -entry.info.collisionNormal.y
+                };
+
+                CollisionKinematicStatic(world, b, a, n);
+            }
+            else if (pa.physicsType == PhysicsType::DYNAMIC &&
+                        pb.physicsType == PhysicsType::DYNAMIC)
+            {
+                CollisionDynamicDynamic(world, a, b,
+                    entry.info.timeOfCollision,
+                    entry.info.collisionNormal,
+                    dt);
+            }
+            else if (pa.physicsType == PhysicsType::DYNAMIC)
+            {
+                CollisionOneDynamic(world, a, b,
+                    entry.info.timeOfCollision,
+                    entry.info.collisionNormal,
+                    dt);
+            }
+            else if (pb.physicsType == PhysicsType::DYNAMIC)
+            {
+                CollisionOneDynamic(world, b, a,
+                    entry.info.timeOfCollision,
+                    entry.info.collisionNormal,
+                    dt);
             }
         }
     }

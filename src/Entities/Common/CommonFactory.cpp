@@ -114,7 +114,7 @@ uint8_t CommonFactory::CreateSideScrollerPlayer(World& world, Vector2 startPos, 
     world.physics[id] =
     {
         .useGravity = USE_GRAVITY,
-        .physicsType = PhysicsType::DYNAMIC, 
+        .physicsType = PhysicsType::KINEMATIC, 
         .currentVelocity = Vector2(0,0),
     };
 
